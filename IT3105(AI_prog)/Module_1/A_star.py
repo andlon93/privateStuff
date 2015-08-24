@@ -1,6 +1,13 @@
 import copy
 debug = True
 #debug = False
+'''
+O = empty
+S = start
+G = Goal
+B = Barrier
+'''
+
 def user_input(): #get all input from user
 	board_size = int( raw_input("Breadth and width of board: ") )	#Board size
 	#start and end nodes
@@ -27,17 +34,35 @@ def create_empty_board(board_size):#Initialaise an empty board
 			column.append('O')
 		board.append( column )
 	return board
+def add_Barriers(board, Barriers):#Add barreiers to the board
+	for Barrier in Barriers:
+		if debug: print Barrier
+		x = int( Barrier[0] )
+		y = int( Barrier[2] )
+		width = int( Barrier[4] )
+		height = int( Barrier[6] )
+		print 'x: ', x, 'y: ', y
+		print 'width: ', width, 'height: ', height
 
-
-
+		
+		for h in xrange(0, height):
+			for w in xrange(0, width):
+				board[y+h][x+w] = 'B'
+	if debug:
+		print '\n'
+		for row in board:
+			print row
+		print '\n'
+	return board	
 #board_size, start_node, goal_node, Barriers = user_input()
 
 def create_board(board_size, start_node, goal_node, Barriers):
-	board = create_empty_board(board_size)
+	board = create_empty_board(board_size)#create empty board
 
 
-	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'
-	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'
+	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node
+	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'#add goal node
+
 
 	if debug:
 		print '\n'
@@ -45,5 +70,7 @@ def create_board(board_size, start_node, goal_node, Barriers):
 		for row in board:
 			print row
 		print '\n'
+	add_Barriers(board, Barriers)
+	return False
 
-create_board(10, '0,0', '9,9', '2,2,2,2')
+create_board(3, '0,0', '2,2', ['0,2,2,1'])
