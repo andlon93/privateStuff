@@ -37,15 +37,15 @@ def create_empty_board(board_size):#Initialaise an empty board
 def add_Barriers(board, Barriers):#Add barreiers to the board
 	for Barrier in Barriers:
 		if debug: print Barrier
+		#Position of lower left point in barrier
 		x = int( Barrier[0] )
 		y = int( Barrier[2] )
+		#width and height of barrier(minimun 1)
 		width = int( Barrier[4] )
 		height = int( Barrier[6] )
-		print 'x: ', x, 'y: ', y
-		print 'width: ', width, 'height: ', height
+		if debug: print 'x: ', x, 'y: ', y, 'width: ', width, 'height: ', height, '\n'
 
-		
-		for h in xrange(0, height):
+		for h in xrange(0, height):#adding the barriers to the board with mark 'B'
 			for w in xrange(0, width):
 				board[y+h][x+w] = 'B'
 	if debug:
@@ -59,10 +59,8 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 def create_board(board_size, start_node, goal_node, Barriers):
 	board = create_empty_board(board_size)#create empty board
 
-
-	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node
-	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'#add goal node
-
+	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node marked 'S'
+	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'#add goal node marked 'G'
 
 	if debug:
 		print '\n'
