@@ -1,6 +1,5 @@
 import copy
-debug = True
-#debug = False
+debug = False
 '''
 O = empty
 S = start
@@ -54,21 +53,23 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 			print row
 		print '\n'
 	return board	
-#board_size, start_node, goal_node, Barriers = user_input()
-
-def create_board(board_size, start_node, goal_node, Barriers):
+def create_board(board_size, start_node, goal_node, Barriers):#Creates board using help functions
 	board = create_empty_board(board_size)#create empty board
-
 	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node marked 'S'
 	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'#add goal node marked 'G'
-
+	board = add_Barriers(board, Barriers)#add the barriers to the board
+	
 	if debug:
 		print '\n'
 		print board_size
 		for row in board:
 			print row
 		print '\n'
-	add_Barriers(board, Barriers)
-	return False
+	
+	return board
 
-create_board(3, '0,0', '2,2', ['0,2,2,1'])
+#board_size, start_node, goal_node, Barriers = user_input()
+#create_board(board_size, start_node, goal_node, Barriers)
+board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
+for n in board:
+	print n
