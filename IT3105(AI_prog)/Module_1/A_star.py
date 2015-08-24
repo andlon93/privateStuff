@@ -6,7 +6,9 @@ S = start
 G = Goal
 B = Barrier
 '''
-
+def print_board(board):#prints board with 0,0 in bottom left corner
+	for row in range (len(board), 0, -1):
+		print board[row-1], '\n'
 def user_input(): #get all input from user
 	board_size = int( raw_input("Breadth and width of board: ") )	#Board size
 	#start and end nodes
@@ -71,5 +73,7 @@ def create_board(board_size, start_node, goal_node, Barriers):#Creates board usi
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
-for n in board:
-	print n
+
+print_board(board)
+def Breadth_first_search(board):
+	pass
