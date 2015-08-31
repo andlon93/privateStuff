@@ -145,7 +145,22 @@ def Breadth_first_search(board, start_node):
 			queue.append(current.children[n])
 			board = update_board_cell(current.children[n], board, 'O')#update opened cells
 			
+def Depth_first_search(board, start_node):
+	stack = []
+	current = start_node
 
+	while True:
+		if current.typ == 'G':
+			return board
+		if len(current.children) > 0:
+			stack.append(current)
+			current = current.children.pop()#go down one level if possible
+			if current.typ != 'G': board = update_board_cell(current, board, 'P')#update board cell
+		else:
+			current = stack.pop()#go up level if bottom level is reached
+			update_board_cell(current, board, 'O')#update board cell
+		pass
+	pass
 
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
@@ -155,6 +170,30 @@ rot, class_board = create_linked_classes(board)
 
 print_board(board)
 print '\n\n'
-board = Breadth_first_search(board, rot)
+#board = Breadth_first_search(board, rot)
+board = Depth_first_search(board, rot)
 print_board(board)
 print '\n\n'
+
+'''
+def dfs(rot):
+    niva = 0
+    stack = []
+    node = rot
+
+    
+    while(True):
+        
+        #print "node.barn", len(node.barn)
+        if(node.ratatosk):
+            return niva
+        if(len(node.barn) > 0):
+            stack.append(node)
+            print "stack", stack
+            node = node.barn.pop()
+            print "node", node
+            niva+=1
+        else:
+            node = stack.pop()
+            niva-=1
+'''
