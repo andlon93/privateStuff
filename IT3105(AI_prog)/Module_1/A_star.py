@@ -1,5 +1,6 @@
 import copy
 debug = True
+#########---- Letters from the print ----########
 '''
 C = Closed
 S = start
@@ -8,6 +9,16 @@ B = Barrier
 P = path
 O = Open
 '''
+#########---- Example sets ----########
+#        row  col start    goal    Barriers
+set_0 = [ 10, 10, [0,0],  [9,9],   [[2,3,5,5], [8,8,2,1]] 										   ]		
+set_1 = [ 20, 20, [19,3], [2,18],  [[5,5,10,10], [1,2,4,1]] 									   ]
+set_2 = [ 20, 20, [0,0],  [19,19], [[17,10,2,1], [14,4,5,2], [3,16,10,2], [13,7,5,3], [15,15,3,3]] ]
+set_3 = [ 10, 10, [0,0],  [9,5],   [[3,0,2,7], [6,0,4,4], [6, 6, 2, 4]] 						   ]
+set_4 = [ 10, 10, [0,0],  [9,9],   [[3,0,2,7], [6,0,4,4], [6, 6, 2, 4]] 						   ]
+set_5 = [ 20, 20, [0,0],  [19,13], [[4,0,4,16], [12,4,2,16], [16,8,4,4]] 						   ]
+
+#########---- Node Class ----########
 class Node:
     children = None 
     typ = None
@@ -57,7 +68,7 @@ def create_empty_board(rows, cols):#Initialaise an empty board
 	for row in xrange(0, rows):
 		column = []
 		for col in xrange(0, cols):
-			column.append('C')
+			column.append('-')
 		board.append( column )
 
 
@@ -66,11 +77,12 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 	for Barrier in Barriers:
 		if debug: print Barrier
 		#Position of lower left point in barrier
+
 		x = int( Barrier[0] )
-		y = int( Barrier[2] )
+		y = int( Barrier[1] )
 		#width and height of barrier(minimun 1)
-		width = int( Barrier[4] )
-		height = int( Barrier[6] )
+		width = int( Barrier[2] )
+		height = int( Barrier[3] )
 		if debug: print 'x: ', x, 'y: ', y, 'width: ', width, 'height: ', height, '\n'
 
 		for h in xrange(0, height):#adding the barriers to the board with mark 'B'
@@ -84,8 +96,8 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 	return board	
 def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board using help functions
 	board = create_empty_board(rows, cols)#create empty board
-	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node marked 'S'
-	board[ int(goal_node[0]) ][ int(goal_node[-1]) ] = 'G'#add goal node marked 'G'
+	board[ start_node[0] ][ start_node[1] ] = 'S'#add start node marked 'S'
+	board[ goal_node[0] ][ goal_node[1] ] = 'G'#add goal node marked 'G'
 	board = add_Barriers(board, Barriers)#add the barriers to the board
 	
 	if debug:
@@ -96,7 +108,8 @@ def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board usi
 		print '\n'
 	
 	return board
-
+#b = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+#print_board(b)
 #########---- Create the nodes ----########
 def create_linked_classes(board):
 	class_board = []#matrix with each node as an object
@@ -182,10 +195,14 @@ def Heuristic():
 def Astar(board, start_node, end_node):
 
 	pass
+
+
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
-board = create_board(3, 4, '0,0', '2,2', ['0,1,2,2'])
+'''
+board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
+#board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
 print_board(board)
 rot, goal_node ,class_board = create_linked_classes(board)
 
@@ -196,3 +213,4 @@ BFS_board = Breadth_first_search(board, rot)
 print_board(BFS_board)
 #print '\n\n'
 
+'''
