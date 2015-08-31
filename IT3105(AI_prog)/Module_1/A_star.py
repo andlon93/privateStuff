@@ -12,16 +12,21 @@ class Node:
     children = None 
     typ = None
     parent = None
+    x_pos = None
+    y_pos = None
 
     def __init__(self):
         self.children = []
 
 
 def print_board(board):#prints board with 0,0 in bottom left corner
-	board = [] 
 	for row in range (len(board), 0, -1):
 		print board[row-1], '\n'
-
+def update_board_cell(node, board, letter):
+	x = node.x_pos
+	y = node.y_pos
+	board[x][y] = letter
+	return board
 def user_input(): #get all input from user
 	board_size = int( raw_input("Breadth and width of board: ") )	#Board size
 	#start and end nodes
@@ -97,11 +102,13 @@ def create_linked_classes(board):
 			if board[row][col] != 'B':
 				node = Node()
 				node.typ = board[row][col]
+				node.x_pos = row
+				node.y_pos = col
 				row_list.append(node)
 				if board[row][col] == 'S':
 					rot = node
 				#if node != rot:
-				#	node.parent = 
+				#node.parent = 
 			else:
 				row_list.append('B')
 		class_board.append(row_list)
@@ -121,7 +128,7 @@ def create_linked_classes(board):
 	#
 	if debug: 
 		print "children: ", rot.children, '\n'
-		print "rot", rot
+		print "rot", rot, 'pos: ', rot.x_pos, rot.y_pos
 		print "parent: ", rot.children[0].parent, '\n'
 	return rot, class_board
 
@@ -131,11 +138,13 @@ def Breadth_first_search(board, start_node):
 		current = queue.pop(0)
 		if current.typ == 'G':
 			while current.typ != 'S':
-				if current != 'G': current.typ = 'P'
+				if current.typ != 'G': update_board_cell(current, board, 'P')#update path
 				current = current.parent
-				return True
+			return board
 		for n in range(0, len(current.children)): 
 			queue.append(current.children[n])
+			board = update_board_cell(current.children[n], board, 'O')#update opened cells
+			
 
 
 #board_size, start_node, goal_node, Barriers = user_input()
@@ -144,5 +153,8 @@ def Breadth_first_search(board, start_node):
 board = create_board(3, '0,0', '2,2', ['0,1,2,2'])
 rot, class_board = create_linked_classes(board)
 
-
-Breadth_first_search(board, rot)
+print_board(board)
+print '\n\n'
+board = Breadth_first_search(board, rot)
+print_board(board)
+print '\n\n'
