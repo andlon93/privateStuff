@@ -18,7 +18,7 @@ class Node:
     def __init__(self):
         self.children = []
 
-
+#########---- Print board methods ----########
 def print_board(board):#prints board with 0,0 in bottom left corner
 	for row in range (len(board), 0, -1):
 		print board[row-1], '\n'
@@ -27,6 +27,8 @@ def update_board_cell(node, board, letter):
 	y = node.y_pos
 	board[x][y] = letter
 	return board
+
+#########---- Take input from user ----########
 def user_input(): #get all input from user
 	board_size = int( raw_input("Breadth and width of board: ") )	#Board size
 	#start and end nodes
@@ -45,6 +47,7 @@ def user_input(): #get all input from user
 		print '\n'
 	return board_size, start_node, goal_node, Barriers
 
+#########---- Create board ----########
 def create_empty_board(board_size):#Initialaise an empty board
 	board = []
 
@@ -56,7 +59,6 @@ def create_empty_board(board_size):#Initialaise an empty board
 
 
 	return board
-
 def add_Barriers(board, Barriers):#Add barreiers to the board
 	for Barrier in Barriers:
 		if debug: print Barrier
@@ -77,7 +79,6 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 			print row
 		print '\n'
 	return board	
-
 def create_board(board_size, start_node, goal_node, Barriers):#Creates board using help functions
 	board = create_empty_board(board_size)#create empty board
 	board[ int(start_node[0]) ][ int(start_node[-1]) ] = 'S'#add start node marked 'S'
@@ -93,6 +94,7 @@ def create_board(board_size, start_node, goal_node, Barriers):#Creates board usi
 	
 	return board
 
+#########---- Create the nodes ----########
 def create_linked_classes(board):
 	class_board = []#matrix with each node as an object
 	#fill in objects where there is not a B
@@ -107,6 +109,8 @@ def create_linked_classes(board):
 				row_list.append(node)
 				if board[row][col] == 'S':
 					rot = node
+				if board[row][col] == 'G':
+					goal = node
 				#if node != rot:
 				#node.parent = 
 			else:
@@ -130,8 +134,10 @@ def create_linked_classes(board):
 		print "children: ", rot.children, '\n'
 		print "rot", rot, 'pos: ', rot.x_pos, rot.y_pos
 		print "parent: ", rot.children[0].parent, '\n'
-	return rot, class_board
+		print "goal: ", goal.typ
+	return rot, goal, class_board
 
+#########---- BFS ----########
 def Breadth_first_search(board, start_node):
 	queue = [start_node]
 	while len(queue) != 0:
@@ -144,7 +150,8 @@ def Breadth_first_search(board, start_node):
 		for n in range(0, len(current.children)): 
 			queue.append(current.children[n])
 			board = update_board_cell(current.children[n], board, 'O')#update opened cells
-			
+
+#########---- DFS ----########			
 def Depth_first_search(board, start_node):
 	stack = []
 	current = start_node
@@ -162,38 +169,23 @@ def Depth_first_search(board, start_node):
 		pass
 	pass
 
+#########---- A* ----########
+def Heuristic():
+	
+	pass
+def Astar(board, start_node, end_node):
+
+	pass
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 board = create_board(3, '0,0', '2,2', ['0,1,2,2'])
-rot, class_board = create_linked_classes(board)
+rot, goal_node ,class_board = create_linked_classes(board)
 
-print_board(board)
-print '\n\n'
-#board = Breadth_first_search(board, rot)
-board = Depth_first_search(board, rot)
-print_board(board)
-print '\n\n'
+#print_board(board)
+#print '\n\n'
+BFS_board = Breadth_first_search(board, rot)
+DFS_board = Depth_first_search(board, rot)
+#print_board(board)
+#print '\n\n'
 
-'''
-def dfs(rot):
-    niva = 0
-    stack = []
-    node = rot
-
-    
-    while(True):
-        
-        #print "node.barn", len(node.barn)
-        if(node.ratatosk):
-            return niva
-        if(len(node.barn) > 0):
-            stack.append(node)
-            print "stack", stack
-            node = node.barn.pop()
-            print "node", node
-            niva+=1
-        else:
-            node = stack.pop()
-            niva-=1
-'''
