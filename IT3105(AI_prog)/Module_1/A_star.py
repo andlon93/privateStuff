@@ -1,19 +1,21 @@
 import copy
-debug = False
+debug = True
 '''
-O = empty
+C = Closed
 S = start
 G = Goal
 B = Barrier
+P = path
+O = Open
 '''
 class Node:
-    barn = None 
+    children = None 
     typ = None
+    parent = None
 
-    #nesteBarn = None    # bare til bruk i DFS
     def __init__(self):
-        self.barn = []
-        #self.nesteBarn = 0
+        self.children = []
+
 
 def print_board(board):#prints board with 0,0 in bottom left corner
 	board = [] 
@@ -44,7 +46,7 @@ def create_empty_board(board_size):#Initialaise an empty board
 	for row in xrange(0, board_size):
 		column = []
 		for col in xrange(0, board_size):
-			column.append('O')
+			column.append('C')
 		board.append( column )
 
 
@@ -98,38 +100,49 @@ def create_linked_classes(board):
 				row_list.append(node)
 				if board[row][col] == 'S':
 					rot = node
+				#if node != rot:
+				#	node.parent = 
 			else:
 				row_list.append('B')
 		class_board.append(row_list)
-
-	#Fill in child lists pn all objects
+	#
+	#Fill in child lists on all nodes
 	for row in xrange(0, len(class_board)):
 		for col in xrange(0, len(class_board[row])):
 			if class_board[row][col] != 'B':
 
-				if debug: print 'node: ', class_board[row][col], '\n'
-
-				if row-1 > -1 and class_board[row-1][col] != 'B':
-					class_board[row][col].barn.append( class_board[row-1][col] )
-				if col-1 > -1 and class_board[row][col-1] != 'B':
-					class_board[row][col].barn.append( class_board[row][col-1] )
+				'''if debug: print 'node: ', class_board[row][col], '\n'''
 				if row+1 < len(class_board[row]) and class_board[row+1][col] != 'B':
-					class_board[row][col].barn.append( class_board[row+1][col] )
+					class_board[row][col].children.append( class_board[row+1][col] )#add child nodes
+					class_board[row+1][col].parent = class_board[row][col]#add parent
 				if col+1 < len(class_board[row]) and class_board[row][col+1] != 'B':
-					class_board[row][col].barn.append( class_board[row][col+1] )
-	
+					class_board[row][col].children.append( class_board[row][col+1] )#add child nodes
+					class_board[row][col+1].parent = class_board[row][col] #add parent
+	#
+	if debug: 
+		print "children: ", rot.children, '\n'
+		print "rot", rot
+		print "parent: ", rot.children[0].parent, '\n'
+	return rot, class_board
 
-	if debug: print "barn: ", rot.barn[0].barn, '\n'
-	return rot
+def Breadth_first_search(board, start_node):
+	queue = [start_node]
+	while len(queue) != 0:
+		current = queue.pop(0)
+		if current.typ == 'G':
+			while current.typ != 'S':
+				if current != 'G': current.typ = 'P'
+				current = current.parent
+				return True
+		for n in range(0, len(current.children)): 
+			queue.append(current.children[n])
+
 
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 board = create_board(3, '0,0', '2,2', ['0,1,2,2'])
-rot = create_linked_classes(board)
+rot, class_board = create_linked_classes(board)
 
 
-
-def Breadth_first_search(board, start_node):
-	queue = []
-	pass
+Breadth_first_search(board, rot)
