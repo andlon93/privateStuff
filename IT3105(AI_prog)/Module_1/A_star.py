@@ -103,7 +103,7 @@ def create_linked_classes(board):
 	#fill in objects where there is not a B
 	for row in xrange(0, len(board)):
 		row_list = []
-		for col in xrange(0, len(board)):
+		for col in xrange(0, len(board[row])):
 			if board[row][col] != 'B':
 				node = Node()
 				node.typ = board[row][col]
@@ -121,12 +121,14 @@ def create_linked_classes(board):
 		class_board.append(row_list)
 	#
 	#Fill in child lists on all nodes
+	print "zzzz:  ", len(class_board)
 	for row in xrange(0, len(class_board)):
+		print "xxxx:  ", len(class_board[row])
 		for col in xrange(0, len(class_board[row])):
 			if class_board[row][col] != 'B':
 
 				'''if debug: print 'node: ', class_board[row][col], '\n'''
-				if row+1 < len(class_board[row]) and class_board[row+1][col] != 'B':
+				if row+1 < len(class_board) and class_board[row+1][col] != 'B':
 					class_board[row][col].children.append( class_board[row+1][col] )#add child nodes
 					class_board[row+1][col].parent = class_board[row][col]#add parent
 				if col+1 < len(class_board[row]) and class_board[row][col+1] != 'B':
@@ -152,7 +154,8 @@ def Breadth_first_search(board, start_node):
 			return board
 		for n in range(0, len(current.children)): 
 			queue.append(current.children[n])
-			board = update_board_cell(current.children[n], board, 'O')#update opened cells
+			if current.children[n].typ != 'G':
+				board = update_board_cell(current.children[n], board, 'O')#update opened cells
 
 #########---- DFS ----########			
 def Depth_first_search(board, start_node):
@@ -184,12 +187,12 @@ def Astar(board, start_node, end_node):
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 board = create_board(3, 4, '0,0', '2,2', ['0,1,2,2'])
 print_board(board)
-#rot, goal_node ,class_board = create_linked_classes(board)
+rot, goal_node ,class_board = create_linked_classes(board)
 
 #print_board(board)
 #print '\n\n'
-#BFS_board = Breadth_first_search(board, rot)
+BFS_board = Breadth_first_search(board, rot)
 #DFS_board = Depth_first_search(board, rot)
-#print_board(board)
+print_board(BFS_board)
 #print '\n\n'
 
