@@ -32,7 +32,7 @@ class Node:
         self.children = []
 
 #########---- Print board methods ----########
-def print_board(board):#prints board with 0,0 in bottom left corner
+def print_board(board):#prints board with 0,0 in bottom left corner  #Also generates a html file with the table
 	htmlString='<link rel="stylesheet" type="text/css" href="theme.css"><table>'
 	for row in range (len(board), 0, -1):
 		htmlString = htmlString + "<tr>"
@@ -53,7 +53,7 @@ def print_board(board):#prints board with 0,0 in bottom left corner
 				htmlString = htmlString + '<td>' + board[row-1][i] + "</td>"
 		print board[row-1], '\n'
 		htmlString = htmlString + "</tr>"
-	f = open('myfile.html','w')
+	f = open('output.html','w')
 	f.write(htmlString)
 	f.close()
 
