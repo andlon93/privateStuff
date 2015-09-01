@@ -1,5 +1,5 @@
 import copy
-debug = True
+debug = False
 #########---- Letters from the print ----########
 '''
 C = Closed
@@ -58,13 +58,18 @@ def print_board(board):#prints board with 0,0 in bottom left corner  #Also gener
 	f.write(htmlString)
 	f.close()
 
-
 def update_board_cell(node, board, letter):
 	x = node.x_pos
 	y = node.y_pos
 	board[x][y] = letter
 	return board
 
+def update_board_with_path(board, path):
+	for cell in path:
+		if board[cell.x_pos][cell.y_pos] != 'S' and board[cell.x_pos][cell.y_pos] != 'G': 
+			board[cell.x_pos][cell.y_pos] = 'P'
+	return board
+	
 #########---- Take input from user ----########
 def user_input(): #get all input from user
 	rows = int( raw_input("Height of board: ") )	#Board size
@@ -158,9 +163,9 @@ def create_linked_classes(board):
 		class_board.append(row_list)
 	#
 	#Fill in child lists on all nodes
-	print "zzzz:  ", len(class_board)
+	##################################print "zzzz:  ", len(class_board)
 	for row in xrange(0, len(class_board)):
-		print "xxxx:  ", len(class_board[row])
+		##################################print "xxxx:  ", len(class_board[row])
 		for col in xrange(0, len(class_board[row])):
 			if class_board[row][col] != 'B':
 
@@ -180,19 +185,28 @@ def create_linked_classes(board):
 	return rot, goal, class_board
 
 #########---- BFS ----########
-def Breadth_first_search(board, start_node):
-	queue = [start_node]
-	while len(queue) != 0:
-		current = queue.pop(0)
-		if current.typ == 'G':
-			while current.typ != 'S':
-				if current.typ != 'G': update_board_cell(current, board, 'P')#update path
-				current = current.parent
-			return board
-		for n in range(0, len(current.children)): 
-			queue.append(current.children[n])
-			if current.children[n].typ != 'G':
-				board = update_board_cell(current.children[n], board, 'O')#update opened cells
+def Breadth_first_search(board, start_node, goal_node):
+	queue = [[start_node]]
+	visited = set()
+
+	while queue:
+		path = queue.pop(0)
+
+		current_node = path[-1]
+
+		if current_node == goal_node:
+			return path
+		elif current_node not in visited:
+			for child in current_node.children:
+				temp_path = list(path)
+				#print 'temp_path: ', temp_path
+				temp_path.append(child)
+				#print 'temp_path 2.0: ', temp_path
+				queue.append(temp_path)
+				#print 'queue: ', queue
+
+			visited.add(current_node)
+		#print '------------New iteration---------------'
 
 #########---- DFS ----########			
 def Depth_first_search(board, start_node):
@@ -227,12 +241,16 @@ def Astar(board, start_node, end_node):
 	
 #board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
 board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
-print_board(board)
+#print_board(board)
 rot, goal_node ,class_board = create_linked_classes(board)
 
 #print_board(board)
 #print '\n\n'
-#BFS_board = Breadth_first_search(board, rot)
-DFS_board = Depth_first_search(board, rot)
-print_board(DFS_board)
+path = Breadth_first_search(board, rot, goal_node)
+
+
+
+board = update_board_with_path(board, path)
+#DFS_board = Depth_first_search(board, rot)
+print_board(board)
 #print '\n\n'
