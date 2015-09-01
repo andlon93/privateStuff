@@ -28,6 +28,7 @@ class Node:
     #-- For A* --#
     g = None
     h = None
+    f = None
     def __init__(self):
         self.children = []
 
@@ -213,26 +214,77 @@ def Depth_first_search(board, start_node):
 	pass
 
 #########---- A* ----########
-def Heuristic():
+def Heuristic(node):
+	return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
 
-	pass
+def attach_and_eval(child,parent):
+	child.parent = parent
+	child.g = parent.g + 1
+	child.h = Heuristic(child)
+	child.f = child.g + child.h
+
+def prop_path_imp(parent):
+	for child in parent.children:
+		if (parent.g + 1) < child.g:
+			child.parent = parent
+			child.g = parent.g + 1
+			child.h = Heuristic(child)
+			child.f = child.g + child.h
+			prop_path_imp(child)
+
+def bubble_sort(items):
+    for i in range(len(items)):
+        for j in range(len(items)-1-i):
+            if items[j].f > items[j+1].f:
+                items[j], items[j+1] = items[j+1], items[j]
+
+
 def Astar(board, start_node, end_node):
+	done = False
+	closed=[]
+	open=[]
+	current_node = start_node
+	current_node.g = 0
+	current_node.h = Heuristic(current_node)
+	current_node.f = current_node.h + current_node.g
+	open.append(current_node)
+	while not done:
+		print '------1-----'
+		if len(open) < 1:
+			return False
+		current_node = open.pop()
+		closed.append(current_node)
+		if (current_node == end_node):
+			return True
+		succ = current_node.children
+		for child in succ:
+			print '-----2------'
+			if child not in closed and child not in closed:
+				print '------3------'
+				bubble_sort(open)
+				open.append(child)
+				attach_and_eval(child,current_node)
+			elif ((current_node.g + 1) < child.g):
+				print '------4------'
+				attach_and_eval(child,current_node)
+				if child in closed:
+					prop_path_imp(child)
 
-	pass
-
+			
 
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
-	
 #board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
 board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
 print_board(board)
 rot, goal_node ,class_board = create_linked_classes(board)
-
+boool = Astar(board, rot, goal_node)
+print boool
 #print_board(board)
 #print '\n\n'
 #BFS_board = Breadth_first_search(board, rot)
-DFS_board = Depth_first_search(board, rot)
-print_board(DFS_board)
+#DFS_board = Depth_first_search(board, rot)
+Astar_board = Astar(board,rot,goal_node)
+#print_board(Astar_board)
 #print '\n\n'
