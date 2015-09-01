@@ -33,8 +33,31 @@ class Node:
 
 #########---- Print board methods ----########
 def print_board(board):#prints board with 0,0 in bottom left corner
+	htmlString='<link rel="stylesheet" type="text/css" href="theme.css"><table>'
 	for row in range (len(board), 0, -1):
+		htmlString = htmlString + "<tr>"
+		for i in range (len(board[row-1])):
+			if board[row-1][i]=="O":
+				htmlString = htmlString + '<td class="O">' + board[row-1][i] + "</td>"
+			elif board[row-1][i]=="G":
+				htmlString = htmlString + '<td class="G">' + board[row-1][i] + "</td>"
+			elif board[row-1][i]=="B":
+				htmlString = htmlString + '<td class="B">' + board[row-1][i] + "</td>"
+			elif board[row-1][i]=="S":
+				htmlString = htmlString + '<td class="S">' + board[row-1][i] + "</td>"
+			elif board[row-1][i]=="-":
+				htmlString = htmlString + '<td class="-">' + board[row-1][i] + "</td>"
+			elif board[row-1][i]=="P":
+				htmlString = htmlString + '<td class="P">' + board[row-1][i] + "</td>"
+			else:
+				htmlString = htmlString + '<td>' + board[row-1][i] + "</td>"
 		print board[row-1], '\n'
+		htmlString = htmlString + "</tr>"
+	f = open('myfile.html','w')
+	f.write(htmlString)
+	f.close()
+
+
 def update_board_cell(node, board, letter):
 	x = node.x_pos
 	y = node.y_pos
@@ -200,17 +223,15 @@ def Astar(board, start_node, end_node):
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
-'''
-board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
-#board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+	
+#board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
+board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
 print_board(board)
 rot, goal_node ,class_board = create_linked_classes(board)
 
 #print_board(board)
 #print '\n\n'
-BFS_board = Breadth_first_search(board, rot)
-#DFS_board = Depth_first_search(board, rot)
-print_board(BFS_board)
+#BFS_board = Breadth_first_search(board, rot)
+DFS_board = Depth_first_search(board, rot)
+print_board(DFS_board)
 #print '\n\n'
-
-'''
