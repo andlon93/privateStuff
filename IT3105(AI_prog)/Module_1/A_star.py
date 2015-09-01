@@ -69,7 +69,7 @@ def update_board_with_path(board, path):
 		if board[cell.x_pos][cell.y_pos] != 'S' and board[cell.x_pos][cell.y_pos] != 'G': 
 			board[cell.x_pos][cell.y_pos] = 'P'
 	return board
-	
+
 #########---- Take input from user ----########
 def user_input(): #get all input from user
 	rows = int( raw_input("Height of board: ") )	#Board size
@@ -212,19 +212,25 @@ def Breadth_first_search(board, start_node, goal_node):
 def Depth_first_search(board, start_node):
 	stack = []
 	current = start_node
+	visited = []
 
 	while True:
+	
 		if current.typ == 'G':
 			return board
-		if len(current.children) > 0:
+
+		if current.children:
 			stack.append(current)
 			current = current.children.pop()#go down one level if possible
 			if current.typ != 'G': board = update_board_cell(current, board, 'P')#update board cell
+			print_board(board)
+			print '\n'
 		else:
-			current = stack.pop()#go up level if bottom level is reached
-			update_board_cell(current, board, 'O')#update board cell
-		pass
-	pass
+			current = stack.pop() #go up level if bottom level is reached
+			update_board_cell(current, board, 'O')#update board cellprint_board(board)
+			print '\n\n\n'
+		
+	
 
 #########---- A* ----########
 def Heuristic():
@@ -246,11 +252,10 @@ rot, goal_node ,class_board = create_linked_classes(board)
 
 #print_board(board)
 #print '\n\n'
-path = Breadth_first_search(board, rot, goal_node)
 
+#path = Breadth_first_search(board, rot, goal_node)
+#board = update_board_with_path(board, path)
 
-
-board = update_board_with_path(board, path)
-#DFS_board = Depth_first_search(board, rot)
+DFS_board = Depth_first_search(board, rot)
 print_board(board)
 #print '\n\n'
