@@ -252,13 +252,17 @@ def Depth_first_search(board, start_node):
 			current = stack.pop() #go up level if bottom level is reached
 #
 #########---- A* ----########
-def Heuristic(node): return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
+def Heuristic(node):
+	heur = (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
+	#board[node.x_pos][node.y_pos] = str(node.g + heur)
+
+	return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
 #
 def attach_and_eval(child,parent):
 	child.parent = parent
 	child.g = parent.g + 1
 	child.h = Heuristic(child)
-	child.f = child.g + child.h
+	child.f = child.h + child.g
 #
 def prop_path_imp(parent):
 	for child in parent.children:
@@ -274,6 +278,7 @@ def bubble_sort(items):
         for j in range(len(items)-1-i):
             if items[j].f > items[j+1].f:
                 items[j], items[j+1] = items[j+1], items[j]
+
 #
 def Astar(board, start_node, end_node):
 	closed=[]
@@ -281,34 +286,53 @@ def Astar(board, start_node, end_node):
 	current_node = start_node
 	current_node.g = 0
 	current_node.h = Heuristic(current_node)
-	current_node.f = current_node.h + current_node.g
+	current_node.f = current_node.g + current_node.h
 	open.append(current_node)
 	while True:
-		print "open:\n", open, "\n"
-		print "closed:\n", closed, "\n"
-		#print '------1-----'
+
 		if len(open) < 1:
 			return False
-		current_node = open.pop()
+		current_node = open.pop(0)
 		closed.append(current_node)
 		if (current_node == end_node):
+			findPath(start_node,end_node)
 			return True
 		succ = current_node.children
 		for child in succ:
-			#print '-----2------'
-			if child not in closed and child not in closed:
-				#print '------3------'
-				bubble_sort(open)
-				open.append(child)
-				######
 
-				######
+			if child not in open and child not in closed:
+
 				attach_and_eval(child,current_node)
+				open.append(child)
+				board[child.x_pos][child.y_pos]="O"
+				bubble_sort(open)
 			elif ((current_node.g + 1) < child.g):
+
+				print "FOUND CHEAPER PATH"
 				#print '------4------'
 				attach_and_eval(child,current_node)
 				if child in closed:
 					prop_path_imp(child)
+	
+
+def findPath(start_node, goal_node):
+	coordinates = []
+	current_node = goal_node
+	board[goal_node.x_pos][goal_node.y_pos]="G"
+
+	while True:
+		if current_node == start_node:
+			print coordinates
+			board[start_node.x_pos][start_node.y_pos]="S"
+			return True
+		else:
+			coords = current_node.y_pos, current_node.x_pos
+			coordinates.append(coords)
+			current_node = current_node.parent
+			board[current_node.x_pos][current_node.y_pos] = "P"
+
+
+
 #
 #			
 #board_size, start_node, goal_node, Barriers = user_input()
@@ -316,13 +340,19 @@ def Astar(board, start_node, end_node):
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 #board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
 
-board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
-#board = create_board( set_5[0], set_5[1], set_5[2], set_5[3], set_5[4] )
+#board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+board = create_board( set_5[0], set_5[1], set_5[2], set_5[3], set_5[4] )
 
 #print_board(board)
 rot, goal_node, class_board = create_linked_classes(board)
+
 ####boool = Astar(board, rot, goal_node)
 ####print boool
+
+
+boool = Astar(board, rot, goal_node)
+print_board(board)
+
 #print_board(board)
 #print '\n\n'
 
@@ -330,15 +360,15 @@ rot, goal_node, class_board = create_linked_classes(board)
 #DFS_board = Depth_first_search(board, rot)
 #Astar_board = Astar(board,rot,goal_node)
 #print_board(Astar_board)
-'''
 
+'''
 board, path = Breadth_first_search(board, rot, goal_node)
 print "path: ", path
 board = update_board_with_path(board, rot, goal_node, path)
 print "BFS: \n"
 print_board(board)
-'''
+
 #
-print "\nDFS: \n"
-DFS_board = Depth_first_search(board, rot)
-print_board(board)
+#print "\nDFS: \n"
+#DFS_board = Depth_first_search(board, rot)
+#print_board(board)'''
