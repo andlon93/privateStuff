@@ -212,7 +212,7 @@ def Breadth_first_search(board, start_node, goal_node):
 		board[current_node.x_pos][current_node.y_pos] = 'O'
 		#
 		if current_node == goal_node:
-			print "GGGGOOOOAAAAALLLL"
+			#print "GGGGOOOOAAAAALLLL"
 
 			return board, path
 		elif current_node not in visited:
@@ -233,7 +233,7 @@ def Depth_first_search(board, start_node):
 	stack = []
 	current = start_node
 	visited = set()
-	parents = {}
+	path = []
 	#
 	while True:
 		if current.typ == 'G': return board
@@ -242,13 +242,13 @@ def Depth_first_search(board, start_node):
 			stack.append(current)
 			current = current.children.pop()#go down one level if possible
 			#
-			if current.typ == 'G':
-				return board
-			update_board_cell(current, board, 'P')#update board cell
+			path.append(current)
+			if current.typ == 'G': return board
+			#update_board_cell(current, board, 'P')#update board cell
 			#
 		else:
 			visited.add(current)
-			update_board_cell(current, board, 'O')#update board cellprint_board(board)
+			#update_board_cell(current, board, 'O')#update board cellprint_board(board)
 			current = stack.pop() #go up level if bottom level is reached
 #
 #########---- A* ----########
@@ -276,7 +276,6 @@ def bubble_sort(items):
                 items[j], items[j+1] = items[j+1], items[j]
 #
 def Astar(board, start_node, end_node):
-	done = False
 	closed=[]
 	open=[]
 	current_node = start_node
@@ -284,8 +283,10 @@ def Astar(board, start_node, end_node):
 	current_node.h = Heuristic(current_node)
 	current_node.f = current_node.h + current_node.g
 	open.append(current_node)
-	while not done:
-		print '------1-----'
+	while True:
+		print "open:\n", open, "\n"
+		print "closed:\n", closed, "\n"
+		#print '------1-----'
 		if len(open) < 1:
 			return False
 		current_node = open.pop()
@@ -294,14 +295,17 @@ def Astar(board, start_node, end_node):
 			return True
 		succ = current_node.children
 		for child in succ:
-			print '-----2------'
+			#print '-----2------'
 			if child not in closed and child not in closed:
-				print '------3------'
+				#print '------3------'
 				bubble_sort(open)
 				open.append(child)
+				######
+
+				######
 				attach_and_eval(child,current_node)
 			elif ((current_node.g + 1) < child.g):
-				print '------4------'
+				#print '------4------'
 				attach_and_eval(child,current_node)
 				if child in closed:
 					prop_path_imp(child)
@@ -312,13 +316,13 @@ def Astar(board, start_node, end_node):
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 #board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
 
-#board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
-board = create_board( set_5[0], set_5[1], set_5[2], set_5[3], set_5[4] )
+board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+#board = create_board( set_5[0], set_5[1], set_5[2], set_5[3], set_5[4] )
 
 #print_board(board)
 rot, goal_node, class_board = create_linked_classes(board)
-#boool = Astar(board, rot, goal_node)
-#print boool
+####boool = Astar(board, rot, goal_node)
+####print boool
 #print_board(board)
 #print '\n\n'
 
