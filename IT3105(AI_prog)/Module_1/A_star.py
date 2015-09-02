@@ -65,10 +65,11 @@ def update_board_cell(node, board, letter):
 	board[x][y] = letter
 	return board
 
-def update_board_with_path(board, path):
+def update_board_with_path(board, rot, goal_node, path):
 	for cell in path:
-		if board[cell.x_pos][cell.y_pos] != 'S' and board[cell.x_pos][cell.y_pos] != 'G': 
-			board[cell.x_pos][cell.y_pos] = 'P'
+		board[cell.x_pos][cell.y_pos] = 'P'
+	board[rot.x_pos][rot.y_pos] = 'S'
+	board[goal_node.x_pos][goal_node.y_pos] = 'G'
 	return board
 
 #########---- Take input from user ----########
@@ -113,10 +114,12 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 		#width and height of barrier(minimun 1)
 		width = int( Barrier[2] )
 		height = int( Barrier[3] )
-		if debug: print 'x: ', x, 'y: ', y, 'width: ', width, 'height: ', height, '\n'
+		if debug: print 'x:', x, ' y:', y, ' width:', width, ' height:', height, '\n'
+		#print "Goalnode: ", board[19][13]
 
 		for h in xrange(0, height):#adding the barriers to the board with mark 'B'
 			for w in xrange(0, width):
+				#print "Y:",y+h, " X:",x+w
 				board[y+h][x+w] = 'B'
 	if debug:
 		print '\n'
@@ -126,8 +129,8 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
 	return board	
 def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board using help functions
 	board = create_empty_board(rows, cols)#create empty board
-	board[ start_node[0] ][ start_node[1] ] = 'S'#add start node marked 'S'
-	board[ goal_node[0] ][ goal_node[1] ] = 'G'#add goal node marked 'G'
+	board[ start_node[1] ][ start_node[0] ] = 'S'#add start node marked 'S'
+	board[ goal_node[1] ][ goal_node[0] ] = 'G'#add goal node marked 'G'
 	board = add_Barriers(board, Barriers)#add the barriers to the board
 	
 	if debug:
@@ -136,6 +139,7 @@ def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board usi
 		for row in board:
 			print row
 		print '\n'
+	#print_board(board)
 	
 	return board
 #b = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
@@ -171,9 +175,18 @@ def create_linked_classes(board):
 			if class_board[row][col] != 'B':
 
 				'''if debug: print 'node: ', class_board[row][col], '\n'''
+				if row-1 > -1 and class_board[row-1][col] != 'B':
+					class_board[row][col].children.append( class_board[row-1][col] )#add child nodes
+					class_board[row-1][col].parent = class_board[row][col]#add parent
+				
+				if col-1 > -1 and class_board[row][col-1] != 'B':
+					class_board[row][col].children.append( class_board[row][col-1] )#add child nodes
+					class_board[row][col-1].parent = class_board[row][col]#add parent
+				
 				if row+1 < len(class_board) and class_board[row+1][col] != 'B':
 					class_board[row][col].children.append( class_board[row+1][col] )#add child nodes
 					class_board[row+1][col].parent = class_board[row][col]#add parent
+				
 				if col+1 < len(class_board[row]) and class_board[row][col+1] != 'B':
 					class_board[row][col].children.append( class_board[row][col+1] )#add child nodes
 					class_board[row][col+1].parent = class_board[row][col] #add parent
@@ -184,19 +197,24 @@ def create_linked_classes(board):
 		print "parent: ", rot.children[0].parent, '\n'
 		print "goal: ", goal.typ
 	return rot, goal, class_board
-
+#
 #########---- BFS ----########
 def Breadth_first_search(board, start_node, goal_node):
+	print "BFS start"
 	queue = [[start_node]]
 	visited = set()
-
+	#
 	while queue:
 		path = queue.pop(0)
 
 		current_node = path[-1]
-
+		print "current_node:", current_node.x_pos, current_node.y_pos
+		board[current_node.x_pos][current_node.y_pos] = 'O'
+		#
 		if current_node == goal_node:
-			return path
+			print "GGGGOOOOAAAAALLLL"
+
+			return board, path
 		elif current_node not in visited:
 			for child in current_node.children:
 				temp_path = list(path)
@@ -205,15 +223,17 @@ def Breadth_first_search(board, start_node, goal_node):
 				#print 'temp_path 2.0: ', temp_path
 				queue.append(temp_path)
 				#print 'queue: ', queue
-
+				#
 			visited.add(current_node)
-		#print '------------New iteration---------------'
-
+			print len(visited)
+			#print '------------New iteration---------------'
+#
 #########---- DFS ----########			
 def Depth_first_search(board, start_node):
 	stack = []
 	current = start_node
 	visited = set()
+	parents = {}
 	#
 	while True:
 		if current.typ == 'G': return board
@@ -222,23 +242,24 @@ def Depth_first_search(board, start_node):
 			stack.append(current)
 			current = current.children.pop()#go down one level if possible
 			#
-			if current.typ == 'G': return board
+			if current.typ == 'G':
+				return board
 			update_board_cell(current, board, 'P')#update board cell
 			#
 		else:
 			visited.add(current)
 			update_board_cell(current, board, 'O')#update board cellprint_board(board)
 			current = stack.pop() #go up level if bottom level is reached
-			#
+#
 #########---- A* ----########
 def Heuristic(node): return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
-
+#
 def attach_and_eval(child,parent):
 	child.parent = parent
 	child.g = parent.g + 1
 	child.h = Heuristic(child)
 	child.f = child.g + child.h
-
+#
 def prop_path_imp(parent):
 	for child in parent.children:
 		if (parent.g + 1) < child.g:
@@ -247,14 +268,13 @@ def prop_path_imp(parent):
 			child.h = Heuristic(child)
 			child.f = child.g + child.h
 			prop_path_imp(child)
-
+#
 def bubble_sort(items):
     for i in range(len(items)):
         for j in range(len(items)-1-i):
             if items[j].f > items[j+1].f:
                 items[j], items[j+1] = items[j+1], items[j]
-
-
+#
 def Astar(board, start_node, end_node):
 	done = False
 	closed=[]
@@ -285,16 +305,18 @@ def Astar(board, start_node, end_node):
 				attach_and_eval(child,current_node)
 				if child in closed:
 					prop_path_imp(child)
-
-			
-
+#
+#			
 #board_size, start_node, goal_node, Barriers = user_input()
 #create_board(board_size, start_node, goal_node, Barriers)
 #board = create_board(10, '0,0', '9,9', ['2,3,5,5', '8,8,2,1'])
 #board = create_board(3, 4, [0,0], [2,2], [[0,1,2,2]])
-board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+
+#board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
+board = create_board( set_5[0], set_5[1], set_5[2], set_5[3], set_5[4] )
+
 #print_board(board)
-rot, goal_node ,class_board = create_linked_classes(board)
+rot, goal_node, class_board = create_linked_classes(board)
 #boool = Astar(board, rot, goal_node)
 #print boool
 #print_board(board)
@@ -304,13 +326,15 @@ rot, goal_node ,class_board = create_linked_classes(board)
 #DFS_board = Depth_first_search(board, rot)
 #Astar_board = Astar(board,rot,goal_node)
 #print_board(Astar_board)
+'''
 
-
-path = Breadth_first_search(board, rot, goal_node)
-board = update_board_with_path(board, path)
+board, path = Breadth_first_search(board, rot, goal_node)
+print "path: ", path
+board = update_board_with_path(board, rot, goal_node, path)
+print "BFS: \n"
 print_board(board)
-
+'''
+#
+print "\nDFS: \n"
 DFS_board = Depth_first_search(board, rot)
 print_board(board)
-
-#print '\n\n'
