@@ -213,29 +213,25 @@ def Breadth_first_search(board, start_node, goal_node):
 def Depth_first_search(board, start_node):
 	stack = []
 	current = start_node
-	visited = []
-
+	visited = set()
+	#
 	while True:
-	
-		if current.typ == 'G':
-			return board
-
-		if current.children:
+		if current.typ == 'G': return board
+		#
+		if current.children and current not in visited:
 			stack.append(current)
 			current = current.children.pop()#go down one level if possible
-			if current.typ != 'G': board = update_board_cell(current, board, 'P')#update board cell
-			print_board(board)
-			print '\n'
+			#
+			if current.typ == 'G': return board
+			update_board_cell(current, board, 'P')#update board cell
+			#
 		else:
-			current = stack.pop() #go up level if bottom level is reached
+			visited.add(current)
 			update_board_cell(current, board, 'O')#update board cellprint_board(board)
-			print '\n\n\n'
-		
-	
-
+			current = stack.pop() #go up level if bottom level is reached
+			#
 #########---- A* ----########
-def Heuristic(node):
-	return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
+def Heuristic(node): return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
 
 def attach_and_eval(child,parent):
 	child.parent = parent
@@ -299,19 +295,20 @@ def Astar(board, start_node, end_node):
 board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
 #print_board(board)
 rot, goal_node ,class_board = create_linked_classes(board)
-boool = Astar(board, rot, goal_node)
-print boool
+#boool = Astar(board, rot, goal_node)
+#print boool
 #print_board(board)
 #print '\n\n'
 
 #BFS_board = Breadth_first_search(board, rot)
 #DFS_board = Depth_first_search(board, rot)
-Astar_board = Astar(board,rot,goal_node)
+#Astar_board = Astar(board,rot,goal_node)
 #print_board(Astar_board)
 
 
-#path = Breadth_first_search(board, rot, goal_node)
-#board = update_board_with_path(board, path)
+path = Breadth_first_search(board, rot, goal_node)
+board = update_board_with_path(board, path)
+print_board(board)
 
 DFS_board = Depth_first_search(board, rot)
 print_board(board)
