@@ -134,8 +134,6 @@ def Depth_first_search(board, start_node):
 #########---- A* ----########
 def Heuristic(node, goal_node):
     heur = (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
-    #board[node.x_pos][node.y_pos] = str(node.g + heur)
-
     return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
 #
 def attach_and_eval(child, parent, end_node):
@@ -185,7 +183,8 @@ def Astar(board, start_node, end_node):
                 open_list.append(child)
 
                 #board[child.x_pos][child.y_pos] = 1
-                if (current_node != start_node and current_node != end_node ): game.setStatusOfTile(current_node.x_pos, current_node.y_pos, 1)
+                game.algorithm_update_GUI(current_node, start_node, end_node, 1)  
+                #time.sleep(sleep_dur)
 
                 bubble_sort(open_list)
             elif ((current_node.g + 1) < child.g):
@@ -199,9 +198,7 @@ def findPath(start_node, goal_node):
     #
     while True:
         if current_node == start_node:
-            for i in xrange( len(path)-1, -1, -1 ): 
-                current_node = path[i]
-                if (current_node != start_node and current_node != goal_node ): game.setStatusOfTile(current_node.x_pos, current_node.y_pos, 2)
+            for i in xrange( len(path)-1, -1, -1 ): game.algorithm_update_GUI(path[i], start_node, goal_node, 2)
             return True
         else:
             current_node = current_node.parent
@@ -227,7 +224,6 @@ class TileData(QtCore.QObject):
             self._status = status
             self.statusChanged.emit(self._status)
             app.processEvents()
-            time.sleep(sleep_dur)
 
 #########---- Class that represent all the tiles in the UI ----########
 class Game(QtCore.QObject):
@@ -306,7 +302,7 @@ class Game(QtCore.QObject):
     @QtCore.pyqtSlot(list, object, object, list)
     def BFS_update_board_with_path(self, board, start_node, goal_node, path):
         for cell in path: 
-            if (cell != start_node and cell != goal_node ): self.setStatusOfTile(cell.x_pos, cell.y_pos, 2)
+            if (cell != start_node and cell != goal_node ): self.algorithm_update_GUI(cell, start_node, goal_node, 2)
             #
     @QtCore.pyqtSlot(list, object, object)
     def Breadth_first_search(self, board, start_node, goal_node):
@@ -318,11 +314,10 @@ class Game(QtCore.QObject):
         while queue:
             path = queue.pop(0)
             current_node = path[-1]
-            
-            ##
-            if (current_node != start_node and current_node != goal_node ): game.setStatusOfTile(current_node.x_pos, current_node.y_pos, 1)
-            ##
-            board[current_node.x_pos][current_node.y_pos] = 1
+            ##-- Write to GUI --##
+            game.algorithm_update_GUI(current_node, start_node, goal_node, 1)
+            #
+            #board[current_node.x_pos][current_node.y_pos] = 1
             if current_node == goal_node: 
                 return path, board
             elif current_node not in visited:
@@ -331,7 +326,6 @@ class Game(QtCore.QObject):
                     temp_path.append(child)
                     queue.append(temp_path)
                 visited.add(current_node)
-
     ###########################
     # Gettere and settere
     @QtCore.pyqtProperty(QtDeclarative.QPyDeclarativeListProperty, constant=True)
@@ -354,7 +348,17 @@ class Game(QtCore.QObject):
             self.numRowsChanged.emit()   
 
     # Public member functions
-    @QtCore.pyqtSlot(int, int, int)
+    @QtCore.pyqtSlot(object, object, object, int)
+    def algorithm_update_GUI(self, current_node, start_node, goal_node, status):
+        if (current_node != start_node and current_node != goal_node ):
+            time.sleep(sleep_dur)
+            t = self._tile(current_node.x_pos, current_node.y_pos)
+            if t is None:
+                return False
+            else:
+                t.setStatus(status)
+                return True
+
     def setStatusOfTile(self, row, col, status):
         t = self._tile(row, col)
         if t is None:
@@ -388,6 +392,7 @@ class Game(QtCore.QObject):
         if found_path: findPath(rot, goal_node)
         else: print 'Path not found'
         
+        
 
     @QtCore.pyqtSlot()
     def updateBoard(self):
@@ -397,7 +402,7 @@ class Game(QtCore.QObject):
     def resetBoard(self):
         for r in range (self._numRows):
             for c in range(self._numCols):
-                game.setStatusOfTile(r, c, 0)
+                self.setStatusOfTile(r, c, initialBoard[r][c])
 
     # Private member functions
     def _onBoard(self, row, col):
@@ -412,8 +417,8 @@ class Game(QtCore.QObject):
 if __name__ == '__main__':
     import sys
 
-    sleep_dur = 0.1
-    initialBoard =  [   [ 0,  0,  0, -1, 0,  0,  0, 0 ] ,
+    sleep_dur = 0.05
+    '''initialBoard =  [   [ 0,  0,  0, -1, 0,  0,  0, 0 ] ,
                         [ 0, -1,  0, -1, 0, -1, -1, 0 ] ,
                         [ 0, -1,  0, -1, 0, -1,  0, 0 ] , 
                         [ 0, -1,  0, -1, 0, -1,  0, 0 ] ,
@@ -421,8 +426,8 @@ if __name__ == '__main__':
                         [ 0, -1,  0, -1, 0, -1,  0, -1 ] ,
                         [ 0, -1,  0, -1, 0, -1,  0, 0 ] , 
                         [ 3,  0,  0,  0, 0, -1,  0, 4 ] 
-                                                    ]
-    #initialBoard = create_board(set_5[0], set_5[1], set_5[2], set_5[3], set_5[4])
+                                                         ]'''
+    initialBoard = create_board(set_5[0], set_5[1], set_5[2], set_5[3], set_5[4])
     game = Game()
 
     app = QtGui.QApplication(sys.argv)
