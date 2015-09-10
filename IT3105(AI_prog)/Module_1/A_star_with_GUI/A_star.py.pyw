@@ -5,6 +5,7 @@ from PyQt4 import QtCore, QtGui, QtDeclarative
 debug = False
 #########---- Letters from the print ----########
 '''C = Closed.....S = start....G = Goal.....B = Barrier.....P = path.....O = Open'''
+'''-1 = obstacle ..... 0 = none ..... 1 = opened ..... 2 = path ..... 3 = start ..... 4 = goal'''
 #########---- Example sets ----########
 #        row  col start    goal    Barriers
 set_0 = [ 10, 10, [0,0],  [9,9],   [[2,3,5,5], [8,8,2,1]]                                          ]        
@@ -131,24 +132,24 @@ def Depth_first_search(board, start_node):
             #update_board_cell(current, board, 1)#update board cellprint_board(board)
             current = stack.pop() #go up level if bottom level is reached
 #########---- A* ----########
-def Heuristic(node):
+def Heuristic(node, goal_node):
     heur = (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
     #board[node.x_pos][node.y_pos] = str(node.g + heur)
 
     return (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos) )
 #
-def attach_and_eval(child,parent):
+def attach_and_eval(child, parent, end_node):
     child.parent = parent
     child.g = parent.g + 1
-    child.h = Heuristic(child)
+    child.h = Heuristic(child, end_node)
     child.f = child.h + child.g
 #
-def prop_path_imp(parent):
+def prop_path_imp(parent, end_node):
     for child in parent.children:
         if (parent.g + 1) < child.g:
             child.parent = parent
             child.g = parent.g + 1
-            child.h = Heuristic(child)
+            child.h = Heuristic(child, end_node)
             child.f = child.g + child.h
             prop_path_imp(child)
 #
@@ -160,66 +161,53 @@ def bubble_sort(items):
 #
 def Astar(board, start_node, end_node):
     closed=[]
-    open=[]
+    open_list=[]
     current_node = start_node
     current_node.g = 0
-    current_node.h = Heuristic(current_node)
+    current_node.h = Heuristic(current_node, end_node)
     current_node.f = current_node.g + current_node.h
-    open.append(current_node)
+    open_list.append(current_node)
+    
     while True:
-
-        if len(open) < 1:
+        if len(open_list) < 1:
             return False
-        current_node = open.pop(0)
+
+        current_node = open_list.pop(0)
         closed.append(current_node)
+
         if (current_node == end_node):
-            findPath(start_node,end_node)
             return True
         succ = current_node.children
+
         for child in succ:
+            if child not in open_list and child not in closed:
+                attach_and_eval(child, current_node, end_node)
+                open_list.append(child)
 
-            if child not in open and child not in closed:
+                #board[child.x_pos][child.y_pos] = 1
+                if (current_node != start_node and current_node != end_node ): game.setStatusOfTile(current_node.x_pos, current_node.y_pos, 1)
 
-                attach_and_eval(child,current_node)
-                open.append(child)
-                board[child.x_pos][child.y_pos]="O"
-                
-
-                ##################################
-
-                #####################################
-                bubble_sort(open)
+                bubble_sort(open_list)
             elif ((current_node.g + 1) < child.g):
-
-                #print "FOUND CHEAPER PATH"
-                #print '------4------'
-                attach_and_eval(child,current_node)
+                attach_and_eval(child, current_node, end_node)
                 if child in closed:
-                    prop_path_imp(child)
+                    prop_path_imp(child, end_node)
 #
 def findPath(start_node, goal_node):
-    coordinates = []
     current_node = goal_node
-    board[goal_node.x_pos][goal_node.y_pos]="G"
-
+    path = []
+    #
     while True:
         if current_node == start_node:
-            #print coordinates
-            board[start_node.x_pos][start_node.y_pos]="S"
+            for i in xrange( len(path)-1, -1, -1 ): 
+                current_node = path[i]
+                if (current_node != start_node and current_node != goal_node ): game.setStatusOfTile(current_node.x_pos, current_node.y_pos, 2)
             return True
         else:
-            coords = current_node.y_pos, current_node.x_pos
-            coordinates.append(coords)
             current_node = current_node.parent
-            board[current_node.x_pos][current_node.y_pos] = "P"
+            path.append(current_node)
+    return False
 #
-#######################################################################################################
-#######################################################################################################
-#######################################################################################################
-
-
-#########---- Letters from the print ----########
-'''Status: -1 = obstacle ..... 0 = none ..... 1 = opened ..... 2 = path ..... 3 = start ..... 4 = goal'''
 #########---- Class that represent the different tiles in the UI ----########
 class TileData(QtCore.QObject):
     
@@ -383,20 +371,22 @@ class Game(QtCore.QObject):
         self._numCols = len(initialBoard[0])
 
         # initialise board
-        
-
         for ii in range(self._numRows * self._numCols):
             self._tiles.append(TileData(initialBoard[ii/self._numRows][ii - ii/self._numRows*self._numCols]))
         
-        # start a-star
     @QtCore.pyqtSlot()
     def startGame(self):
         rot, goal_node, class_board = self.create_linked_classes(initialBoard)
         # Here you have to insert the algorithm and for each update you call game.setStatusOfTile(row, col, status)
+        
         ##--BFS--##
-        path, board = self.Breadth_first_search(initialBoard, rot, goal_node)
+        '''path, board = self.Breadth_first_search(initialBoard, rot, goal_node)
         self.BFS_update_board_with_path(board, rot, goal_node, path)
+        '''
         ##--Astar--##
+        found_path = Astar(initialBoard, rot, goal_node)
+        if found_path: findPath(rot, goal_node)
+        else: print 'Path not found'
         
 
     @QtCore.pyqtSlot()
