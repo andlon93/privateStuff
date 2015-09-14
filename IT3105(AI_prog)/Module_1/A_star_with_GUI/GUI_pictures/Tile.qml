@@ -12,17 +12,25 @@ Image {
     source: {
         if (statusInt === 3) {
             "pics/start.png" 
-        } else if (statusInt === 4) { 
+        } 
+        else if (statusInt === 4) { 
              "pics/goal.png"
-        } else if (statusInt === 2) {
+        } 
+        else if (statusInt === 5){
+            "pics/current.png"
+        }
+        else if (statusInt === 2) {
             expl.explode = true
             "pics/path.png"
-        } else if (statusInt === 1) {
+        } 
+        else if (statusInt === 1) {
              "pics/opened.png"
-        } else if (statusInt === -1) {
-             "pics/front.png"
-        } else {
-             "pics/back.png"
+        } 
+        else if (statusInt === -1) {
+             "pics/barrier.png"
+        } 
+        else {
+             "pics/neutral.png"
         }
     }
 

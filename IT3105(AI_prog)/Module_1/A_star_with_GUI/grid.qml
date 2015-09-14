@@ -6,13 +6,13 @@ Item {
     property int clickx: 0
     property int clicky: 0
 
-    width: 450; height: 500
+    width: 650; height: 700
 
     Image { source: "GUI_pictures/pics/grey_square.jpg"; anchors.fill: parent; fillMode: Image.Tile }
 
     Item {
         id: field
-        width: parent.width; height: 450
+        width: parent.width; height: 650
         Grid {
             id: grid
             anchors.centerIn: parent
