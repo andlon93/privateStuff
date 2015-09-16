@@ -5,6 +5,8 @@ import time
 from PyQt4 import QtCore, QtGui, QtDeclarative
 debug = False
 
+# 
+
 #LINK for Astar online: https://qiao.github.io/PathFinding.js/visual/
 
 #########---- Letters from the print ----########
@@ -34,6 +36,7 @@ class Node:
     g = None
     h = None
     f = None
+    u = 2
     def __init__(self):
         self.children = []
 #########---- Print board methods ----########
@@ -324,8 +327,8 @@ class Game(QtCore.QObject):
                     if col+1 < len(class_board[row]) and class_board[row][col+1] != -1:
                         class_board[row][col].children.append( class_board[row][col+1] )#add child nodes
                         class_board[row][col+1].parent = class_board[row][col] #add parent
-        #
-        if debug: 
+    #
+        if debug:
             print "children: ", rot.children, '\n'
             print "rot", rot, 'pos: ', rot.x_pos, rot.y_pos
             print "parent: ", rot.children[0].parent, '\n'
@@ -361,13 +364,14 @@ class Game(QtCore.QObject):
                     queue.append(temp_path)
                 visited.add(current_node)
     ###########################
+
     # Gettere and settere
     @QtCore.pyqtProperty(QtDeclarative.QPyDeclarativeListProperty, constant=True)
     def tiles(self): return QtDeclarative.QPyDeclarativeListProperty(self, self._tiles)
 
     @QtCore.pyqtProperty(int, notify=numColsChanged)
     def numCols(self): return self._numCols
-
+# 
     def setNumCols(self, nCols):
         if self._numCols != nCols:
             self._numCols = nCols

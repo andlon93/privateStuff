@@ -1,0 +1,26 @@
+State:
+	dictionary med noder
+	Heuristic - tall av noe slag
+	Heuristic() - regne ut heuristic av seg selv
+	Revise() - Filtrer domener i state ut fra constraints.
+
+class Node():
+	Domain[]
+	index
+	x_pos
+	y_pos
+	constructor(i, x, y):
+
+
+Constraints: Liste med liste over par
+
+A*()
+
+constructor(nodes)
+
+readfile(): //iterer over noder, 
+	return(constraints, nodes )
+
+node = Node(index, x, y, ds)
+
+
