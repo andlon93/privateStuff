@@ -353,9 +353,11 @@ def findPath(start_node, goal_node):
 #
 #board_size, start_node, goal_node, Barriers = user_input()
 #board = create_board( set_0[0], set_0[1], set_0[2], set_0[3], set_0[4] )
-#board = create_board( set_6[0], set_6[1], set_6[2], set_6[3], set_6[4] )
+board = create_board( set_6[0], set_6[1], set_6[2], set_6[3], set_6[4] )
 ###################################################################
 def draw(reverse_board, iterations):
+	print 'length of iterations:'
+	print len(iterations)
 	reverse_board [ len(reverse_board)-iterations[0][0]-1 ] [ iterations[0][1] ] = iterations[0][2]
 	iterations.pop(0)
 	for n in xrange(0, len(reverse_board)):
@@ -366,8 +368,9 @@ def draw(reverse_board, iterations):
 			elif reverse_board[n][i] == 'B': Entry( bg="black", width=4 ).grid(row=n, column=i)
 			elif reverse_board[n][i] == 'S': Entry( bg="yellow", width=4 ).grid(row=n, column=i)
 			elif reverse_board[n][i] == 'P': Entry( bg="sky blue", width=4 ).grid(row=n, column=i)
-			else: Entry( bg="green", width=4 ).grid(row=n, column=i)
-	root.after( 200, draw, reverse_board, iterations )
+			else: Entry( bg="green", width=4 ).grid(row=n, column=i)	
+			wait(2000)
+	root.after( 250, draw, reverse_board, iterations )
 
 
 #def GUI(board, iterations):
@@ -420,7 +423,7 @@ for n in xrange( len(board)-1, -1, -1):
 	
 	
 
-root.after( 200, draw, reverse_board, iterations )
+root.after( 250, draw, reverse_board, iterations )
 root.mainloop()
 #GUI(board, iterations)
 #print "path: ", path
