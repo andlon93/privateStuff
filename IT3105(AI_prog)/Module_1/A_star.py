@@ -12,7 +12,6 @@ B = Barrier
 P = path
 O = Open
 '''
-
 #########---- Example sets ----########
 #        row  col start    goal    Barriers
 set_0 = [ 10, 10, [0,0],  [9,9],   [[2,3,5,5], [8,8,2,1]] 										   ]		
@@ -367,7 +366,7 @@ def draw(reverse_board, iterations):
 			elif reverse_board[n][i] == 'S': Entry( bg="yellow", width=4 ).grid(row=n, column=i)
 			elif reverse_board[n][i] == 'P': Entry( bg="sky blue", width=4 ).grid(row=n, column=i)
 			else: Entry( bg="green", width=4 ).grid(row=n, column=i)
-	root.after( 200, draw, reverse_board, iterations )
+	root.after( 500, draw, reverse_board, iterations )
 
 
 #def GUI(board, iterations):
@@ -420,7 +419,9 @@ for n in xrange( len(board)-1, -1, -1):
 	
 	
 
-root.after( 200, draw, reverse_board, iterations )
+root.after( 500, draw, reverse_board, iterations )
+
+print "after root.after"
 root.mainloop()
 #GUI(board, iterations)
 #print "path: ", path
