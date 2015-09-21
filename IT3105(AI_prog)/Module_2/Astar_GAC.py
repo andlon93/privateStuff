@@ -1,5 +1,6 @@
 import readfile as rf
 import State
+import random
 #import collections as c
 #all_states = collections.OrderedDict(sorted(all_states.items()))
 
@@ -20,9 +21,9 @@ def generate_child_states(s):
 	#update childstates with assumption
 	return s
 #
-def get_best_state(states):
-	#iterate and return one state from the list with lowest heuristic
-	pass
+def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
+	for index in all_states:
+		if all_states[index]: return all_states[index][ random.randint(0, len(all_states[index])-1) ]
 #
 def create_GAC_constraint_queue(assumption, constraints):
 	queue = []
@@ -41,10 +42,15 @@ def Filter(s, q):
 #
 def Astar(start_state, constraints):
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
+	print "dict laget: ", len(all_states)
 	
 	all_states[start_state.get_heuristic()].append(start_state) #adding start_state into dictionary
-	#print all_states[start_state.get_heuristic()]
+	print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()]
 	
+	current_state = get_best_state(all_states)
+	print "funnet beste state: ", current_state
+	
+
 
 	while True:
 		new_states = generate_child_states( get_best_state(all_states) )
@@ -61,8 +67,9 @@ def Astar(start_state, constraints):
 
 		current_state.set_heuristic( current_state.calculate_heuristic() )
 
-		if current_state.get_heuristic() == 0: return True
-		else:
+		if current_state.get_heuristic() == 0: print True
+		#else:
+
 			#update the states position in all_states 
 		
 
@@ -73,4 +80,4 @@ def Astar(start_state, constraints):
 
 s, c = rf.read_graph("graph1.txt")
 
-#Astar(s, c)
+Astar(s, c)
