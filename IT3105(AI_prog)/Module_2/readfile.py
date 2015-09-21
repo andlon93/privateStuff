@@ -1,14 +1,8 @@
 # Read from file
 # vertices edges
-print "ReadFile - Loaded"
+
 import Node
 import State
-import math
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
-
-
 def read_graph(path):
 	domain_size = 4
 	#

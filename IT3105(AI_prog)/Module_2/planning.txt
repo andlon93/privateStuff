@@ -22,5 +22,3 @@ readfile(): //iterer over noder,
 	return(constraints, nodes )
 
 node = Node(index, x, y, ds)
-
-
