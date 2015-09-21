@@ -17,8 +17,9 @@ def add_states_to_dict(states, d):
 		d[ state.get_heuristic() ].append( state )
 	return d
 #
-def generate_child_states(s):
+def generate_child_states(state):
 	#update childstates with assumption
+	var_list = range()
 	return s
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
@@ -42,18 +43,18 @@ def Filter(s, q):
 #
 def Astar(start_state, constraints):
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
-	print "dict laget: ", len(all_states)
+	print "dict laget: ", len(all_states), '\n'
 	
 	all_states[start_state.get_heuristic()].append(start_state) #adding start_state into dictionary
-	print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()]
+	print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
 	
 	current_state = get_best_state(all_states)
-	print "funnet beste state: ", current_state
+	print "funnet beste state: ", current_state, '\n'
 	
 
 
 	while True:
-		new_states = generate_child_states( get_best_state(all_states) )
+		new_states = generate_child_states( get_best_state(all_states), constraints )
 		all_states = add_states_to_dict( new_states, all_states )
 
 		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
