@@ -1,6 +1,5 @@
 # Read from file
 # vertices edges
-print "GO"
 import Node
 import State
 #
@@ -30,4 +29,4 @@ def read_graph(path):
 	#
 	Start_State = State.State(Node_dict)
 	return Start_State, constraints
-#read_graph("graph1.txt")
+#s, c = read_graph("graph1.txt")
