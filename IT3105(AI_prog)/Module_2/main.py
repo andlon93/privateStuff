@@ -4,6 +4,7 @@ import State
 import readfile
 import time
 import math
+import Astar_GAC
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
@@ -11,18 +12,13 @@ from threading import *
 window_size_x = 500 # Window width
 window_size_y = 500 # Window Height
 
-def changeColor(circle_matrix,index,color): # Can probably delete this afterwards
-	circle_matrix[index][2] = color
-	return circle_matrix
 
 def worker():
     while True:
     	time.sleep(1)
     	circles.update()
-    	print "updating"
 t = Thread(target=worker)
 t.start()
-
 
 class Draw(QWidget):
     def __init__(self, parent=None):
@@ -30,6 +26,15 @@ class Draw(QWidget):
         # setGeometry(x_pos, y_pos, width, height) - places and sizes the windows
         self.setGeometry(300, 100, window_size_x, window_size_y)
         self.setWindowTitle('Draw circles')
+
+        # self.timer  = QTimer(self)
+        # self.timer.setInterval(1000)          # Throw event timeout with an interval of 1000 milliseconds
+        # self.timer.timeout.connect(self.blink) # each time timer counts a second, call self.blink
+        # self.color_flag = True
+
+    def blink(self):
+        circles.update()
+
     def paintEvent(self, event):
         paint = QPainter()
         paint.begin(self)
@@ -48,7 +53,7 @@ class Draw(QWidget):
         
         for circle in circle_matrix:
             center = QPoint( ( circle[0] * x_multi ) + abs(lowest_x)*x_multi , (( circle[1] ) * y_multi ) + abs(lowest_y)*y_multi      ) 
-            print center
+            #print center
             paint.setBrush(circle[2])
             paint.drawEllipse(center, radx, rady)
         paint.end()
@@ -85,10 +90,8 @@ def generate_circle_matrix(state):
 				color=Qt.red
 			elif domain[0] == 2:
 				color = Qt.blue
-			elif domain[0] == 3:
-				color = Qt.yellow
 			elif domain[0] == 0:
-				color = Qt.brown
+				color = Qt.yellow
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
@@ -116,4 +119,8 @@ x_multi = ((window_size_x-100)/highest_x)
 app = QApplication([])
 circles = Draw()
 circles.show()
+
+Astar_GAC.Astar(state,cons)
+
+
 app.exec_()

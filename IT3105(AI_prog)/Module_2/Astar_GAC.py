@@ -1,8 +1,10 @@
 import readfile as rf
 import copy
 import State
+import time
 import random
 from collections import deque
+from threading import *
 #
 #
 def create_dictionary(l):
@@ -85,6 +87,7 @@ def Filter(state, queue):
 	pass
 #
 def Astar(start_state, constraints):
+	import main
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 	print "dict laget: ", len(all_states), '\n'
 	#
@@ -93,9 +96,17 @@ def Astar(start_state, constraints):
 	#
 	current_state = get_best_state(all_states)
 	print "funnet beste state: ", current_state, '\n\n'
+
+
+
+	main.circle_matrix = main.generate_circle_matrix(current_state)
+	
+
+
 	#
 	#while True:
-	for xyz in xrange(1):
+	for xyz in xrange(5):
+		time.sleep(1)
 		#
 		new_states, number_constarints = generate_child_states( get_best_state(all_states), constraints )
 		print "new child states:", new_states, '\n\n'
@@ -113,11 +124,16 @@ def Astar(start_state, constraints):
 		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
 		print "new best state: ",current_state, ", heuristic:", current_state.get_heuristic(), '\n'
 		#
+
+
+		main.circle_matrix = main.generate_circle_matrix(current_state)
+
+
 		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints, number_constarints)
 		print "GAC queue: ", queue, '\n\n'
 		#
 		#Check whether new state is contrdictory, either in filtering loop or after it
-		Filter(current_state, queue)
+		#Filter(current_state, queue)
 		#Check whether new state is contrdictory, either in filtering loop or after it
 
 		current_state.set_heuristic( current_state.calculate_heuristic() )
@@ -130,6 +146,6 @@ def Astar(start_state, constraints):
 	pass
 
 
-s, c = rf.read_graph("graph1.txt")
+#s, c = rf.read_graph("graph1.txt")
 
-Astar(s, c)
+#Astar(s, c)
