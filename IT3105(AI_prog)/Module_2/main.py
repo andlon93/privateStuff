@@ -11,18 +11,15 @@ from threading import *
 window_size_x = 500 # Window width
 window_size_y = 500 # Window Height
 
-def changeColor(circle_matrix,index,color):
+def changeColor(circle_matrix,index,color): # Can probably delete this afterwards
 	circle_matrix[index][2] = color
 	return circle_matrix
 
 def worker():
-    print "sleeping 1 sec from thread"
-    time.sleep(2)
-    changeColor(circle_matrix,3,Qt.black)
-    changeColor(circle_matrix,1,Qt.black)
-    changeColor(circle_matrix,5,Qt.black)
-    circles.update()
-
+    while True:
+    	time.sleep(1)
+    	circles.update()
+    	print "updating"
 t = Thread(target=worker)
 t.start()
 
@@ -72,12 +69,27 @@ def findLowestAndHighestValue(circle_matrix):
             lowest_y = node[1]
     return lowest_x,lowest_y,highest_x,highest_y
 def generate_circle_matrix(state):
+	color = Qt.white
 	circle_matrix = [[0 for x in xrange(3)] for x in xrange(len(state.nodes))]
 	i = 0;
 	for nodee in state.nodes:
 		circle_matrix[i][0]=int(round(float(state.nodes[nodee].x)))
 		circle_matrix[i][1]=int(round(float(state.nodes[nodee].y)))
-		circle_matrix[i][2]=Qt.red
+		domain = state.nodes[nodee].domain
+		if (len(domain) > 1):
+			color=Qt.white
+			print "Domain size > 1! Values: ",domain
+		elif (len(domain)==1):
+			print "Domain size 1! Value: ",domain
+			if domain == 1:
+				color=Qt.red
+			elif domain == 2:
+				color = Qt.blue
+			elif domain == 3:
+				color = Qt.yellow
+			elif domain == 0:
+				color = Qt.brown
+		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
 def generate_coordinates(state, cons):
@@ -93,7 +105,6 @@ def generate_coordinates(state, cons):
 
 state, cons = readfile.read_graph("graph1.txt")
 
-
 # Setting up lists and variables used by the GUI to draw the graph
 circle_matrix = generate_circle_matrix(state)
 constraints_coordinates = generate_coordinates(state, cons)
@@ -101,11 +112,7 @@ lowest_x,lowest_y,highest_x,highest_y = findLowestAndHighestValue(circle_matrix)
 y_multi = ((window_size_y-100)/highest_y) 
 x_multi = ((window_size_x-100)/highest_x) 
 
-
-print y_multi,x_multi
-print findLowestAndHighestValue(circle_matrix)
-
-
+#PyQt stuff
 app = QApplication([])
 circles = Draw()
 circles.show()
