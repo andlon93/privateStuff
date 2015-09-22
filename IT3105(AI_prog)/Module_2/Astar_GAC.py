@@ -2,11 +2,9 @@ import readfile as rf
 import copy
 import State
 import random
-#import collections as c
-#all_states = collections.OrderedDict(sorted(all_states.items()))
-
-
-
+from collections import deque
+#
+#
 def create_dictionary(l):
 	d = {}
 	for n in xrange(l+1):
@@ -54,10 +52,11 @@ def generate_child_states(state, constraints):#Creates childstates with an assum
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
 	for i in all_states:
-		if all_states[i]: return all_states[i][ random.randint(0, len(all_states[i])-1) ]
+		if all_states[i]: 
+			return all_states[i][ random.randint(0, len(all_states[i])-1) ]
 #
 def create_GAC_constraint_queue(assumption, constraints, n):
-	queue = []
+	queue = deque()
 	counter = 0
 	for C in constraints:
 		if C[0] == assumption:
@@ -69,29 +68,40 @@ def create_GAC_constraint_queue(assumption, constraints, n):
 			counter += 1
 			if counter == n: return queue
 #
-def Filter(s, q):
+def Filter(state, queue):
 	#iterate over q
 	#run revice on all elements of q
 		#everytime one changes state --> push new constraints on q
+	#while queue:
+	for qqq in xrange(1):
+		constraint = queue.popleft()
+		print "constraint: ", constraint
+		#
+		length_pre_revise = len(state.nodes[constraint[0]].domain)
+		print "length_pre_revise: ", length_pre_revise
+		#
+		state.revice
 
 	pass
 #
 def Astar(start_state, constraints):
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 	print "dict laget: ", len(all_states), '\n'
-	
+	#
 	all_states[start_state.get_heuristic()].append(start_state) #adding start_state into dictionary
 	print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
-	
+	#
 	current_state = get_best_state(all_states)
 	print "funnet beste state: ", current_state, '\n\n'
-	
+	#
 	#while True:
 	for xyz in xrange(1):
+		#
 		new_states, number_constarints = generate_child_states( get_best_state(all_states), constraints )
 		print "new child states:", new_states, '\n\n'
-
+		#
 		all_states = add_states_to_dict( new_states, all_states )
+		#
 		###--- start printing ---###
 		print "all_states med nye barn:"
 		for n in xrange(len(all_states)):
@@ -99,12 +109,13 @@ def Astar(start_state, constraints):
 				print n, all_states[n]
 		print '\n\n'
 		###--- end printing ---###
-
+		#
 		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
 		print "new best state: ",current_state, ", heuristic:", current_state.get_heuristic(), '\n'
-
+		#
 		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints, number_constarints)
 		print "GAC queue: ", queue, '\n\n'
+		#
 		#Check whether new state is contrdictory, either in filtering loop or after it
 		Filter(current_state, queue)
 		#Check whether new state is contrdictory, either in filtering loop or after it
@@ -116,9 +127,6 @@ def Astar(start_state, constraints):
 
 			#update the states position in all_states 
 		
-
-
-		pass
 	pass
 
 
