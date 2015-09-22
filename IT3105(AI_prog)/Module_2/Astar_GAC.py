@@ -1,4 +1,5 @@
 import readfile as rf
+import copy
 import State
 import random
 #import collections as c
@@ -17,20 +18,56 @@ def add_states_to_dict(states, d):
 		d[ state.get_heuristic() ].append( state )
 	return d
 #
-def generate_child_states(state):
-	#update childstates with assumption
-	var_list = range()
-	return s
+def generate_child_states(state, constraints):#Creates childstates with an assumption
+	childs = []
+	n = len(state.nodes)
+	var_list = [0]*n
+	print "var_list: ", len(var_list), var_list[0], '\n'
+
+	max_value = 0
+	for c in constraints:#telle antall forekomster av hver variabel
+		var_list[c[0]] += 1
+		var_list[c[1]] += 1
+		if var_list[c[0]] > max_value: max_value = var_list[c[0]]
+		if var_list[c[1]] > max_value: max_value = var_list[c[1]]
+	print "max: ", max_value, '\n'
+
+	counter = 0
+	for i in xrange(n): #endre maks tre av varaiblene med hoyest forekomst til singletons
+		if var_list[i] == max_value and len(state.nodes[i].domain) > 1:
+			print 'index: ', i
+			print "parent foer copy: ", state.nodes[i].domain
+			new_dict = copy.deepcopy(state.nodes)
+			new_dict[i].domain = [new_dict[i].domain[ random.randint(0, len(new_dict[i].domain)-1) ] ]
+			print "new child: ", new_dict[i].domain
+			print "parent etter copy: ", state.nodes[i].domain
+			childs.append( State.State(new_dict) )
+			childs[-1].set_assumption(i)
+			print "parent heuristic: ", state.get_heuristic()
+			print "child heuristic: ", childs[-1].get_heuristic(), "assumption: ", childs[-1].get_assumption() , '\n'
+			counter += 1
+			if counter == 3: 
+				print '\n\n'
+				return childs, max_value		
+
+	return childs, max_value
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
-	for index in all_states:
-		if all_states[index]: return all_states[index][ random.randint(0, len(all_states[index])-1) ]
+	for i in all_states:
+		if all_states[i]: return all_states[i][ random.randint(0, len(all_states[i])-1) ]
 #
-def create_GAC_constraint_queue(assumption, constraints):
+def create_GAC_constraint_queue(assumption, constraints, n):
 	queue = []
-	#create queue of all constraints with assuption variable in it
-	# every element of queue == [var som ikke er assumption, constraints[n] ]
-	return queue
+	counter = 0
+	for C in constraints:
+		if C[0] == assumption:
+			queue.append( [C[1], C] )
+			counter += 1
+			if counter == n: return queue
+		elif C[1] == assumption:
+			queue.append( [C[0], C] )
+			counter += 1
+			if counter == n: return queue
 #
 def Filter(s, q):
 	#iterate over q
@@ -38,8 +75,6 @@ def Filter(s, q):
 		#everytime one changes state --> push new constraints on q
 
 	pass
-#
-
 #
 def Astar(start_state, constraints):
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
@@ -49,19 +84,27 @@ def Astar(start_state, constraints):
 	print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
 	
 	current_state = get_best_state(all_states)
-	print "funnet beste state: ", current_state, '\n'
+	print "funnet beste state: ", current_state, '\n\n'
 	
+	#while True:
+	for xyz in xrange(1):
+		new_states, number_constarints = generate_child_states( get_best_state(all_states), constraints )
+		print "new child states:", new_states, '\n\n'
 
-
-	while True:
-		new_states = generate_child_states( get_best_state(all_states), constraints )
 		all_states = add_states_to_dict( new_states, all_states )
+		###--- start printing ---###
+		print "all_states med nye barn:"
+		for n in xrange(len(all_states)):
+			if len(all_states[n]) > 0:
+				print n, all_states[n]
+		print '\n\n'
+		###--- end printing ---###
 
 		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
-		
+		print "new best state: ",current_state, ", heuristic:", current_state.get_heuristic(), '\n'
 
-		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints)
-
+		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints, number_constarints)
+		print "GAC queue: ", queue, '\n\n'
 		#Check whether new state is contrdictory, either in filtering loop or after it
 		Filter(current_state, queue)
 		#Check whether new state is contrdictory, either in filtering loop or after it
