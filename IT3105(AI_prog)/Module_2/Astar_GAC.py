@@ -58,12 +58,15 @@ def get_best_state(all_states):	#iterates and returns one state from the list wi
 #
 def create_GAC_constraint_queue(assumption, constraints, n):
 	queue = []
+	counter = 0
 	for C in constraints:
 		if C[0] == assumption:
 			queue.append( [C[1], C] )
+			counter += 1
 			if counter == n: return queue
 		elif C[1] == assumption:
 			queue.append( [C[0], C] )
+			counter += 1
 			if counter == n: return queue
 #
 def Filter(s, q):
@@ -101,7 +104,7 @@ def Astar(start_state, constraints):
 		print "new best state: ",current_state, ", heuristic:", current_state.get_heuristic(), '\n'
 
 		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints, number_constarints)
-		print queue
+		print "GAC queue: ", queue, '\n\n'
 		#Check whether new state is contrdictory, either in filtering loop or after it
 		Filter(current_state, queue)
 		#Check whether new state is contrdictory, either in filtering loop or after it

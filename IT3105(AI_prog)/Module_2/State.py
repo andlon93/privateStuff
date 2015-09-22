@@ -12,7 +12,6 @@ class State:
 		for node in self.nodes:
 			h = h + len(self.nodes[node].domain) - 1
 		return h
-	#
 	def set_heuristic(self, heuristic): self.heuristic = heuristic
 	def get_heuristic(self): return self.heuristic
 	#
