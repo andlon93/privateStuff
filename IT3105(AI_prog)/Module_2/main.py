@@ -2,12 +2,27 @@ print "GO"
 import Node
 import State
 import readfile
+import time
 import math
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from threading import *
 
-window_size_x = 1000
-window_size_y = 1000
+window_size_x = 500 # Window width
+window_size_y = 500 # Window Height
+
+def changeColor(circle_matrix,index,color): # Can probably delete this afterwards
+	circle_matrix[index][2] = color
+	return circle_matrix
+
+def worker():
+    while True:
+    	time.sleep(1)
+    	circles.update()
+    	print "updating"
+t = Thread(target=worker)
+t.start()
+
 
 class Draw(QWidget):
     def __init__(self, parent=None):
@@ -34,7 +49,7 @@ class Draw(QWidget):
         for circle in circle_matrix:
             center = QPoint( ( circle[0] * x_multi ) + abs(lowest_x)*x_multi , (( circle[1] ) * y_multi ) + abs(lowest_y)*y_multi      ) 
             print center
-            paint.setBrush(Qt.yellow)
+            paint.setBrush(circle[2])
             paint.drawEllipse(center, radx, rady)
         paint.end()
 
@@ -53,35 +68,51 @@ def findLowestAndHighestValue(circle_matrix):
         if ( node[1]<lowest_y):
             lowest_y = node[1]
     return lowest_x,lowest_y,highest_x,highest_y
+def generate_circle_matrix(state):
+	color = Qt.white
+	circle_matrix = [[0 for x in xrange(3)] for x in xrange(len(state.nodes))]
+	i = 0;
+	for nodee in state.nodes:
+		circle_matrix[i][0]=int(round(float(state.nodes[nodee].x)))
+		circle_matrix[i][1]=int(round(float(state.nodes[nodee].y)))
+		domain = state.nodes[nodee].domain
+		if (len(domain) > 1):
+			color=Qt.white
+			print "Domain size > 1! Values: ",domain
+		elif (len(domain)==1):
+			print "Domain size 1! Value: ",domain
+			if domain == 1:
+				color=Qt.red
+			elif domain == 2:
+				color = Qt.blue
+			elif domain == 3:
+				color = Qt.yellow
+			elif domain == 0:
+				color = Qt.brown
+		circle_matrix[i][2]=color
+		i=i+1
+	return circle_matrix
+def generate_coordinates(state, cons):
+	constraints_coordinates=[[0 for x in xrange(4)] for x in xrange(len(cons))] # constraints_coordinates[0][0]= node 1 - x, [0][1] =node 1 - y, [0][2] = node 2 - x, [0][3] = node 2 -y
+	k=0
+	for cons_pair in cons:
+		constraints_coordinates[k][0] = (int(round(float(state.nodes[cons_pair[0]].x))))
+		constraints_coordinates[k][1] = (int(round(float(state.nodes[cons_pair[0]].y))))
+		constraints_coordinates[k][2] = (int(round(float(state.nodes[cons_pair[1]].x))))
+		constraints_coordinates[k][3] = (int(round(float(state.nodes[cons_pair[1]].y))))
+		k=k+1
+	return constraints_coordinates
 
-steit, cons = readfile.read_graph("graph5.txt")
-circle_matrix = [[0 for x in xrange(2)] for x in xrange(len(steit.nodes))]
+state, cons = readfile.read_graph("graph1.txt")
 
-constraints_coordinates=[[0 for x in xrange(4)] for x in xrange(len(steit.nodes)*10)] # HVORFOR 10???? gange med seg selv? kan jo ikke vare mer enn noder * noder
-# constraints_coordinates[0][0]= node 1 - x, [0][1] =node 1 - y, [0][2] = node 2 - x, [0][3] = node 2 -y
-
-i = 0;
-for nodee in steit.nodes:
-	circle_matrix[i][0]=int(round(float(steit.nodes[nodee].x)))
-	circle_matrix[i][1]=int(round(float(steit.nodes[nodee].y)))
-	i=i+1
-
+# Setting up lists and variables used by the GUI to draw the graph
+circle_matrix = generate_circle_matrix(state)
+constraints_coordinates = generate_coordinates(state, cons)
 lowest_x,lowest_y,highest_x,highest_y = findLowestAndHighestValue(circle_matrix)
 y_multi = ((window_size_y-100)/highest_y) 
 x_multi = ((window_size_x-100)/highest_x) 
-print y_multi,x_multi
-print findLowestAndHighestValue(circle_matrix)
 
-
-k=0
-for cons_pair in cons:
-	constraints_coordinates[k][0] = (int(round(float(steit.nodes[cons_pair[0]].x))))
-	constraints_coordinates[k][1] = (int(round(float(steit.nodes[cons_pair[0]].y))))
-	constraints_coordinates[k][2] = (int(round(float(steit.nodes[cons_pair[1]].x))))
-	constraints_coordinates[k][3] = (int(round(float(steit.nodes[cons_pair[1]].y))))
-	k=k+1
-#print constraints_coordinates
-
+#PyQt stuff
 app = QApplication([])
 circles = Draw()
 circles.show()
