@@ -19,7 +19,9 @@ class State:
 	def get_assumption(self): return self.assumption
 	#
 	def revise(node, c):
-		pass
+		print node
+		print c
+		return True
 	#
 	def is_contradictory(self):
 		## TODO: implement

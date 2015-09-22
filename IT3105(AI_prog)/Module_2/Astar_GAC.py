@@ -70,19 +70,56 @@ def create_GAC_constraint_queue(assumption, constraints, n):
 			counter += 1
 			if counter == n: return queue
 #
-def Filter(state, queue):
+def revice(state, constraint):
+	#TODO: lag ny revice metode
+	'''b = state.nodes[ state.assumption ].domain[0]
+	print "constraint: ", constraint
+	print b, "skal fjernes fra domain", state.nodes[constraint[0]].domain
+	new_domain = []
+	for n in state.nodes[constraint[0]].domain:
+		print n, b
+		if n == b:
+			print "test"
+		else: 
+			new_domain.append(n)
+	state.nodes[constraint[0]].domain = new_domain 
+	return len(new_domain)'''
+#
+def extend_queue(x, constraints):
+	l = []
+	for C in constraints:
+		if C[0] == x:
+			l.append( [C[1], C] )
+		elif C[1] == x:
+			l.append( [C[0], C] )
+	return l
+	pass
+#
+def Filter(state, queue, constraints):
 	#iterate over q
 	#run revice on all elements of q
 		#everytime one changes state --> push new constraints on q
 	#while queue:
-	for qqq in xrange(1):
-		constraint = queue.popleft()
+	for qqq in xrange(7):
+		constraint = queue.popleft()#popper constraint fra ko
 		print "constraint: ", constraint
 		#
 		length_pre_revise = len(state.nodes[constraint[0]].domain)
 		print "length_pre_revise: ", length_pre_revise
 		#
-		state.revice
+		print "for:", state.nodes[constraint[0]].domain
+		length_post_revice = revice(state, constraint)#kjorer revice paa constrainten som ble poppet
+		print "etter: ", state.nodes[constraint[0]].domain, '\n'
+		#
+		if length_pre_revise > length_post_revice:#hvis domenet har blitt forkortet maa nye constarints inn i ko
+			print "domenet her blitt forkortet. Maa oppdatere kooen"
+			queue.extend( extend_queue(constraint[0], constraints) )
+			###--- print q ---###
+			for q in queue:
+				print q
+			###--- print q ---###
+
+
 
 	pass
 #
@@ -134,6 +171,8 @@ def Astar(start_state, constraints):
 		#
 		#Check whether new state is contrdictory, either in filtering loop or after it
 		#Filter(current_state, queue)
+		Filter(current_state, queue, constraints)
+
 		#Check whether new state is contrdictory, either in filtering loop or after it
 
 		current_state.set_heuristic( current_state.calculate_heuristic() )
