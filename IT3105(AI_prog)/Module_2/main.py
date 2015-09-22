@@ -81,13 +81,13 @@ def generate_circle_matrix(state):
 			print "Domain size > 1! Values: ",domain
 		elif (len(domain)==1):
 			print "Domain size 1! Value: ",domain
-			if domain == 1:
+			if domain[0] == 1:
 				color=Qt.red
-			elif domain == 2:
+			elif domain[0] == 2:
 				color = Qt.blue
-			elif domain == 3:
+			elif domain[0] == 3:
 				color = Qt.yellow
-			elif domain == 0:
+			elif domain[0] == 0:
 				color = Qt.brown
 		circle_matrix[i][2]=color
 		i=i+1
