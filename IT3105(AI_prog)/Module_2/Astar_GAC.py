@@ -178,7 +178,7 @@ def Astar(start_state, constraints):
 
 		main.circle_matrix = main.generate_circle_matrix(current_state)
 		main.app.processEvents()
-		# time.sleep(0.1)
+		time.sleep(0.5)
 
 		#
 		#
@@ -186,6 +186,9 @@ def Astar(start_state, constraints):
 			if len(current_state.nodes[domain].domain) == 0:
 				all_states[current_state.get_heuristic()].remove(current_state)
 				current_state = get_best_state(all_states)
+
+				main.circle_matrix = main.generate_circle_matrix(current_state)
+				main.app.processEvents()
 				#print "current state er ikke gyldig"
 		#
 		#

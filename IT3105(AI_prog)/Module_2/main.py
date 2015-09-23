@@ -12,11 +12,11 @@ from threading import *
 print "GO"
 window_size_x = 500 # Window width
 window_size_y = 500 # Window Height
-
+fit_to_windows = False
 
 def worker():
     while True:
-    	time.sleep(0.1)
+    	time.sleep(0.1) # This, for some reason, is how often the GUI will be drawn
     	circles.update()
 t = Thread(target=worker)
 t.start()
@@ -50,10 +50,11 @@ class Draw(QWidget):
         # draw red circles
         paint.setPen(Qt.red)
         for i in range (len(constraints_coordinates)):
-            paint.drawLine((constraints_coordinates[i][0]*x_multi)+ abs(lowest_x)*x_multi, (constraints_coordinates[i][1]*y_multi)+ abs(lowest_y)*y_multi , (constraints_coordinates[i][2]*x_multi)+ abs(lowest_x)*x_multi , (constraints_coordinates[i][3]*y_multi)+ abs(lowest_y)*y_multi)
-        
+        	paint.drawLine((constraints_coordinates[i][0]*x_multi)+ abs(lowest_x)*x_multi, (constraints_coordinates[i][1]*y_multi)+ abs(lowest_y)*y_multi , (constraints_coordinates[i][2]*x_multi)+ abs(lowest_x)*x_multi , (constraints_coordinates[i][3]*y_multi)+ abs(lowest_y)*y_multi)
+			#paint.drawLine(constraints_coordinates[i][0], constraints_coordinates[i][1], constraints_coordinates[i][2], constraints_coordinates[i][3])
         for circle in circle_matrix:
-            center = QPoint( ( circle[0] * x_multi ) + abs(lowest_x)*x_multi , (( circle[1] ) * y_multi ) + abs(lowest_y)*y_multi      ) 
+            center = QPoint( ( circle[0] * x_multi ) + abs(lowest_x)*x_multi , (( circle[1] ) * y_multi ) + abs(lowest_y)*y_multi) 
+            #center = QPoint( ( circle[0]), (( circle[1] ))) 
             #print center
             paint.setBrush(circle[2])
             paint.drawEllipse(center, radx, rady)
@@ -87,14 +88,18 @@ def generate_circle_matrix(state):
 			#print "Domain size > 1! Values: ",domain
 		elif (len(domain)==1):
 			#print "Domain size 1! Value: ",domain
-			if domain[0] == 1:
+			if domain[0] == 0:
 				color=Qt.red
+			elif domain[0] == 1:
+				color = Qt.magenta
 			elif domain[0] == 2:
-				color = Qt.blue
-			elif domain[0] == 0:
 				color = Qt.yellow
 			elif domain[0] == 3:
 				color = Qt.black
+			elif domain[0] == 4:
+				color = Qt.gray
+			elif domain[0] == 5:
+				color = Qt.darkBlue
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
@@ -117,6 +122,11 @@ constraints_coordinates = generate_coordinates(state, cons)
 lowest_x,lowest_y,highest_x,highest_y = findLowestAndHighestValue(circle_matrix)
 y_multi = ((window_size_y-100)/highest_y) 
 x_multi = ((window_size_x-100)/highest_x) 
+lowest_x = lowest_x + 2
+
+
+print x_multi,y_multi
+print lowest_x,lowest_y,highest_x,highest_y
 
 #PyQt stuff
 app = QApplication([])
@@ -125,3 +135,4 @@ circles.show()
 
 Astar_GAC.Astar(state,cons)
 app.exec_()
+# sys.exit(app.exec_())
