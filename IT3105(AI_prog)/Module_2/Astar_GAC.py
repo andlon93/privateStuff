@@ -128,6 +128,8 @@ def Filter(state, queue, constraints):
 #
 def Astar(start_state, constraints):
 	import main
+	#main.rungui()
+	
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 	##print "dict laget: ", len(all_states), '\n'
 	#
@@ -135,8 +137,12 @@ def Astar(start_state, constraints):
 	##print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
 	#
 	current_state = get_best_state(all_states)
+
+
 	main.circle_matrix = main.generate_circle_matrix(current_state)
 	main.app.processEvents()
+
+
 	##print "funnet beste state: ", current_state, '\n\n'
 	#
 	#
@@ -167,11 +173,12 @@ def Astar(start_state, constraints):
 			print '\n\n'
 		###--- end printing ---###
 		#
-
 		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
+
+
 		main.circle_matrix = main.generate_circle_matrix(current_state)
 		main.app.processEvents()
-		time.sleep(0.2)
+		# time.sleep(0.1)
 
 		#
 		#

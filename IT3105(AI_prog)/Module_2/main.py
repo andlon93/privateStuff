@@ -16,7 +16,7 @@ window_size_y = 500 # Window Height
 
 def worker():
     while True:
-    	time.sleep(1)
+    	time.sleep(0.1)
     	circles.update()
 t = Thread(target=worker)
 t.start()
@@ -84,9 +84,9 @@ def generate_circle_matrix(state):
 		domain = state.nodes[nodee].domain
 		if (len(domain) > 1):
 			color=Qt.white
-			print "Domain size > 1! Values: ",domain
+			#print "Domain size > 1! Values: ",domain
 		elif (len(domain)==1):
-			print "Domain size 1! Value: ",domain
+			#print "Domain size 1! Value: ",domain
 			if domain[0] == 1:
 				color=Qt.red
 			elif domain[0] == 2:
@@ -109,7 +109,7 @@ def generate_coordinates(state, cons):
 		k=k+1
 	return constraints_coordinates
 
-state, cons = readfile.read_graph("graph6.txt")
+state, cons = readfile.read_graph("graph3.txt")
 
 # Setting up lists and variables used by the GUI to draw the graph
 circle_matrix = generate_circle_matrix(state)
@@ -124,6 +124,4 @@ circles = Draw()
 circles.show()
 
 Astar_GAC.Astar(state,cons)
-
-
 app.exec_()
