@@ -1,4 +1,4 @@
-print "GO"
+from __future__ import division
 import Node
 import State
 import readfile
@@ -9,6 +9,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
 
+print "GO"
 window_size_x = 500 # Window width
 window_size_y = 500 # Window Height
 
@@ -108,7 +109,7 @@ def generate_coordinates(state, cons):
 		k=k+1
 	return constraints_coordinates
 
-state, cons = readfile.read_graph("graph5.txt")
+state, cons = readfile.read_graph("graph6.txt")
 
 # Setting up lists and variables used by the GUI to draw the graph
 circle_matrix = generate_circle_matrix(state)
