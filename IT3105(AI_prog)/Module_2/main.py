@@ -92,6 +92,8 @@ def generate_circle_matrix(state):
 				color = Qt.blue
 			elif domain[0] == 0:
 				color = Qt.yellow
+			elif domain[0] == 3:
+				color = Qt.black
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
@@ -106,7 +108,7 @@ def generate_coordinates(state, cons):
 		k=k+1
 	return constraints_coordinates
 
-state, cons = readfile.read_graph("graph1.txt")
+state, cons = readfile.read_graph("graph5.txt")
 
 # Setting up lists and variables used by the GUI to draw the graph
 circle_matrix = generate_circle_matrix(state)
