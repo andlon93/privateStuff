@@ -71,19 +71,14 @@ def create_GAC_constraint_queue(assumption, constraints, n):
 			if counter == n: return queue
 #
 def revice(state, constraint):
-	#TODO: lag ny revice metode
-	'''b = state.nodes[ state.assumption ].domain[0]
-	print "constraint: ", constraint
-	print b, "skal fjernes fra domain", state.nodes[constraint[0]].domain
-	new_domain = []
-	for n in state.nodes[constraint[0]].domain:
-		print n, b
-		if n == b:
-			print "test"
-		else: 
-			new_domain.append(n)
-	state.nodes[constraint[0]].domain = new_domain 
-	return len(new_domain)'''
+	print state.nodes[ state.assumption ].domain[0], "skal fjernes fra domain", state.nodes[constraint[0]].domain
+	#
+	for change_value in state.nodes[constraint[0]].domain:
+		for check_value in state.nodes[state.assumption].domain:
+			if (check_value != change_value):
+				state.nodes[constraint[0]].domain.remove(change_value)
+	#
+	return len(state.nodes[constraint[0]].domain)
 #
 def extend_queue(x, constraints):
 	l = []
@@ -99,8 +94,8 @@ def Filter(state, queue, constraints):
 	#iterate over q
 	#run revice on all elements of q
 		#everytime one changes state --> push new constraints on q
-	#while queue:
-	for qqq in xrange(7):
+	while queue:
+		#for qqq in xrange(7):
 		constraint = queue.popleft()#popper constraint fra ko
 		print "constraint: ", constraint
 		#
@@ -124,7 +119,7 @@ def Filter(state, queue, constraints):
 	pass
 #
 def Astar(start_state, constraints):
-	import main
+	#import main
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 	print "dict laget: ", len(all_states), '\n'
 	#
@@ -136,13 +131,13 @@ def Astar(start_state, constraints):
 
 
 
-	main.circle_matrix = main.generate_circle_matrix(current_state)
+	#main.circle_matrix = main.generate_circle_matrix(current_state)
 	
 
 
 	#
 	#while True:
-	for xyz in xrange(5):
+	for xyz in xrange(1):
 		time.sleep(1)
 		#
 		new_states, number_constarints = generate_child_states( get_best_state(all_states), constraints )
@@ -163,7 +158,7 @@ def Astar(start_state, constraints):
 		#
 
 
-		main.circle_matrix = main.generate_circle_matrix(current_state)
+		#main.circle_matrix = main.generate_circle_matrix(current_state)
 
 
 		queue = create_GAC_constraint_queue(current_state.get_assumption(), constraints, number_constarints)
@@ -177,7 +172,10 @@ def Astar(start_state, constraints):
 
 		current_state.set_heuristic( current_state.calculate_heuristic() )
 
-		if current_state.get_heuristic() == 0: print True
+		if current_state.get_heuristic() == 0: 
+			print '\n\n', True, '\n'
+			for domain in current_state.nodes:
+				print domain, current_state.nodes[domain].domain
 		#else:
 
 			#update the states position in all_states 
@@ -185,6 +183,5 @@ def Astar(start_state, constraints):
 	pass
 
 
-#s, c = rf.read_graph("graph1.txt")
-
-#Astar(s, c)
+s, c = rf.read_graph("graph1.txt")
+Astar(s, c)
