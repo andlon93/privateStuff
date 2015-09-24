@@ -4,10 +4,13 @@
 import Node
 import State
 def read_graph(path):
-	domain_size = 4
+	domain_size = 4 # Domain Size is now read from file
 	#
 	f = open(path, 'r')
 	#
+	domain_size = int(f.readline())
+	print "domain size: ",domain_size
+
 	vertices_and_edges =f.readline().split()#read number of vertices and edges
 	vertices = int(vertices_and_edges[0])#number of vertices
 	edges = int(vertices_and_edges[1])#number of edges

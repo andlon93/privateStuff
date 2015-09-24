@@ -8,7 +8,7 @@ from collections import deque
 #
 #
 debug = False
-debug_childstates = False
+debug_childrentates = False
 def create_dictionary(l):
 	d = {}
 	for n in xrange(l+1):
@@ -17,14 +17,18 @@ def create_dictionary(l):
 #
 def add_states_to_dict(states, d):
 	for state in states:
-		d[ state.get_heuristic() ].append( state )
+		try:
+			d[ state.get_heuristic() ].append( state )
+		except:
+			print "Algorithm failed - add_states_to_dict"
+			return False
 	return d
 #
-def generate_child_states(state, constraints):#Creates childstates with an assumption
-	childs = []
+def generate_child_states(state, constraints):#Creates childrentates with an assumption
+	children = []
 	n = len(state.nodes)
 	var_list = [0]*n
-	if debug_childstates: print "var_list: ", len(var_list), var_list[0], '\n'
+	if debug_childrentates: print "var_list: ", len(var_list), var_list[0], '\n'
 
 	max_value = 0
 	for c in constraints:#telle antall forekomster av hver variabel
@@ -34,32 +38,36 @@ def generate_child_states(state, constraints):#Creates childstates with an assum
 			max_value = var_list[c[0]]
 		if var_list[c[1]] > max_value: 
 			max_value = var_list[c[1]]
-	if debug_childstates: print "max: ", max_value, '\n'
+	if debug_childrentates: print "max: ", max_value, '\n'
 
 	counter = 0
 	for i in xrange(n): #endre maks tre av varaiblene med hoyest forekomst til singletons
 		if var_list[i] == max_value and len(state.nodes[i].domain) > 1:
-			if debug_childstates:
+			if debug_childrentates:
 				print 'index: ', i
 				print "parent foer copy: ", state.nodes[i].domain
 			new_dict = copy.deepcopy(state.nodes)
 			new_dict[i].domain = [new_dict[i].domain[ random.randint(0, len(new_dict[i].domain)-1) ] ]
-			if debug_childstates:
+			if debug_childrentates:
 				print "new child: ", new_dict[i].domain
 				print "parent etter copy: ", state.nodes[i].domain
-			childs.append( State.State(new_dict) )
-			childs[-1].set_assumption(i)
+			children.append( State.State(new_dict) )
+
+
+
+
+			children[-1].set_assumption(i)
 			###
 			###
-			if debug_childstates:
+			if debug_childrentates:
 				print "parent heuristic: ", state.get_heuristic()
-				print "child heuristic: ", childs[-1].get_heuristic(), "assumption: ", childs[-1].get_assumption() , '\n'
+				print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
 			counter += 1
 			if counter == 3: 
-				if debug_childstates: print '\n\n'
-				return childs, max_value		
+				if debug_childrentates: print '\n\n'
+				return children, max_value		
 
-	return childs, max_value
+	return children, max_value
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
 	for i in all_states:
@@ -150,9 +158,14 @@ def Astar(start_state, constraints):
 	#for xyz in xrange(1):
 		#
 		new_states, number_constarints = generate_child_states( current_state, constraints )
+
 		if debug: print "new child states:", new_states, '\n\n'
 		#
 		for new_state in new_states:
+
+			main.circle_matrix = main.generate_circle_matrix(new_state)
+			main.app.processEvents()
+
 			#print new_state.get_assumption
 			queue = create_GAC_constraint_queue(new_state.get_assumption(), constraints)
 			if debug: print "queue:", queue
@@ -173,12 +186,15 @@ def Astar(start_state, constraints):
 			print '\n\n'
 		###--- end printing ---###
 		#
-		current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
-
+		try:
+			current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
+		except:
+			print "Algorithm failed - no more states"
+			break
 
 		main.circle_matrix = main.generate_circle_matrix(current_state)
 		main.app.processEvents()
-		time.sleep(0.5)
+		# time.sleep(0.1)
 
 		#
 		#
@@ -189,6 +205,7 @@ def Astar(start_state, constraints):
 
 				main.circle_matrix = main.generate_circle_matrix(current_state)
 				main.app.processEvents()
+				# time.sleep(0.1)
 				#print "current state er ikke gyldig"
 		#
 		#
