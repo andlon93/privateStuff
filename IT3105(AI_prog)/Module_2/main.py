@@ -80,7 +80,7 @@ def generate_circle_matrix(state):
 		domain = state.nodes[node].domain
 		if (len(domain) > 1):
 			color=Qt.white
-		elif (len(domain)==1):
+		else:
 			if domain[0] == 0:
 				color=Qt.red
 			elif domain[0] == 1:

@@ -50,32 +50,52 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 					print 'index: ', i
 					print "parent foer copy: ", state.nodes[i].domain
 				new_dict = copy.deepcopy(state.nodes)
-				new_dict[i].domain = [new_dict[i].domain[ random.randint(0, len(new_dict[i].domain)-1) ] ]
+				
+				choose_random_value = random.randint(0, len(new_dict[i].domain)-1)
+				
+				new_dict[i].domain = [new_dict[i].domain[ choose_random_value ] ]
 				if debug_childstates:
 					print "new child: ", new_dict[i].domain
 					print "parent etter copy: ", state.nodes[i].domain
-				children.append( State.State(new_dict) )
-				children[-1].set_assumption(i)
 
+				temp_state = State.State(new_dict) 
 
-				number_of_children = number_of_children + 1
+				if is_valid_state(temp_state,constraints):
+					children.append( temp_state )
+					children[-1].set_assumption([i, new_dict[i].domain[0]])
+					children[-1].set_parent(state)
+					number_of_children = number_of_children + 1
 
-				###
-				###
-				if debug_childstates:
-					print "parent heuristic: ", state.get_heuristic()
-					print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
-				counter += 1
-				if counter == 3: 
-					if debug_childstates: print '\n\n'
-					return children, max_value
+					###
+					###
+					if debug_childstates:
+						print "parent heuristic: ", state.get_heuristic()
+						print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
+					counter += 1
+					if counter == 3: 
+						if debug_childstates: print '\n\n'
+						return children, max_value
 		max_value = max_value - 1
-		if max_value == 0:
-			print "Max value: 0", len(children)
+		if max_value < 0:
+			print "children created ", len(children)
 			return children, max_value
-		print "Max_value: ",max_value		
+		#print "Max_value: ",max_value		
 
 	return children, max_value
+#
+def generate_child_states2(state, constraints):
+	children = []
+	for index in state.nodes:
+		if len(state.nodes[index].domain) > 1:
+			for n in state.nodes[index].domain:
+				new_dict = copy.deepcopy(state.nodes)
+				new_dict[index].domain = [n]
+				temp_state = State.State(new_dict)
+				temp_state.set_assumption([index, n])
+				temp_state.set_parent(state)
+				children.append(temp_state)
+			print "children:", children
+			return children
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
 	for i in all_states:
@@ -142,93 +162,195 @@ def Filter(state, queue, constraints):
 
 	pass
 #
+def is_valid_state(state, constraints):
+	for node in state.nodes:
+		if len(state.nodes[node].domain) == 0:
+			print "false"
+			return False
+	for C in constraints:
+
+		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1: 
+			
+			if state.nodes[C[0]].domain[0] == state.nodes[C[1]].domain[0]:
+				print "false", state.nodes[C[0]].domain[0], state.nodes[C[1]].domain[0]
+				return False
+	return True
+
 def Astar(start_state, constraints):
 	import main
+	all_states = create_dictionary(start_state.get_heuristic())
+
+	start_state.set_assumption([0, 0])
+	start_state.nodes[0].domain = [0]
+	queue = create_GAC_constraint_queue(start_state.get_assumption()[0], constraints)
+	Filter(start_state, queue, constraints)
+	start_state.set_heuristic( start_state.calculate_heuristic() )
+	all_states[start_state.get_heuristic()].append(start_state)
+
+	#print "ny heuristic", start_state.get_heuristic()
+
+	#for node in start_state.nodes:
+	#	print node, ":", start_state.nodes[node].domain
+	
+	current_state = start_state
+	while True:
+		new_states = generate_child_states2(current_state, constraints)
+		
+
+		if len(new_states) != 0:
+			valid_states = []
+			parent = new_states[0].get_parent()
+			all_states[parent.get_heuristic()].remove(parent)
+			for new_state in new_states:
+				queue = create_GAC_constraint_queue(new_state.get_assumption()[0], constraints)
+				Filter(new_state, queue, constraints)
+				if is_valid_state(new_state, constraints):
+					new_state.set_heuristic( new_state.calculate_heuristic() )
+					valid_states.append(new_state)
+					#print "ny heuristic", new_state.get_heuristic()
+				else:
+					print "invalid state", new_state.get_assumption()
+					
+					#print "parent heuristic FOR", parent.get_heuristic()
+					
+
+					parent.nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
+					
+			if is_valid_state(parent, constraints):
+				print "heuristic for", parent.get_heuristic()
+				parent.set_heuristic(parent.calculate_heuristic())
+				print "heuristic etter", parent.get_heuristic()
+
+				print "all_states FOR", all_states[parent.get_heuristic()]
+				all_states[parent.get_heuristic()].append(parent)
+				print "all_states ETTER", all_states[parent.get_heuristic()]
+			
+			all_states = add_states_to_dict(valid_states, all_states)
+
+			current_state = get_best_state(all_states)
+			main.circle_matrix = main.generate_circle_matrix(current_state)
+			main.app.processEvents()
+		else:
+			all_states[current_state.get_heuristic()].remove(current_state)
+			current_state = get_best_state(all_states)
+
+		if current_state.get_heuristic() == 0 and is_valid_state(current_state, constraints):
+			print "er i maal"
+			return True
+		
+		'''for State in all_states:
+			if len(all_states[State]) > 0:
+				print State, all_states[State]'''
+
+
+# def Astar(start_state, constraints):
+# 	import main
 
 	
-	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
-	##print "dict laget: ", len(all_states), '\n'
-	#
-	all_states[start_state.get_heuristic()].append(start_state) #adding start_state into dictionary
-	##print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
-	#
-	current_state = get_best_state(all_states)
+# 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
+# 	##print "dict laget: ", len(all_states), '\n'
+# 	#
+# 	all_states[start_state.get_heuristic()].append(start_state) #adding start_state into dictionary
+# 	##print "start state lagt inn i dict: ", all_states[start_state.get_heuristic()], '\n'
+# 	#
+# 	current_state = get_best_state(all_states)
 
 
-	main.circle_matrix = main.generate_circle_matrix(current_state)
-	main.app.processEvents()
+# 	main.circle_matrix = main.generate_circle_matrix(current_state)
+# 	main.app.processEvents()
 
 
-	##print "funnet beste state: ", current_state, '\n\n'
-	#
-	#
-	while True:
-	#for xyz in xrange(1):
-		#
-		new_states, number_constarints = generate_child_states( current_state, constraints )
+# 	##print "funnet beste state: ", current_state, '\n\n'
+# 	#
+# 	#
+# 	while True:
+# 	#for xyz in xrange(1):
+# 		#
+# 		new_states, number_constarints = generate_child_states( current_state, constraints )
 
 
-		if debug: print "new child states:", new_states, '\n\n'
-		#
-		for new_state in new_states:
+# 		if len(new_states) == 0:
+# 			all_states[current_state.get_heuristic()].remove(current_state)
 
-			main.circle_matrix = main.generate_circle_matrix(new_state)
-			main.app.processEvents()
+# 			current_state = get_best_state(all_states)
 
-			#print new_state.get_assumption
-			queue = create_GAC_constraint_queue(new_state.get_assumption(), constraints)
-			if debug: print "queue:", queue
-			Filter( new_state, queue, constraints )
-			new_state.set_heuristic( new_state.calculate_heuristic() )
-			#
-			'''for s in new_state.nodes:
-				print s, ":", new_state.nodes[s].domain'''
-			#
-		all_states = add_states_to_dict( new_states, all_states )
-		#
-		###--- start printing ---###
-		if debug:
-			print "all_states med barn:"
-			for n in xrange(len(all_states)):
-				if len(all_states[n]) > 0:
-					print n, all_states[n]
-			print '\n\n'
-		###--- end printing ---###
-		#
-		try:
-			current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
-		except:
-			print "Algorithm failed - no more states"
-			break
+# 		if debug: print "new child states:", new_states, '\n\n'
+# 		#
+# 		new_valid_states = []
+# 		for new_state in new_states:
 
-		main.circle_matrix = main.generate_circle_matrix(current_state)
-		main.app.processEvents()
-		# time.sleep(0.1)
+# 			main.circle_matrix = main.generate_circle_matrix(new_state)
+# 			main.app.processEvents()
 
-		#
-		#
-		for domain in current_state.nodes:
-			if len(current_state.nodes[domain].domain) == 0:
-				all_states[current_state.get_heuristic()].remove(current_state)
-				current_state = get_best_state(all_states)
+# 			#print new_state.get_assumption()
+# 			queue = create_GAC_constraint_queue(new_state.get_assumption(), constraints)
+# 			if debug: print "queue:", queue
+# 			Filter( new_state, queue, constraints )
+# 			new_state.set_heuristic( new_state.calculate_heuristic() )
 
-				main.circle_matrix = main.generate_circle_matrix(current_state)
-				main.app.processEvents()
-				# time.sleep(0.1)
-				#print "current state er ikke gyldig"
-		#
-		#
-		'''if current_state.get_heuristic() < 5:
-			for domain in current_state.nodes:
-					print domain, current_state.nodes[domain].domain
-			print '\n\n ny heuristic:', current_state.get_heuristic()'''
-		#
-		#
-		if current_state.get_heuristic() == 0: 
-			print '\n\n', True, '\n'
-			for domain in current_state.nodes:
-				print domain, current_state.nodes[domain].domain
-			return True	
-#
-# s, c = rf.read_graph("graph6.txt")
-# Astar(s, c)
+# 			if not is_valid_state(new_state, constraints):
+# 				print "domain som skal fjernes fra", new_state.get_parent().nodes[new_state.get_assumption()[0]].domain
+# 				print "remove verdi fra domain", new_state.get_assumption()[1] 
+# 				print "assumption", new_state.get_assumption()
+				
+
+# 				new_state.get_parent().nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
+				
+# 				all_states[new_state.get_parent().get_heuristic()].remove(new_state.get_parent())
+				
+
+# 				print "after assumption is removed", new_state.get_parent().nodes[new_state.get_assumption()[0]].domain, '\n'
+# 				if is_valid_state(new_state.get_parent(), constraints):
+# 					new_state.get_parent().set_heuristic( new_state.get_parent().calculate_heuristic() )
+# 					all_states[new_state.get_parent().get_heuristic()].append(new_state.get_parent())
+# 			else:
+# 				new_valid_states.append(new_state)
+# 			#
+# 		all_states = add_states_to_dict( new_valid_states, all_states )
+# 		#
+# 		###--- start printing ---###
+# 		if debug:
+# 			print "all_states med barn:"
+# 			for n in xrange(len(all_states)):
+# 				if len(all_states[n]) > 0:
+# 					print n, all_states[n]
+# 			print '\n\n'
+# 		###--- end printing ---###
+# 		#
+# 		try:
+# 			current_state = get_best_state(all_states)#Staten som analyseres naa er alltid current_state
+# 		except:
+# 			print "Algorithm failed - no more states"
+# 			break
+
+# 		main.circle_matrix = main.generate_circle_matrix(current_state)
+# 		main.app.processEvents()
+# 		# time.sleep(0.1)
+
+# 		#
+# 		#
+# 		'''for domain in current_state.nodes:
+# 			if len(current_state.nodes[domain].domain) == 0:
+# 				all_states[current_state.get_heuristic()].remove(current_state)
+# 				current_state = get_best_state(all_states)
+
+# 				main.circle_matrix = main.generate_circle_matrix(current_state)
+# 				main.app.processEvents()'''
+# 				# time.sleep(0.1)
+# 				#print "current state er ikke gyldig"
+# 		#
+# 		#
+# 		'''if current_state.get_heuristic() < 5:
+# 			for domain in current_state.nodes:
+# 					print domain, current_state.nodes[domain].domain
+# 			print '\n\n ny heuristic:', current_state.get_heuristic()'''
+# 		#
+# 		#
+# 		if current_state.get_heuristic() == 0: 
+# 			print '\n\n', True, '\n'
+# 			for domain in current_state.nodes:
+# 				print domain, current_state.nodes[domain].domain
+# 			return True	
+# #
+#s, c = rf.read_graph("graph1.txt")
+#Astar(s, c)
