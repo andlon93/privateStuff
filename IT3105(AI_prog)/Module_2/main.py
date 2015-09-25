@@ -14,10 +14,16 @@ window_size_x = 800 # Window width
 window_size_y = 600 # Window Height
 fit_to_windows = False
 
+
 def worker():
-    while True:
-    	time.sleep(0.01) # This, for some reason, is how often the GUI will be drawn. processEvent() is required in the algorithm to make this work...
-    	circles.update()
+	sleeptime = 0.1
+	try:
+		while True:
+			time.sleep(sleeptime)
+			circles.update()
+	except:
+		print "Gui overload, increasing sleep-time"
+		sleeptime = sleeptime * 5
 t = Thread(target=worker)
 t.start()
 
@@ -103,7 +109,7 @@ def generate_coordinates(state, cons):
 		k=k+1
 	return constraints_coordinates
 
-state, cons = readfile.read_graph("graph5.txt")
+state, cons = readfile.read_graph("graph6.txt")
 
 # Setting up lists and variables used by the GUI to draw the graph
 circle_matrix = generate_circle_matrix(state)
@@ -112,8 +118,8 @@ lowest_x,lowest_y,highest_x,highest_y = findLowestAndHighestValues(circle_matrix
 y_multi = ((window_size_y-100)/highest_y) 
 x_multi = ((window_size_x-100)/highest_x) 
 
-print x_multi,y_multi
-print lowest_x,lowest_y,highest_x,highest_y
+# print x_multi,y_multi
+# print lowest_x,lowest_y,highest_x,highest_y
 
 #PyQt stuff
 app = QApplication([])

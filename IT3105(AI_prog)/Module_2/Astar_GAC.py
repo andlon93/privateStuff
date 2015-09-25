@@ -8,7 +8,7 @@ from collections import deque
 #
 #
 debug = False
-debug_childrentates = False
+debug_childstates = False
 def create_dictionary(l):
 	d = {}
 	for n in xrange(l+1):
@@ -24,11 +24,13 @@ def add_states_to_dict(states, d):
 			return False
 	return d
 #
-def generate_child_states(state, constraints):#Creates childrentates with an assumption
+def generate_child_states(state, constraints):#Creates childtates with an assumption
 	children = []
 	n = len(state.nodes)
 	var_list = [0]*n
-	if debug_childrentates: print "var_list: ", len(var_list), var_list[0], '\n'
+	if debug_childstates: print "var_list: ", len(var_list), var_list[0], '\n'
+
+	number_of_children = 0
 
 	max_value = 0
 	for c in constraints:#telle antall forekomster av hver variabel
@@ -38,34 +40,40 @@ def generate_child_states(state, constraints):#Creates childrentates with an ass
 			max_value = var_list[c[0]]
 		if var_list[c[1]] > max_value: 
 			max_value = var_list[c[1]]
-	if debug_childrentates: print "max: ", max_value, '\n'
+	if debug_childstates: print "max: ", max_value, '\n'
 
 	counter = 0
-	for i in xrange(n): #endre maks tre av varaiblene med hoyest forekomst til singletons
-		if var_list[i] == max_value and len(state.nodes[i].domain) > 1:
-			if debug_childrentates:
-				print 'index: ', i
-				print "parent foer copy: ", state.nodes[i].domain
-			new_dict = copy.deepcopy(state.nodes)
-			new_dict[i].domain = [new_dict[i].domain[ random.randint(0, len(new_dict[i].domain)-1) ] ]
-			if debug_childrentates:
-				print "new child: ", new_dict[i].domain
-				print "parent etter copy: ", state.nodes[i].domain
-			children.append( State.State(new_dict) )
+	while number_of_children < 3:
+		for i in xrange(n): #endre maks tre av varaiblene med hoyest forekomst til singletons
+			if var_list[i] == max_value and len(state.nodes[i].domain) > 1:
+				if debug_childstates:
+					print 'index: ', i
+					print "parent foer copy: ", state.nodes[i].domain
+				new_dict = copy.deepcopy(state.nodes)
+				new_dict[i].domain = [new_dict[i].domain[ random.randint(0, len(new_dict[i].domain)-1) ] ]
+				if debug_childstates:
+					print "new child: ", new_dict[i].domain
+					print "parent etter copy: ", state.nodes[i].domain
+				children.append( State.State(new_dict) )
+				children[-1].set_assumption(i)
 
 
+				number_of_children = number_of_children + 1
 
-
-			children[-1].set_assumption(i)
-			###
-			###
-			if debug_childrentates:
-				print "parent heuristic: ", state.get_heuristic()
-				print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
-			counter += 1
-			if counter == 3: 
-				if debug_childrentates: print '\n\n'
-				return children, max_value		
+				###
+				###
+				if debug_childstates:
+					print "parent heuristic: ", state.get_heuristic()
+					print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
+				counter += 1
+				if counter == 3: 
+					if debug_childstates: print '\n\n'
+					return children, max_value
+		max_value = max_value - 1
+		if max_value == 0:
+			print "Max value: 0", len(children)
+			return children, max_value
+		print "Max_value: ",max_value		
 
 	return children, max_value
 #
@@ -136,7 +144,7 @@ def Filter(state, queue, constraints):
 #
 def Astar(start_state, constraints):
 	import main
-	#main.rungui()
+
 	
 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 	##print "dict laget: ", len(all_states), '\n'
@@ -158,6 +166,7 @@ def Astar(start_state, constraints):
 	#for xyz in xrange(1):
 		#
 		new_states, number_constarints = generate_child_states( current_state, constraints )
+
 
 		if debug: print "new child states:", new_states, '\n\n'
 		#
