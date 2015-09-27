@@ -88,8 +88,8 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 	return children, max_value
 #
 def generate_child_states2(state, constraints):
+	from random import randint
 	children = []
-
 	for index in state.nodes:
 		if len(state.nodes[index].domain) > 1:
 			for n in state.nodes[index].domain:
@@ -100,7 +100,8 @@ def generate_child_states2(state, constraints):
 				temp_state.set_parent(state)
 				children.append(temp_state)
 			#print "children:", children
-			return children
+			if len(children)>=1:
+				return children
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
 	for i in all_states:
@@ -267,6 +268,10 @@ def Astar(start_state, constraints):
 			#
 			if is_done(current_state, constraints):
 				print "ER FERDIG"
+				if gui:
+					main.circle_matrix = main.generate_circle_matrix(current_state)
+					main.app.processEvents()
+					time.sleep(1)
 				for C in constraints:
 					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
 				print("--- %s seconds ---" % (time.time() - start_time))

@@ -21,7 +21,7 @@ def worker():
 			time.sleep(sleeptime)
 			circles.update()
 	except:
-		print "Gui overload, increasing sleep-time"
+		print "Gui overload!"
 		sleeptime = sleeptime * 5
 t = Thread(target=worker)
 t.start()
