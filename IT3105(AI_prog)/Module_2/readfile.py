@@ -9,7 +9,6 @@ def read_graph(path):
 	f = open(path, 'r')
 	#
 	domain_size = int(f.readline())
-	print "domain size: ",domain_size
 
 	vertices_and_edges =f.readline().split()#read number of vertices and edges
 	vertices = int(vertices_and_edges[0])#number of vertices

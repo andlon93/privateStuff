@@ -54,13 +54,13 @@ def close_gui():
 def findLowestAndHighestValues(circle_matrix):
     lowest_x = lowest_y = highest_x = highest_y = 0
     for node in circle_matrix:
-        if node[0]>highest_x:
+        if node[0] > highest_x:
             highest_x = node[0]
-        if node[0]<lowest_x:
+        if node[0] < lowest_x:
             lowest_x = node[0]
-        if node[1]>highest_y:
+        if node[1] > highest_y:
             highest_y = node[1]
-        if node[1]<lowest_y:
+        if node[1] < lowest_y:
             lowest_y = node[1]
     return lowest_x,lowest_y,highest_x,highest_y
 
@@ -69,8 +69,8 @@ def generate_circle_matrix(state):
 	circle_matrix = [[0 for x in xrange(4)] for x in xrange(len(state.nodes))]
 	i = 0;
 	for node in state.nodes:
-		circle_matrix[i][0]=int(round(float(state.nodes[node].x)))
-		circle_matrix[i][1]=int(round(float(state.nodes[node].y)))
+		circle_matrix[i][0] = int(round(float(state.nodes[node].x)))
+		circle_matrix[i][1] = int(round(float(state.nodes[node].y)))
 		domain = state.nodes[node].domain
 		if (len(domain) > 1):
 			color=Qt.white
@@ -100,18 +100,18 @@ def generate_coordinates(state, cons):
 		constraints_coordinates[k][1] = (int(round(float(state.nodes[cons_pair[0]].y))))
 		constraints_coordinates[k][2] = (int(round(float(state.nodes[cons_pair[1]].x))))
 		constraints_coordinates[k][3] = (int(round(float(state.nodes[cons_pair[1]].y))))
-		k=k+1
+		k = k + 1
 	return constraints_coordinates
 
 print ("Graph number:")
 graph = "graph"
-graph+=raw_input("")
-graph+=".txt"
+graph += raw_input("")
+graph += ".txt"
 state, cons = readfile.read_graph(graph)
 t = Thread(target=worker)
 t.start()
 # Setting up lists and variables used by the GUI to draw the graph
-circle_matrix = generate_circle_matrix(state)
+circle_matrix           = generate_circle_matrix(state)
 constraints_coordinates = generate_coordinates(state, cons)
 lowest_x,lowest_y,highest_x,highest_y = findLowestAndHighestValues(circle_matrix)
 y_multi = ((window_size_y-100)/highest_y)

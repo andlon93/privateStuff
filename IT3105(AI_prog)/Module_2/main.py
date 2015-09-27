@@ -4,8 +4,6 @@ import time
 import os
 import Astar_GAC
 
-kill_command = "taskkill /F /PID"
-kill_command += str(os.getpid())
 
 def changeDelay():
 	time.sleep(0.2)
@@ -16,7 +14,7 @@ print "-----------------------------"
 print "Use GUI? Yes: '1', No: '0'"
 use_gui = int( raw_input("") )
 
-if use_gui==1:
+if not use_gui==0:
 	print "Input algorithm delay in milliseconds, blank to use default (0)"
 	try:
 		delay = (float ( raw_input("")) /1000)
