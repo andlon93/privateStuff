@@ -220,6 +220,7 @@ def is_done(state, constraints):
 	return True
 #
 def Astar(start_state, constraints):
+	print "Calculating..."
 	start_time = time.time()
 	if show_gui:
 		import gui
