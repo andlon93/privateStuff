@@ -9,6 +9,8 @@ from collections import deque
 #
 debug = False
 debug_childstates = False
+algorithm_delay = 0
+
 def create_dictionary(l):
 	d = {}
 	for n in xrange(l+1):
@@ -66,9 +68,9 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 					children[-1].set_parent(state)
 					number_of_children = number_of_children + 1
 
-					if gui:
-						main.circle_matrix = main.generate_circle_matrix(temp_state)
-						main.app.processEvents()
+					if show_gui:
+						gui.circle_matrix = gui.generate_circle_matrix(temp_state)
+						gui.app.processEvents()
 
 					###
 					###
@@ -219,9 +221,8 @@ def is_done(state, constraints):
 #
 def Astar(start_state, constraints):
 	start_time = time.time()
-	print "start time: ",start_time
-	if gui:
-		import main
+	if show_gui:
+		import gui
 	all_states = create_dictionary(start_state.get_heuristic())
 
 	start_state.set_assumption([0, 0])
@@ -265,13 +266,20 @@ def Astar(start_state, constraints):
 
 			all_states = add_states_to_dict(valid_states, all_states)
 			current_state = get_best_state(all_states)
+			time.sleep(algorithm_delay)
 			#
 			if is_done(current_state, constraints):
-				print "ER FERDIG"
-				if gui:
-					main.circle_matrix = main.generate_circle_matrix(current_state)
-					main.app.processEvents()
-					time.sleep(1)
+				print "Done"
+				if show_gui:
+					gui.circle_matrix = gui.generate_circle_matrix(current_state)
+					gui.app.processEvents()
+					print("--- %s seconds ---" % (time.time() - start_time))
+					print ""
+					print "Press ENTER to close gui, input 'n' to keep it open"
+					stri = str(raw_input(""))
+					if not (stri=="n" or stri=="N"):
+						import subprocess
+						subprocess.call("taskkill /F /IM python.exe", shell=True)
 				for C in constraints:
 					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
 				print("--- %s seconds ---" % (time.time() - start_time))
@@ -279,9 +287,9 @@ def Astar(start_state, constraints):
 				return True
 
 
-			if gui:
-				main.circle_matrix = main.generate_circle_matrix(current_state)
-				main.app.processEvents()
+			if show_gui:
+				gui.circle_matrix = gui.generate_circle_matrix(current_state)
+				gui.app.processEvents()
 				# time.sleep(1)
 
 
@@ -295,19 +303,19 @@ def Astar(start_state, constraints):
 
 				for C in constraints:
 					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
-				if gui:
-					main.circle_matrix = main.generate_circle_matrix(current_state)
-					main.app.processEvents()
+				if show_gui:
+					gui.circle_matrix = gui.generate_circle_matrix(current_state)
+					gui.app.processEvents()
 					time.sleep(5)
 				return True
 
-
-gui = False
-
-if not gui:
-	s, c = rf.read_graph("graph6.txt")
-	Astar(s, c)
-
+show_gui = False
+def run(delay):
+	if not show_gui:
+		s, c = rf.read_graph("graph6.txt")
+		Astar(s, c)
+	else:
+		algorithm_delay = delay
 # def Astar(start_state, constraints):
 # 	import main
 
