@@ -36,9 +36,9 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 	for c in constraints:#telle antall forekomster av hver variabel
 		if len( state.nodes[ c[0] ].domain ) > 1: var_list[c[0]] += 1
 		if len( state.nodes[ c[1] ].domain ) > 1: var_list[c[1]] += 1
-		if var_list[c[0]] > max_value: 
+		if var_list[c[0]] > max_value:
 			max_value = var_list[c[0]]
-		if var_list[c[1]] > max_value: 
+		if var_list[c[1]] > max_value:
 			max_value = var_list[c[1]]
 	if debug_childstates: print "max: ", max_value, '\n'
 
@@ -50,15 +50,15 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 					print 'index: ', i
 					print "parent foer copy: ", state.nodes[i].domain
 				new_dict = copy.deepcopy(state.nodes)
-				
+
 				choose_random_value = random.randint(0, len(new_dict[i].domain)-1)
-				
+
 				new_dict[i].domain = [new_dict[i].domain[ choose_random_value ] ]
 				if debug_childstates:
 					print "new child: ", new_dict[i].domain
 					print "parent etter copy: ", state.nodes[i].domain
 
-				temp_state = State.State(new_dict) 
+				temp_state = State.State(new_dict)
 
 				if is_valid_state(temp_state,constraints):
 					children.append( temp_state )
@@ -66,20 +66,24 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 					children[-1].set_parent(state)
 					number_of_children = number_of_children + 1
 
+					if gui:
+						main.circle_matrix = main.generate_circle_matrix(temp_state)
+						main.app.processEvents()
+
 					###
 					###
 					if debug_childstates:
 						print "parent heuristic: ", state.get_heuristic()
 						print "child heuristic: ", children[-1].get_heuristic(), "assumption: ", children[-1].get_assumption() , '\n'
 					counter += 1
-					if counter == 3: 
+					if counter == 3:
 						if debug_childstates: print '\n\n'
 						return children, max_value
 		max_value = max_value - 1
 		if max_value < 0:
 			print "children created ", len(children)
 			return children, max_value
-		#print "Max_value: ",max_value		
+		#print "Max_value: ",max_value
 
 	return children, max_value
 #
@@ -99,7 +103,7 @@ def generate_child_states2(state, constraints):
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
 	for i in all_states:
-		if all_states[i]: 
+		if all_states[i]:
 			return all_states[i][ random.randint(0, len(all_states[i])-1) ]
 #
 def create_GAC_constraint_queue(assumption, constraints):
@@ -120,13 +124,13 @@ def revice2(state, c):
 	#elif c[0] == c[1][1]: print "len av check index", len(state.nodes[c[1][0]].domain)
 
 
-	if len(state.nodes[c[0]].domain) < 2: 
+	if len(state.nodes[c[0]].domain) < 2:
 		return len(state.nodes[c[0]].domain)
-	elif c[0] == c[1][0] and len(state.nodes[c[1][1]].domain) == 1: 
+	elif c[0] == c[1][0] and len(state.nodes[c[1][1]].domain) == 1:
 		check_node = state.nodes[c[1][1]].domain[0]
-	elif c[0] == c[1][1] and len(state.nodes[c[1][0]].domain) == 1: 
+	elif c[0] == c[1][1] and len(state.nodes[c[1][0]].domain) == 1:
 		check_node = state.nodes[c[1][0]].domain[0]
-	else: 
+	else:
 		return len(state.nodes[c[0]].domain)
 
 	#print "check_node: ", check_node
@@ -144,7 +148,7 @@ def revice(state, constraint):
 	for n in xrange(2):
 		if constraint[1][n] != constraint[0]:
 			index = constraint[1][n]
-	if debug: 
+	if debug:
 		print "fjerne med henhold til: ", state.nodes[index].domain
 		print index, ":", state.nodes[index].domain, "skal fjernes fra domain", constraint[0],":",state.nodes[constraint[0]].domain
 	#
@@ -196,7 +200,7 @@ def is_valid_state(state, constraints):
 		if len(state.nodes[node].domain) == 0:
 			return False
 	for C in constraints:
-		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1: 			
+		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1:
 			if state.nodes[C[0]].domain[0] == state.nodes[C[1]].domain[0]:
 				return False
 	return True
@@ -212,6 +216,8 @@ def is_done(state, constraints):
 	return True
 #
 def Astar(start_state, constraints):
+	start_time = time.time()
+	print "start time: ",start_time
 	import main
 	all_states = create_dictionary(start_state.get_heuristic())
 
@@ -226,12 +232,10 @@ def Astar(start_state, constraints):
 
 	#for node in start_state.nodes:
 	#	print node, ":", start_state.nodes[node].domain
-	
+
 	current_state = start_state
 	while True:
 		new_states = generate_child_states2(current_state, constraints)
-		
-
 		if len(new_states) != 0:
 			valid_states = []
 			parent = new_states[0].get_parent()
@@ -245,52 +249,61 @@ def Astar(start_state, constraints):
 					#print "ny heuristic", new_state.get_heuristic()
 				else:
 					#print "invalid state", new_state.get_assumption()
-					
 					#print "parent heuristic FOR", parent.get_heuristic()
-					
-
 					parent.nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
-					
+
 			if is_valid_state(parent, constraints):
 				#print "heuristic for", parent.get_heuristic()
 				parent.set_heuristic(parent.calculate_heuristic())
 				#print "heuristic etter", parent.get_heuristic()
-
 				#print "all_states FOR", all_states[parent.get_heuristic()]
 				all_states[parent.get_heuristic()].append(parent)
 				#print "all_states ETTER", all_states[parent.get_heuristic()]
-			
-			all_states = add_states_to_dict(valid_states, all_states)
 
-			current_state = get_best_state(all_states)
-			#
-			if is_done(current_state, constraints):
-				print "ER FERDIG"
-				for C in constraints:
-					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain 
-				print "--------------------------------------------"
-				return True
-			#
-			main.circle_matrix = main.generate_circle_matrix(current_state)
-			main.app.processEvents()
-		else:
-			all_states[current_state.get_heuristic()].remove(current_state)
+			all_states = add_states_to_dict(valid_states, all_states)
 			current_state = get_best_state(all_states)
 			#
 			if is_done(current_state, constraints):
 				print "ER FERDIG"
 				for C in constraints:
 					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
+				print("--- %s seconds ---" % (time.time() - start_time))
 				print "--------------------------------------------"
 				return True
 
-		
 
+			if gui:
+				main.circle_matrix = main.generate_circle_matrix(current_state)
+				main.app.processEvents()
+				# time.sleep(1)
+
+
+		else:
+			all_states[current_state.get_heuristic()].remove(current_state)
+			current_state = get_best_state(all_states)
+			#
+			if is_done(current_state, constraints):
+
+				print "ER FERDIG"
+
+				for C in constraints:
+					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
+				if gui:
+					main.circle_matrix = main.generate_circle_matrix(current_state)
+					main.app.processEvents()
+					time.sleep(5)
+				return True
+
+
+gui = True
+if not gui:
+	s, c = rf.read_graph("graph6.txt")
+	Astar(s, c)
 
 # def Astar(start_state, constraints):
 # 	import main
 
-	
+
 # 	all_states = create_dictionary( start_state.get_heuristic() )#dict over alle states som ses paa. Nokkel er heurestikkverdier(heltall)
 # 	##print "dict laget: ", len(all_states), '\n'
 # 	#
@@ -334,14 +347,14 @@ def Astar(start_state, constraints):
 
 # 			if not is_valid_state(new_state, constraints):
 # 				print "domain som skal fjernes fra", new_state.get_parent().nodes[new_state.get_assumption()[0]].domain
-# 				print "remove verdi fra domain", new_state.get_assumption()[1] 
+# 				print "remove verdi fra domain", new_state.get_assumption()[1]
 # 				print "assumption", new_state.get_assumption()
-				
+
 
 # 				new_state.get_parent().nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
-				
+
 # 				all_states[new_state.get_parent().get_heuristic()].remove(new_state.get_parent())
-				
+
 
 # 				print "after assumption is removed", new_state.get_parent().nodes[new_state.get_assumption()[0]].domain, '\n'
 # 				if is_valid_state(new_state.get_parent(), constraints):
@@ -390,11 +403,9 @@ def Astar(start_state, constraints):
 # 			print '\n\n ny heuristic:', current_state.get_heuristic()'''
 # 		#
 # 		#
-# 		if current_state.get_heuristic() == 0: 
+# 		if current_state.get_heuristic() == 0:
 # 			print '\n\n', True, '\n'
 # 			for domain in current_state.nodes:
 # 				print domain, current_state.nodes[domain].domain
-# 			return True	
+# 			return True
 # #
-#s, c = rf.read_graph("graph1.txt")
-#Astar(s, c)
