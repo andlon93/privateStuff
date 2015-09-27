@@ -89,6 +89,7 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 #
 def generate_child_states2(state, constraints):
 	children = []
+
 	for index in state.nodes:
 		if len(state.nodes[index].domain) > 1:
 			for n in state.nodes[index].domain:
@@ -296,7 +297,7 @@ def Astar(start_state, constraints):
 				return True
 
 
-gui = True
+gui = False
 
 if not gui:
 	s, c = rf.read_graph("graph6.txt")
