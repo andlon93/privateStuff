@@ -94,7 +94,7 @@ def generate_child_states2(state, constraints):
 				temp_state.set_assumption([index, n])
 				temp_state.set_parent(state)
 				children.append(temp_state)
-			print "children:", children
+			#print "children:", children
 			return children
 #
 def get_best_state(all_states):	#iterates and returns one state from the list with lowest heuristic
@@ -110,6 +110,35 @@ def create_GAC_constraint_queue(assumption, constraints):
 		elif C[1] == assumption:
 			queue.append( [C[0], C] )
 	return queue
+#
+def revice2(state, c):
+	#change = c[0]
+	#change_after = !c[0]
+	#print "change index", c[0]
+	#print "len av change index", len(state.nodes[c[0]].domain)
+	#if c[0] == c[1][0]: print "len av check index", len(state.nodes[c[1][1]].domain)
+	#elif c[0] == c[1][1]: print "len av check index", len(state.nodes[c[1][0]].domain)
+
+
+	if len(state.nodes[c[0]].domain) < 2: 
+		return len(state.nodes[c[0]].domain)
+	elif c[0] == c[1][0] and len(state.nodes[c[1][1]].domain) == 1: 
+		check_node = state.nodes[c[1][1]].domain[0]
+	elif c[0] == c[1][1] and len(state.nodes[c[1][0]].domain) == 1: 
+		check_node = state.nodes[c[1][0]].domain[0]
+	else: 
+		return len(state.nodes[c[0]].domain)
+
+	#print "check_node: ", check_node
+	#print "change node: ", state.nodes[c[0]].domain
+	for change_node in state.nodes[c[0]].domain:
+		if change_node == check_node:
+			state.nodes[c[0]].domain.remove(change_node)
+			#print "changed node: ", state.nodes[c[0]].domain, "new len", len(state.nodes[c[0]].domain)
+			return len(state.nodes[c[0]].domain)
+
+	#print "changed node: ", state.nodes[c[0]].domain
+	return len(state.nodes[c[0]].domain)
 #
 def revice(state, constraint):
 	for n in xrange(2):
@@ -139,7 +168,7 @@ def extend_queue(x, constraints):
 #
 def Filter(state, queue, constraints):
 
-	#for qqq in xrange(7):
+	#for qqq in xrange(2):
 	while queue:
 		constraint = queue.popleft()#popper constraint fra ko
 		if debug: print "constraint: ", constraint
@@ -147,7 +176,7 @@ def Filter(state, queue, constraints):
 		length_pre_revise = len(state.nodes[constraint[0]].domain)
 		#
 		if debug: print "for:", state.nodes[constraint[0]].domain
-		length_post_revice = revice(state, constraint)#kjorer revice paa constrainten som ble poppet
+		length_post_revice = revice2(state, constraint)#kjorer revice paa constrainten som ble poppet
 		if debug: print "etter: ", state.nodes[constraint[0]].domain, '\n'
 		#
 		if length_pre_revise > length_post_revice:#hvis domenet har blitt forkortet maa nye constarints inn i ko
@@ -165,17 +194,23 @@ def Filter(state, queue, constraints):
 def is_valid_state(state, constraints):
 	for node in state.nodes:
 		if len(state.nodes[node].domain) == 0:
-			print "false"
 			return False
 	for C in constraints:
-
-		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1: 
-			
+		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1: 			
 			if state.nodes[C[0]].domain[0] == state.nodes[C[1]].domain[0]:
-				print "false", state.nodes[C[0]].domain[0], state.nodes[C[1]].domain[0]
 				return False
 	return True
-
+#
+def is_done(state, constraints):
+	for c in constraints:
+		if len(state.nodes[c[0]].domain) != 1:
+			return False
+		elif len(state.nodes[c[1]].domain) != 1:
+			return False
+		elif state.nodes[c[0]].domain[0] == state.nodes[c[1]].domain[0]:
+			return False
+	return True
+#
 def Astar(start_state, constraints):
 	import main
 	all_states = create_dictionary(start_state.get_heuristic())
@@ -209,7 +244,7 @@ def Astar(start_state, constraints):
 					valid_states.append(new_state)
 					#print "ny heuristic", new_state.get_heuristic()
 				else:
-					print "invalid state", new_state.get_assumption()
+					#print "invalid state", new_state.get_assumption()
 					
 					#print "parent heuristic FOR", parent.get_heuristic()
 					
@@ -217,30 +252,39 @@ def Astar(start_state, constraints):
 					parent.nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
 					
 			if is_valid_state(parent, constraints):
-				print "heuristic for", parent.get_heuristic()
+				#print "heuristic for", parent.get_heuristic()
 				parent.set_heuristic(parent.calculate_heuristic())
-				print "heuristic etter", parent.get_heuristic()
+				#print "heuristic etter", parent.get_heuristic()
 
-				print "all_states FOR", all_states[parent.get_heuristic()]
+				#print "all_states FOR", all_states[parent.get_heuristic()]
 				all_states[parent.get_heuristic()].append(parent)
-				print "all_states ETTER", all_states[parent.get_heuristic()]
+				#print "all_states ETTER", all_states[parent.get_heuristic()]
 			
 			all_states = add_states_to_dict(valid_states, all_states)
 
 			current_state = get_best_state(all_states)
+			#
+			if is_done(current_state, constraints):
+				print "ER FERDIG"
+				for C in constraints:
+					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain 
+				print "--------------------------------------------"
+				return True
+			#
 			main.circle_matrix = main.generate_circle_matrix(current_state)
 			main.app.processEvents()
 		else:
 			all_states[current_state.get_heuristic()].remove(current_state)
 			current_state = get_best_state(all_states)
+			#
+			if is_done(current_state, constraints):
+				print "ER FERDIG"
+				for C in constraints:
+					print current_state.nodes[C[0]].domain, current_state.nodes[C[1]].domain
+				print "--------------------------------------------"
+				return True
 
-		if current_state.get_heuristic() == 0 and is_valid_state(current_state, constraints):
-			print "er i maal"
-			return True
 		
-		'''for State in all_states:
-			if len(all_states[State]) > 0:
-				print State, all_states[State]'''
 
 
 # def Astar(start_state, constraints):
