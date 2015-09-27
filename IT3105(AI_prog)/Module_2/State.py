@@ -2,6 +2,7 @@ class State:
 	nodes = {} #id: peker til objekt
 	heuristic = None #heuristic til denne staten
 	assumption = None
+	parent = None
 
 	def __init__(self, nodes):
 		self.nodes = nodes
@@ -18,14 +19,8 @@ class State:
 	def set_assumption(self, assumption): self.assumption = assumption
 	def get_assumption(self): return self.assumption
 	#
-	def revise(node, c):
-		print node
-		print c
-		return True
-	#
-	def is_contradictory(self):
-		## TODO: implement
-		return True
+	def set_parent(self, parent): self.parent = parent
+	def get_parent(self): return self.parent
 
 #
 #s = State(nodes)
