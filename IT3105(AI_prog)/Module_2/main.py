@@ -88,7 +88,6 @@ def generate_circle_matrix(state):
 			elif domain[0] == 5:
 				color = Qt.lightGray
 		circle_matrix[i][2]=color
-		circle_matrix[i][3]=domain
 		i=i+1
 	return circle_matrix
 

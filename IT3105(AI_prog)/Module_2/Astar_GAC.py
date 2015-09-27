@@ -218,7 +218,8 @@ def is_done(state, constraints):
 def Astar(start_state, constraints):
 	start_time = time.time()
 	print "start time: ",start_time
-	import main
+	if gui:
+		import main
 	all_states = create_dictionary(start_state.get_heuristic())
 
 	start_state.set_assumption([0, 0])
@@ -296,6 +297,7 @@ def Astar(start_state, constraints):
 
 
 gui = True
+
 if not gui:
 	s, c = rf.read_graph("graph6.txt")
 	Astar(s, c)
