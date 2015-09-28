@@ -26,8 +26,14 @@ if not use_gui==0:
 	import gui
 else:
 	print "Which graph do you want to solve?"
-	graph = int ( raw_input(""))
-	Astar_GAC.run(graph)
+	try:
+		graph = int ( raw_input(""))
+		Astar_GAC.run(graph)
+	except:
+		print "Invalid input, default graph:5"
+		Astar_GAC.run(5)
+
+
 
 
 
