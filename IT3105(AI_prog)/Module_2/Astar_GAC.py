@@ -90,7 +90,6 @@ def generate_child_states(state, constraints):#Creates childtates with an assump
 	return children, max_value
 #
 def generate_child_states2(state, constraints):
-	from random import randint
 	children = []
 	for index in state.nodes:
 		if len(state.nodes[index].domain) > 1:
