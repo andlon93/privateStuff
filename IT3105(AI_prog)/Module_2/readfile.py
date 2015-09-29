@@ -1,6 +1,4 @@
 # Read from file
-# vertices edges
-
 import Node
 import State
 def read_graph(path):
@@ -9,7 +7,6 @@ def read_graph(path):
 	f = open(path, 'r')
 	#
 	domain_size = int(f.readline())
-
 	vertices_and_edges =f.readline().split()#read number of vertices and edges
 	vertices = int(vertices_and_edges[0])#number of vertices
 	edges = int(vertices_and_edges[1])#number of edges
