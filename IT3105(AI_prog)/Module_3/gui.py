@@ -71,7 +71,8 @@ print ("Scenario:")
 # graph += raw_input("")
 # graph += ".txt"
 graph = "nono-heart.txt"
-cols_size, rows_size, cols, rows = readfile.read_graph(graph)
+cols_size, rows_size = readfile.getSizes(graph)
+
 cols_px, rows_px = calculate_size(cols_size, rows_size)
 color_matrix = initialise_color_matrix(cols_size,rows_size)
 rectMatrix = generate_rectMatrix(cols_size,rows_size,color_matrix)
