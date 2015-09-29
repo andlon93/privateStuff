@@ -76,7 +76,6 @@ def extend_queue(x, constraints):
 		elif C[1] == x:
 			l.append( [C[0], C] )
 	return l
-	pass
 #
 def Filter(state, queue, constraints):
 	while queue:

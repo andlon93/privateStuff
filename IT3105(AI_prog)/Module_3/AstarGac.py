@@ -46,4 +46,6 @@ def is_done(state):
 	pass
 #
 def Astar(start_state):
+	print "Astar is running..."
+	
 	pass
