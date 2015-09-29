@@ -8,11 +8,11 @@ import Astar_GAC
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
-
+#
 window_size_x = 800 # Window width
 window_size_y = 600 # Window Height
 is_done=False
-
+#
 def worker():
 	sleeptime = 0.1
 	try:
@@ -22,8 +22,7 @@ def worker():
 	except:
 		print "Gui overload!"
 		sleeptime = sleeptime * 5
-
-
+#
 class Draw(QWidget):
 	# All the GUI stuff is done within this class
 	# paintEvent is the function that draws the GUI - this is called by the "worker" thread
@@ -32,7 +31,7 @@ class Draw(QWidget):
         QWidget.__init__(self, parent)
         self.setGeometry(300, 100, window_size_x, window_size_y) # setGeometry(x_pos, y_pos, width, height) - places and sizes the windows
         self.setWindowTitle('Astar_GAC')
-
+    #
     def paintEvent(self, event):
         paint = QPainter()
         paint.begin(self)
@@ -48,9 +47,9 @@ class Draw(QWidget):
             paint.setBrush(circle[2])
             paint.drawEllipse(center, 10, 10) # arguments 2 and 3 are the size of the circles, in x and y direction. Argument 1 is the placement, also containing x and y
         paint.end()
-
-def close_gui():
-	app.exit()
+#
+def close_gui(): app.exit()
+#
 def findLowestAndHighestValues(circle_matrix):
     lowest_x = lowest_y = highest_x = highest_y = 0
     for node in circle_matrix:
@@ -63,7 +62,7 @@ def findLowestAndHighestValues(circle_matrix):
         if node[1] < lowest_y:
             lowest_y = node[1]
     return lowest_x,lowest_y,highest_x,highest_y
-
+#
 def generate_circle_matrix(state):
 	color = Qt.white
 	circle_matrix = [[0 for x in xrange(4)] for x in xrange(len(state.nodes))]
@@ -87,10 +86,14 @@ def generate_circle_matrix(state):
 				color = Qt.magenta
 			elif domain[0] == 5:
 				color = Qt.lightGray
+			elif domain[0] == 4:
+				color = Qt.green
+			elif domain[0] == 5:
+				color = Qt.orange
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
-
+#
 def generate_coordinates(state, cons):
 	# This function makes a list containing the x and y coordinates of each pair of connected nodes
 	constraints_coordinates=[[0 for x in xrange(4)] for x in xrange(len(cons))] # constraints_coordinates[0][0]= node 1 - x, [0][1] =node 1 - y, [0][2] = node 2 - x, [0][3] = node 2 -y
@@ -102,7 +105,7 @@ def generate_coordinates(state, cons):
 		constraints_coordinates[k][3] = (int(round(float(state.nodes[cons_pair[1]].y))))
 		k = k + 1
 	return constraints_coordinates
-
+#z
 print ("Graph number:")
 graph = "graph"
 graph += raw_input("")

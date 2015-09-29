@@ -3,7 +3,6 @@ class State:
 	heuristic = None #heuristic til denne staten
 	assumption = None
 	parent = None
-
 	def __init__(self, nodes):
 		self.nodes = nodes
 		self.heuristic = self.calculate_heuristic()
@@ -21,6 +20,3 @@ class State:
 	#
 	def set_parent(self, parent): self.parent = parent
 	def get_parent(self): return self.parent
-
-#
-#s = State(nodes)
