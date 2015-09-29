@@ -36,4 +36,6 @@ def getSizes(path): #Just for GUI debug
 	return cols_size,rows_size
 
 
-# read_graph("nono-chick.txt")
+s = read_graph("nono-chick.txt")
+for row in s.rows:
+	print row.domain
