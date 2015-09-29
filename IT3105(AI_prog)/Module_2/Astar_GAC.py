@@ -5,8 +5,6 @@ import time
 import random
 from collections import deque
 #
-debug = False
-debug_childstates = False
 algorithm_delay = 0
 #
 def create_dictionary(l):
