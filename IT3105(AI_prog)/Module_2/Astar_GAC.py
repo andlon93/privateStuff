@@ -23,7 +23,6 @@ def add_states_to_dict(states, d):
 	return d
 #
 def generate_child_states2(state, constraints):
-	from random import randint
 	children = []
 	for index in state.nodes:
 		if len(state.nodes[index].domain) > 1:
