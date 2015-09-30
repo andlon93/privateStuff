@@ -21,10 +21,8 @@ def read_graph(path):
 	variable_cols = []
 	for i in range (cols_size):
 		variable_cols.append( Variable.Variable(False, i, cols[i],rows_size) )
-		# print ( (False, i, cols[i],rows_size) )
 	for i in range (rows_size):
 		variable_rows.append( Variable.Variable(True, i, rows[i], cols_size) )
-		# print ( (True, i, cols[i],rows_size) )
 	Start_state = State.State(variable_rows, variable_cols, None)
 	return Start_state
 
@@ -36,6 +34,6 @@ def getSizes(path): #Just for GUI debug
 	return cols_size,rows_size
 
 
-s = read_graph("nono-chick.txt")
+s = read_graph("nono-rabbit.txt")
 for row in s.rows:
-	print len(row.domain)
+ 	print len(row.domain)
