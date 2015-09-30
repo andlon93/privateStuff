@@ -38,4 +38,4 @@ def getSizes(path): #Just for GUI debug
 
 s = read_graph("nono-chick.txt")
 for row in s.rows:
-	print row.domain
+	print len(row.domain)

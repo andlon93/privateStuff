@@ -29,7 +29,7 @@ def generate_child_states(state):
 def create_GAC_queue(assumption):#Generates the queue of constraints to run
 	queue = deque()
 	pass
-# 
+#
 def revice():#changes a state based on a constraint
 	pass
 #
@@ -47,5 +47,5 @@ def is_done(state):
 ###--- The main algorithm ---###
 def Astar(start_state):
 	print "Astar is running..."
-	
+
 	pass
