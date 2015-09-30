@@ -2,14 +2,14 @@ import State
 import Variable
 import random
 from collections import deque
-#
-def create_dictionary(l):
+###--- Dictionary methods(contains all states) ---###
+def create_dictionary(l):#The key is the F-value of the states
 	d = {}
 	for n in xrange(l+1):
 		d[n] = []
 	return d
 #
-def add_states_to_dict(states, d):
+def add_states_to_dict(states, d):#add newly created states to the dict
 	for state in states:
 		try:
 			d[state.get_h()].append(state)
@@ -18,33 +18,33 @@ def add_states_to_dict(states, d):
 			return False
 	return d
 #
-def generate_child_states(state):
-	pass
-#
-def get_best_state(all_states):
+def get_best_state(all_states):#get one of the best states from the dict
 	for i in all_states:
 		if all_states[i]:
 			return all_states[i][random.randint(0, len(all_states[i])-1)]
-#
-def create_GAC_queue(assumption):
+###--- method to generate child states ---###
+def generate_child_states(state):
+	pass
+###--- GAC methods ---###
+def create_GAC_queue(assumption):#Generates the queue of constraints to run
 	queue = deque()
 	pass
 # 
-def revice():
+def revice():#changes a state based on a constraint
 	pass
 #
-def extend_queue():
+def extend_queue():#extends the GAC_queue when needed
 	pass
 #
-def Filter(state):
+def Filter(state):#Iterates through the GAC_queue -> runs revice on them
 	pass
-#
+###--- Methods to check validity of a state ---###
 def is_valid_state(state):
 	pass
 #
 def is_done(state):
 	pass
-#
+###--- The main algorithm ---###
 def Astar(start_state):
 	print "Astar is running..."
 	
