@@ -30,8 +30,34 @@ def create_GAC_queue(assumption):#Generates the queue of constraints to run
 	queue = deque()
 	pass
 #
-def revice():#changes a state based on a constraint
-	pass
+def possible_to_update(t):#Checks whether any of the cells van be updated
+		for i in t:
+			if i!=-1: return True
+		return False
+def update_cell(C):#updates the cell in Board if possible
+	d=C[1].domain
+	temp_list=[]*len(d[0])
+	#
+	for n in xrange(len(d[0])):#sets temp_list to the first list in domain
+		temp_list[n]=d[0][n]
+	##--if a cell can have two values, it cannot be set to a value--##
+	for n in xrange(1, len(d)):
+		for i in xrange(len(d[n])):
+			if temp_list[i]!=d[n][i]: temp_list[i]=-1
+		if not possible_to_update(temp_list): return False, []#temp_list should be all -1's
+	return True, temp_list
+#
+def update_variable_domain(C):
+	return True
+#
+def revice(state, C):#changes a state based on a constraint
+	cell_updated=False
+	domain_updated=False
+	if C[0][2]==-1: 
+		cell_updated, new_list=update_cell(state, C)
+	else: 
+		domain_updated=update_variable_domain(state, C)
+	return cell_updated, domain_updated, new_list
 #
 def extend_queue():#extends the GAC_queue when needed
 	pass
