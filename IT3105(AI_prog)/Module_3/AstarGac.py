@@ -30,8 +30,17 @@ def create_GAC_queue(assumption):#Generates the queue of constraints to run
 	queue = deque()
 	pass
 #
-def revice():#changes a state based on a constraint
+def update_cell(C):
 	pass
+#
+def update_variable(C):
+	pass
+#
+def revice(state, C):#changes a state based on a constraint
+	if C[0][2] == -1:
+		update_cell(state, C)
+	else:
+		update_variable(state, C)
 #
 def extend_queue():#extends the GAC_queue when needed
 	pass
