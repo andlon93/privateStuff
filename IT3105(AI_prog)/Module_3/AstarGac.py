@@ -102,10 +102,17 @@ def Filter(state):#Iterates through the GAC_queue -> runs revice on them
 #
 ###--- Methods to check validity of a state ---###
 def is_valid_state(state):
-	pass
+	for var in state.get_rows():
+		if len(var.get_domain()) == 0: return False
+	for var in state.get_cols():
+		if len(var.get_domain()) == 0: return False
+	return True
 #
 def is_done(state):
-	pass
+	'''for row in len(state.get_board()):
+		for col in len(state.get_board()[row]):
+			if state.get_board()[row][col] == state.get_row(row).get_domain()[0][col]:
+				if state.get_board()[row][col] == state.get_col(col).get_domain()[0][row]:'''
 ###--- The main algorithm ---###
 def Astar(start_state):
 	print "Astar is running..."
