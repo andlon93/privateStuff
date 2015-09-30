@@ -4,6 +4,7 @@ import readfile as rf
 import random
 import copy
 from collections import deque
+from multiprocessing import Process, Queue
 #
 ###--- Dictionary methods(contains all states) ---###
 def create_dictionary(l):#The key is the F-value of the states
@@ -36,7 +37,7 @@ def create_state(state, assumption):
 def generate_child_states(state):
 	b = state.get_board()
 	states=[]
-	for row in xrange(len(b)):#finner en rute som ikke er satt. 
+	for row in xrange(len(b)):#finner en rute som ikke er satt.
 		for col in xrange(len(b[row])):
 			if b[row][col] == -1:#Lager et barn per mulighet for ruta
 				states.append( create_state(state, [row, col, 1]) )
@@ -92,7 +93,7 @@ def update_variable_domain(C):#updates the domain based on a cell value
 def revice(state, C):#changes a state based on a constraint
 	domain_updated=False
 	cells_updated=False
-	if C[0][1]==-1: 
+	if C[0][1]==-1:
 		new_list=update_cell(C)
 		##--update cell rows or columns if needed--##
 		if len(new_list)>0:
@@ -102,10 +103,10 @@ def revice(state, C):#changes a state based on a constraint
 				update_state_cell_cols(C, state, new_list)
 			cells_updated=True
 		##
-	else: 
+	else:
 		old_domain_len=len(C[1].get_domain())
 		new_domain=update_variable_domain(C)
-		
+
 		##--update domain if needed--##
 		if old_domain_len>len(new_domain):
 			print "new domain", new_domain
@@ -174,7 +175,7 @@ def Astar(start_state):
 	#
 	children = generate_child_states(start_state)
 	for c in children:
-		
+
 		queue = create_GAC_queue(c, c.get_assumption())
 		#for q in queue:
 		#	print q[1].get_is_row()
@@ -189,4 +190,7 @@ def Astar(start_state):
 
 
 	pass
-Astar(rf.read_graph("nono-cat.txt"))
+if __name__ == '__main__':
+	qc = Queue()
+	qr = Queue()
+	Astar(rf.read_graph("nono-cat.txt",qc,qr))

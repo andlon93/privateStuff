@@ -3,12 +3,10 @@
 # vertices edges
 import Variable
 from threading import *
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 import time
-
 import State
-variable_rows = []
-variable_cols = []
+from functools import partial
 
 cols_size = None
 rows_size = None
@@ -17,7 +15,7 @@ t = None
 
 
 
-def read_graph(path):
+def read_graph(path,qc,qr):
 	start_time = time.time()
 	#
 	f = open(path, 'r')
@@ -32,47 +30,50 @@ def read_graph(path):
 		cols.append((f.readline().split()))
 	for i in range (rows_size):
 		rows.append((f.readline().split()))
+	var_rows = []
+	var_cols = []
 
-
-	# pool = Pool(processes=4)
-	# r2 = pool.apply_async(make_rows(rows_size, cols_size))
-	# r1 = pool.apply_async(make_cols(cols_size, rows_size))
-	# print "her?"
-	# a1 = r1.get()
-	# a2 = r2.get()
 	k = [None] * cols_size
 	for i in range(cols_size):
-		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i))
+		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc))
 		k[i].start()
 
 	for i in range (cols_size):
 		k[i].join()
+		print "Joined k: ",i
 
 	t = [None] * rows_size
+
 	for i in range(rows_size):
-		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i))
+		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i,qr))
 		t[i].start()
-
-
 
 	for i in range (rows_size):
 		t[i].join()
 
+	variable_rows = []
+	variable_cols = []
+	for i in range((cols_size)):
+		variable_cols.append(qc.get())
+	for i in range((rows_size)):
+		variable_rows.append(qr.get())
+
 	Start_state = State.State(variable_rows, variable_cols, None)
+
 	print("--- %s seconds ---" % (time.time() - start_time))
 	return Start_state
 
-def make_cols(cols_size, rows_size,cols,i):
+def make_cols(cols_size, rows_size,cols,i,qc):
 	print "making cols"
-	variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
+	#variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
+	qc.put(Variable.Variable(False,i, cols[i], rows_size))
 	return True
 
-def make_rows(rows_size, cols_size,rows,i):
+def make_rows(rows_size, cols_size,rows,i,qr):
 	print "making rows"
-	variable_rows.append( Variable.Variable(True,i, rows[i], cols_size) )
+#	variable_rows.append( Variable.Variable(True,i, rows[i], cols_size) )
+	qr.put( Variable.Variable(True,i, rows[i], cols_size) )
 	return True
-
-
 
 def getSizes(path): #Just for GUI debug
 	f = open(path, 'r')
@@ -81,6 +82,10 @@ def getSizes(path): #Just for GUI debug
 	rows_size = int(cols_and_rows_size[1])
 	return cols_size,rows_size
 
-
 if __name__ == '__main__':
-    s = read_graph("nono-rabbit.txt")
+	qc = Queue()
+	qr = Queue()
+	s = read_graph("nono-cat.txt",qc,qr)
+	print "done?"
+	for rad in s.rows:
+		print "DOmain: ",rad.domain
