@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # Read from file
 # vertices edges
 import Variable
@@ -33,7 +34,6 @@ def getSizes(path): #Just for GUI debug
 	rows_size = int(cols_and_rows_size[1])
 	return cols_size,rows_size
 
-
-s = read_graph("nono-rabbit.txt")
+s = read_graph("nono-cat.txt")
 for row in s.rows:
  	print len(row.domain)
