@@ -44,20 +44,30 @@ def update_cell(C):#updates the cell in Board if possible
 	for n in xrange(1, len(d)):
 		for i in xrange(len(d[n])):
 			if temp_list[i]!=d[n][i]: temp_list[i]=-1
-		if not possible_to_update(temp_list): return False, []#temp_list should be all -1's
-	return True, temp_list
+		if not possible_to_update(temp_list): return [] #temp_list should be all -1's
+	return temp_list
 #
-def update_variable_domain(C):
-	return True
+def update_variable_domain(C):#updates the domain based on a cell value
+	d=C[1].domain
+	for n in d:
+		if n[index]!=C[0][1]:
+			d.remove(n)
+	return d
 #
 def revice(state, C):#changes a state based on a constraint
-	cell_updated=False
 	domain_updated=False
-	if C[0][2]==-1: 
-		cell_updated, new_list=update_cell(state, C)
+	if C[0][1]==-1: 
+		new_list=update_cell(state, C)
 	else: 
-		domain_updated=update_variable_domain(state, C)
-	return cell_updated, domain_updated, new_list
+		old_domain_len=len(C[1].domain)
+		new_domain=update_variable_domain(state, C)
+		##--update domain if needed--##
+		if old_domain_len>len(new_domain):
+			if C[1].get_is_row()==True:
+				state.get_row()
+			else:
+
+	return new_list, new_domain
 #
 def extend_queue():#extends the GAC_queue when needed
 	pass

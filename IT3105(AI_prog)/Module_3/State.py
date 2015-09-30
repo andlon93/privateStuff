@@ -28,8 +28,10 @@ class State:
 	#
 	def get_rows(self): return self.rows
 	def get_row(self, index): return self.rows[index]
+	def set_row(self, index, new_row): self.rows[index]=new_row
 	#
 	def get_cols(self): return self.cols
 	def get_col(self, index): return self.cols[index]
+	def set_col(self, index, new_col): self.cols[index]=new_col
 	#
 	def get_parent(self): return self.parent
