@@ -5,6 +5,7 @@ class State:
 	cols = []
 	board = []
 	parent = None
+	assumption = None
 	#
 	def __init__(self, rows, cols, parent):
 		self.rows = rows
@@ -40,3 +41,6 @@ class State:
 	def get_board_cell(self, row, col): return self.board[row][col]
 	#
 	def get_parent(self): return self.parent
+	#
+	def get_assumption(self): return self.assumption
+	def set_assumption(self, assumption): self.assumption = assumption 
