@@ -14,6 +14,7 @@ class State:
 		self.g = self.calculate_g()
 		self.h = self.calculate_h()
 		self.board = [[-1 for x in xrange(len(self.cols))] for x in xrange(len(self.rows))]
+		print "i state: ", len(rows)
 	#
 	def calculate_h(self):
 		h = 0
@@ -45,4 +46,4 @@ class State:
 	def get_parent(self): return self.parent
 	#
 	def get_assumption(self): return self.assumption
-	def set_assumption(self, assumption): self.assumption = assumption 
+	def set_assumption(self, assumption): self.assumption = assumption

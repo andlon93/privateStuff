@@ -40,7 +40,6 @@ def read_graph(path,qc,qr):
 
 	for i in range (cols_size):
 		k[i].join()
-		print "Joined k: ",i
 
 	t = [None] * rows_size
 
@@ -53,20 +52,33 @@ def read_graph(path,qc,qr):
 
 	variable_rows = []
 	variable_cols = []
-	for i in range((cols_size)):
+	for i in range(cols_size):
 		variable_cols.append(qc.get())
-	for i in range((rows_size)):
+	for i in range(rows_size):
 		variable_rows.append(qr.get())
+
+	variable_cols = bubble_sort(variable_cols)
+	variable_rows = bubble_sort(variable_rows)
+
+	for i in range(len(variable_cols)):
+		print "index",variable_cols[i].index
 
 	Start_state = State.State(variable_rows, variable_cols, None)
 
 	print("--- %s seconds ---" % (time.time() - start_time))
 	return Start_state
 
+def bubble_sort(items):
+    for i in range(len(items)):
+        for j in range(len(items)-1-i):
+            if items[j].index > items[j+1].index:
+                items[j], items[j+1] = items[j+1], items[j]
+    return items
+
 def make_cols(cols_size, rows_size,cols,i,qc):
 	print "making cols"
 	#variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
-	qc.put(Variable.Variable(False,i, cols[i], rows_size))
+	qc.put(Variable.Variable(False,i, cols[i], rows_size),)
 	return True
 
 def make_rows(rows_size, cols_size,rows,i,qr):
@@ -88,4 +100,4 @@ if __name__ == '__main__':
 	s = read_graph("nono-cat.txt",qc,qr)
 	print "done?"
 	for rad in s.rows:
-		print "DOmain: ",rad.domain
+		print "DOmain: ",len(rad.domain)
