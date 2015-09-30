@@ -28,17 +28,19 @@ class State:
 	##-- Getters and setters--##
 	def get_g(self): return self.g
 	def get_h(self): return self.h
+	def set_h(self, h): self.h = h
 	#
 	def get_rows(self): return self.rows
 	def get_row(self, index): return self.rows[index]
-	def set_row(self, index, new_row): self.rows[index]=new_row
+	def set_row(self, index, new_row): self.rows[index].domain=new_row
 	#
 	def get_cols(self): return self.cols
 	def get_col(self, index): return self.cols[index]
-	def set_col(self, index, new_col): self.cols[index]=new_col
+	def set_col(self, index, new_col): self.cols[index].domain=new_col
 	#
 	def get_board(self): return self.board
 	def get_board_cell(self, row, col): return self.board[row][col]
+	def set_board_cell(self, row, col, val): self.board[row][col] = val
 	#
 	def get_parent(self): return self.parent
 	#
