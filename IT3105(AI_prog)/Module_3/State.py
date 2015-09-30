@@ -3,6 +3,7 @@ class State:
 	h = None
 	rows = []
 	cols = []
+	board = []
 	parent = None
 	#
 	def __init__(self, rows, cols, parent):
@@ -11,6 +12,7 @@ class State:
 		self.parent = parent
 		self.g = self.calculate_g()
 		self.h = self.calculate_h()
+		self.board = [[-1 for x in xrange(len(self.cols))] for x in xrange(len(self.rows))]
 	#
 	def calculate_h(self):
 		h = 0
@@ -33,5 +35,8 @@ class State:
 	def get_cols(self): return self.cols
 	def get_col(self, index): return self.cols[index]
 	def set_col(self, index, new_col): self.cols[index]=new_col
+	#
+	def get_board(self): return self.board
+	def get_board_cell(self, row, col): return self.board[row][col]
 	#
 	def get_parent(self): return self.parent

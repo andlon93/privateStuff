@@ -1,5 +1,6 @@
 import State
 import Variable
+import readfile as rf
 import random
 from collections import deque
 #
@@ -118,3 +119,4 @@ def Astar(start_state):
 	print "Astar is running..."
 
 	pass
+Astar(rf.read_graph("nono-cat.txt"))
