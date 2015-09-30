@@ -12,14 +12,13 @@ class Variable:
 		self.create_full_domain(blocks, length)
 	#
 	def isValid(self,s,blocks):
-
 		b = copy.deepcopy(blocks) # Blocks
 		current_block = 0
 		group_done = False
 		group_started = False
 		done = False
-
 		for c in s: #For character in string, aka 0 or 1
+
 			if c == '1' and done == True:
 				# Found a 1 after we are supposed to have found them all.
 				return False
@@ -28,11 +27,11 @@ class Variable:
 				# Found a 1, while looking for 1
 				group_started = True
 				b[current_block] = int (b[current_block]) - 1 # Decrease remaining number of 1's in the current block
-				if b[current_block] == 0:	# If this is 0, it means all of the 1's in the current group has been found
-					group_done    = True    #This group of 1's is done
-					group_started = False   #There is currently no group of 1's
-					current_block += 1		#move to look for the next block of 1's
-					if current_block > (len(b)-1): # If all blocks have been found:
+				if b[current_block] == 0:			# If this is 0, it means all of the 1's in the current group has been found
+					group_done    = True    		# This group of 1's is done
+					group_started = False   		# There is currently no group of 1's
+					current_block += 1				# move to look for the next block of 1's
+					if current_block > (len(b)-1):  # If all blocks have been found:
 						done = True # If we find another 1 after done == True, there are too many.
 
 			elif c == '1' and group_done == True:
