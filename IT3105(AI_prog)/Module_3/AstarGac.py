@@ -56,26 +56,26 @@ def possible_to_update(t):#Checks whether any of the cells van be updated
 			if i!=-1: return True
 		return False
 def update_cell(C):#updates the cell in Board if possible
-	d=C[1].domain
-	temp_list=[]*len(d[0])
+	d=C[1].get_domain()
+	temp_list=[None]*len(d[0])
 	#
 	for n in xrange(len(d[0])):#sets temp_list to the first list in domain
-		temp_list[n]=d[0][n]
+		temp_list[n]=int(d[0][n])
 	##--if a cell can have two values, it cannot be set to a value--##
 	for n in xrange(1, len(d)):
 		for i in xrange(len(d[n])):
-			if temp_list[i]!=d[n][i]: temp_list[i]=-1
+			if temp_list[i]!=int(d[n][i]): temp_list[i]=-1
 		if not possible_to_update(temp_list): return [] #temp_list should be all -1's
 	return temp_list
 #
-def update_state_cell_rows(state, new_list):#updates state board rows
+def update_state_cell_rows(C, state, new_list):#updates state board rows
 	for n in xrange(len(new_list)):
 		if state.board[C[1].get_index()][n]==-1:
-			state.board[C[1].get_index()][n]=new_list[n]
-def update_state_cell_cols(state, new_list):#updates state board columns
+			state.board[C[1].get_index()][n]=int(new_list[n])
+def update_state_cell_cols(C, state, new_list):#updates state board columns
 	for n in xrange(len(new_list)):
 		if state.board[n][C[1].get_index()]==-1:
-			state.board[n][C[1].get_index()]=new_list[n]
+			state.board[n][C[1].get_index()]=int(new_list[n])
 #
 def update_variable_domain(C):#updates the domain based on a cell value
 	index = C[0][0]
@@ -97,32 +97,61 @@ def revice(state, C):#changes a state based on a constraint
 		##--update cell rows or columns if needed--##
 		if len(new_list)>0:
 			if C[1].get_is_row():
-				update_state_cell_rows(state, new_list)
+				update_state_cell_rows(C, state, new_list)
 			else:
-				update_state_cell_cols(state, new_list)
+				update_state_cell_cols(C, state, new_list)
 			cells_updated=True
 		##
 	else: 
 		old_domain_len=len(C[1].get_domain())
 		new_domain=update_variable_domain(C)
+		
 		##--update domain if needed--##
 		if old_domain_len>len(new_domain):
+			print "new domain", new_domain
 			if C[1].get_is_row():
+
 				state.set_row(C[1].get_index(), new_domain)
+				#print "is row", state.get_row(C[1].get_index())
 			else:
 				state.set_col(C[1].get_index(), new_domain)
+				#print "is not row", state.get_col(C[1].get_index()).get_domain()
 			domain_updated=True
 		##
 	return domain_updated, cells_updated
 #
 ###--- Filter methods ---###
-def extend_queue():#extends the GAC_queue when needed
-	pass
+def extend_queue_domain(C, state):#extends the GAC_queue when needed
+	new_c = deque()
+	if C[1].get_is_row():
+		for index in xrange(len(C[1].get_domain()[0])):
+			new_c.append( [ [index, state.get_board_cell(C[1].get_index(), index)], C[1] ] )
+	else:
+		for index in xrange(len(C[1].get_domain()[0])):
+			new_c.append([[index, state.get_board_cell( index, C[1].get_index() )], C[1]])
+	return new_c
 #
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 	while queue:
 		C = queue.popleft()
-		revice(state, C)
+		#print C[0], C[1]
+		domain_updated, cells_updated=revice(state, C)
+		if domain_updated:
+			queue.extend(extend_queue_domain(C, state))
+			#print len(queue)
+		if cells_updated:
+			print "cells updated"
+			new_c = deque()
+			if C[1].get_is_row():
+				for index in xrange(len(C[1].get_domain()[0])):
+					if state.get_board_cell(C[1].get_index(), index) != -1:
+						new_c.append( [ [index, state.get_board_cell(C[1].get_index(), index)], C[1] ] )
+			else:
+				for index in xrange(len(C[1].get_domain()[0])):
+					if state.get_board_cell(C[1].get_index(), index) != -1:
+						new_c.append( [ [index, state.get_board_cell(index, C[1].get_index())], C[1] ] )
+			queue.extend(new_c)
+
 #
 ###--- Methods to check validity of a state ---###
 def is_valid_state(state):
@@ -145,16 +174,18 @@ def Astar(start_state):
 	#
 	children = generate_child_states(start_state)
 	for c in children:
-		for row in c.get_board():
-			print row
+		
 		queue = create_GAC_queue(c, c.get_assumption())
-		for q in queue:
-			print q[1].get_is_row()
-		print "\n"
+		#for q in queue:
+		#	print q[1].get_is_row()
+		#print "\n"
 		print "h for Filter", c.get_h()
 		Filter(c, queue)
 		c.set_h(c.calculate_h())
-		print "h etter Filter", c.get_h(), "  g verdi", c.get_g()
+		print "h etter Filter", c.get_h(), "  g verdi", c.get_g(), '\n\n'
+		for row in c.get_board():
+			print row
+		print '\n\n\n'
 
 
 	pass
