@@ -20,8 +20,8 @@ class State:
 			h += len( n.get_domain() ) - 1
 		return h
 	def calculate_g(self):
-		if self.get_parent() == None: return 0
-		else: return self.get_parent().get_g() + 1
+		if not self.get_parent() == None: return self.get_parent().get_g() + 1
+		else: return 0
 	##-- Getters and setters--##
 	def get_g(self): return self.g
 	def get_h(self): return self.h
