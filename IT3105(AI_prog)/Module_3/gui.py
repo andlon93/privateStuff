@@ -63,7 +63,7 @@ def generate_color_matrix(board):
 	print "BOOOOOOOOOOARD", board
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
 	for c in range(len(board)):
-		for r in range(c):
+		for r in range(len(board[c])):
 			if board[c][r] == -1:
 				color_matrix[c][r] = (Qt.gray)
 			elif board[c][r] == 0:

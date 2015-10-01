@@ -218,10 +218,10 @@ def Astar(start_state):
 
 		gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
 		gui.app.processEvents()
-
 		print "GUI processing from astar"
-
 		time.sleep(1.5)
+
+
 		print "assumption: ", c.get_assumption()
 		queue = create_GAC_queue(c, c.get_assumption())
 		print "Queue:"
