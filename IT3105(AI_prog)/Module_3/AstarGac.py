@@ -191,6 +191,4 @@ def Astar(start_state):
 
 	pass
 if __name__ == '__main__':
-	qc = Queue()
-	qr = Queue()
-	Astar(rf.read_graph("nono-cat.txt",qc,qr))
+	Astar(rf.read_graph("nono-cat.txt"))
