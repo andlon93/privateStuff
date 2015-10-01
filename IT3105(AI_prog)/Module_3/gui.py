@@ -7,12 +7,15 @@ import math
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
+import AstarGac
 
 window_size_x = 500 # Window width
 window_size_y = 400 # Window Height
 
+board = []
+
 def worker():
-	sleeptime = 1
+	sleeptime = 0.1
 	try:
 		while True:
 			time.sleep(sleeptime)
@@ -50,13 +53,26 @@ def calculate_size(cols_size,rows_size): #Calculates pixels per col/row
 	return cols_px, rows_px
 
 
-def generate_rectMatrix(cols_size,rows_size,color_matrix):
+def generate_rectMatrix(color_matrix):
 	for c in range(cols_size):
 		for r in range(rows_size):
 			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[c][r]))
 	return rectMatrix
 
-def initialise_color_matrix(cols_size,rows_size):
+def generate_color_matrix(board):
+	print "BOOOOOOOOOOARD", board
+	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+	for c in range(len(board)):
+		for r in range(c):
+			if board[c][r] == -1:
+				color_matrix[c][r] = (Qt.gray)
+			elif board[c][r] == 0:
+				color_matrix[c][r] = (Qt.white)
+			elif board[c][r] == 1:
+				color_matrix[c][r] = (Qt.blue)
+	return color_matrix
+
+def initialise_color_matrix():
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
 	for c in range(cols_size):
 		for r in range(rows_size):
@@ -74,8 +90,8 @@ graph = "nono-heart.txt"
 cols_size, rows_size = readfile.getSizes(graph)
 
 cols_px, rows_px = calculate_size(cols_size, rows_size)
-color_matrix = initialise_color_matrix(cols_size,rows_size)
-rectMatrix = generate_rectMatrix(cols_size,rows_size,color_matrix)
+color_matrix = initialise_color_matrix()
+rectMatrix = generate_rectMatrix(color_matrix)
 
 t = Thread(target=worker)
 t.start()
@@ -83,4 +99,5 @@ t.start()
 app = QApplication([])
 circles = Draw()
 circles.show()
+AstarGac.Astar(readfile.read_graph(graph))
 app.exec_()

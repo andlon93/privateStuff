@@ -2,9 +2,11 @@ import State
 import Variable
 import readfile as rf
 import random
+import time
 import copy
 from collections import deque
 from multiprocessing import Process, Queue
+
 #
 ###--- Dictionary methods(contains all states) ---###
 def create_dictionary(l):#The key is the F-value of the states
@@ -68,7 +70,7 @@ def update_cell(C):#updates the cell in Board if possible
 		for i in xrange(len(d[n])):
 			print "I:",i
 			print "hvis temp_list[i]  !=  ", int(d[n][i]), "then temp_list[i]=-1"
-			if temp_list[i]!=int(d[n][i]): 
+			if temp_list[i]!=int(d[n][i]):
 				temp_list[i] = -1
 		print temp_list
 		if not possible_to_update(temp_list): return [] #temp_list should be all -1's
@@ -167,7 +169,7 @@ def extend_queue_cells(C, state):
 	new_c = deque()
 	if C[1].get_is_row():
 		for index in xrange(len(C[1].get_domain()[0])):
-			print "Hvis ikke  ", state.get_board_cell(C[1].get_index(), index), " == -1" 
+			print "Hvis ikke  ", state.get_board_cell(C[1].get_index(), index), " == -1"
 			if state.get_board_cell(C[1].get_index(), index) != -1:
 				print "new constraint:  ", [ [index, state.get_board_cell(C[1].get_index(), index)], C[1] ]
 				new_c.append( [ [index, state.get_board_cell(C[1].get_index(), index)], C[1] ] )
@@ -206,12 +208,20 @@ def is_done(state):
 	pass
 ###--- Astar ---###
 def Astar(start_state):
+	import gui
 	print "Astar is running..."
 	all_states = create_dictionary(start_state.get_h())
 	all_states[start_state.get_h()].append(start_state)
 	#
 	children = generate_child_states(start_state)
 	for c in children:
+
+		gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
+		gui.app.processEvents()
+
+		print "GUI processing from astar"
+
+		time.sleep(1.5)
 		print "assumption: ", c.get_assumption()
 		queue = create_GAC_queue(c, c.get_assumption())
 		print "Queue:"
