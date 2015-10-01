@@ -227,11 +227,6 @@ def Astar(start_state):
 		for row in c.get_board():
 			print row
 		print '\n\n\n'
-		pass
-#
-#
-#if __name__ == '__main__':
-	#qc = Queue()
-	#qr = Queue()
-	#Astar(rf.read_graph("nono-heart.txt")#,qc,qr))
-Astar(rf.read_graph("nono-heart.txt"))
+
+if __name__ == '__main__':
+	Astar(rf.read_graph("nono-cat.txt"))

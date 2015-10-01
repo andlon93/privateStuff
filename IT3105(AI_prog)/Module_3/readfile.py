@@ -14,10 +14,11 @@ def read_graph(path):
 	cols_and_rows_size =f.readline().split()
 	cols_size = int(cols_and_rows_size[0])
 	rows_size = int(cols_and_rows_size[1])
-	for i in range (cols_size):
-		cols.append((f.readline().split()))
 	for i in range (rows_size):
 		rows.append((f.readline().split()))
+	for i in range (cols_size):
+		cols.append((f.readline().split()))
+
 	variable_rows = []
 	variable_cols = []
 	for i in range (cols_size):
