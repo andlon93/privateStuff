@@ -35,14 +35,14 @@ def read_graph(path,qc,qr):
 
 	k = [None] * cols_size
 	for i in range(cols_size):
-		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc))
+		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc,))
 		k[i].start()
 	for i in range (cols_size):
 		k[i].join()
 
 	t = [None] * rows_size
 	for i in range(rows_size):
-		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i,qr))
+		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i,qr,))
 		t[i].start()
 	for i in range (rows_size):
 		t[i].join()
@@ -75,7 +75,7 @@ def bubble_sort(items):
 def make_cols(cols_size, rows_size,cols,i,qc):
 	#print "making cols"
 	#variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
-	qc.put(Variable.Variable(False,i, cols[i], rows_size),)
+	qc.put(Variable.Variable(False,i, cols[i], rows_size))
 	return True
 
 def make_rows(rows_size, cols_size,rows,i,qr):
