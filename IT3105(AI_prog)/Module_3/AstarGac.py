@@ -42,7 +42,7 @@ def generate_child_states(state):
 	rows = state.get_rows()
 	cols = state.get_cols()
 	row_list = [-1]*len(rows)
-	col_list = [-1]*len(rows)
+	col_list = [-1]*len(cols)
 	for row in rows:
 		if len(row.get_domain()) < 2:
 			row_list[row.get_index()] = -1
@@ -101,14 +101,44 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 #
 ###--- Revice methods ---###
 def revice(C, state):
-	d = C[0].get_domain()
-	print len(d)
-	if len(d) == 1:
-		for n in d:
-			print n
+	d_0 = C[0].get_domain()
+	index = C[1].get_index()
+	d_1 = C[1].get_domain()
+	#
+	#print d_0
+	#print len(d_1)
+	#print "index", index
+	new_domain = []
+	if len(d_0) == 1:
+		for n in xrange(len(d_1)):
+			#print d_1[n]
+			#print d_0[0][index], d_1[n][index]
+			if d_0[0][index] == d_1[n][index]:
+				new_domain.append(d_1[0])
+		#print len(new_domain)
+		return new_domain
+	else:
+		temp_val = d_0[0][index]
+		is_possible = True
+		#print temp_val
+		#print is_possible
+		for n in xrange(1, len(d_0)):
+			if d_0[n][index] != temp_val:
+				print "test"
+				is_possible = False
+		#print temp_val
+		#print is_possible
 
+		if is_possible:
+			for n in xrange(len(d_1)):
+				if d_0[0][index] == d_1[n][index]:
+					new_domain.append(d_1[0])
 
-
+		#print "len", len(new_domain)
+		if new_domain:
+			return new_domain
+		else:
+			return d_1
 #
 ###--- Revice methods ---###
 #
@@ -168,5 +198,5 @@ if __name__ == '__main__':
 
 	qr = Queue(maxsize=0) 
 
-	Astar(rf.read_graph("nono-rabbit.txt", qc, qr))
+	Astar(rf.read_graph("nono-heart.txt", qc, qr))
 
