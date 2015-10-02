@@ -95,6 +95,6 @@ def getSizes(path): #Just for GUI debug
 if __name__ == '__main__':
 	qc = Queue(maxsize=0)
 	qr = Queue(maxsize=0)
-	s = read_graph("nono-chick.txt",qc,qr)
+	s = read_graph("nono-rabbit.txt",qc,qr)
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)
