@@ -31,11 +31,11 @@ def get_best_state(all_states):#get one of the best states from the dict
 #
 ###--- methods to generate child states ---###
 #
-def create_state(state, assumption):
+'''def create_state(state, assumption):
 	new_state=State.State(copy.deepcopy(state.get_rows()), copy.deepcopy(state.get_cols()), state))
 	
 	new_state.set_assumption(assumption)
-	return new_state
+	return new_state'''
 #
 def generate_child_states(state):
 	children = []
@@ -80,12 +80,14 @@ def generate_child_states(state):
 ###--- GAC methods ---###
 #
 def create_GAC_queue(state, assumption):#Generates the queue of constraints to run
+	pass
 	
 #
 ###--- Revice methods ---###
 #
 
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
+	pass
 
 #
 ###--- Methods to check validity of a state ---###
@@ -107,6 +109,7 @@ def is_valid_state(state):
 					is_possible = True
 			if not is_possible: return False
 	return True
+
 #
 def is_done(state):
 	for row in xrange(len(state.get_board())):
@@ -131,10 +134,10 @@ def is_done(state):
 def Astar(start_state):
 	#import gui
 	print "Astar is running..."
-	all_states = create_dictionary(start_state.get_h())
+	#all_states = create_dictionary(start_state.get_h())
 	#all_states[start_state.get_h()].append(start_state)
 	#
-	children = generate_child_states(start_state)
+	#children = generate_child_states(start_state)
 
 	'''gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
 	gui.app.processEvents()
@@ -144,4 +147,6 @@ def Astar(start_state):
 
 
 if __name__ == '__main__':
-	b = Astar(rf.read_graph("nono-heart.txt"))
+	qc = Queue(maxsize=0)
+	qr = Queue(maxsize=0) 
+	Astar(rf.read_graph("nono-rabbit.txt", qc, qr))
