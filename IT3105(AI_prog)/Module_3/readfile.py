@@ -13,8 +13,6 @@ rows_size = None
 k = None
 t = None
 
-
-
 def read_graph(path,qc,qr):
 	start_time = time.time()
 	#

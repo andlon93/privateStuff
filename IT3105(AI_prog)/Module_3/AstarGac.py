@@ -85,17 +85,23 @@ def create_GAC_queue(state, assumption):#Generates the queue of constraints to r
 #
 ###--- Revice methods ---###
 #
-def ex(q):
+def extend_queue(state, var):
 	queue = deque()
-	if q.is_row:
-		rad,col
+	if var.is_row:
+		for col in state.cols:
+			queue.append(var, col)
+	else:
+		for row in state.rows:
+			queue.append(var, row)
+	return queue
+
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 	while queue:
 		q                  = queue.popleft()   	  #popper constraint fra ko
 		length_pre_revise  = len(q[1].get_domain)
 		length_post_revice = revice(q)			  #kjorer revice paa constrainten som ble poppet
 		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
-			queue.extend( extend_queue(q[1]))
+			queue.extend( extend_queue(state, q[1]))
 #
 
 #
