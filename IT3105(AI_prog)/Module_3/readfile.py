@@ -32,27 +32,30 @@ def read_graph(path,qc,qr):
 		rows.append((f.readline().split()))
 	var_rows = []
 	var_cols = []
+	variable_rows = []
+	variable_cols = []
+
+	print "cols_size, len(cons): ",cols_size, len(cols)
 
 	k = [None] * cols_size
 	for i in range(cols_size):
 		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc,))
 		k[i].start()
+	for i in range(cols_size):
+		variable_cols.append(qc.get())
 	for i in range (cols_size):
+		print "Joining k: ",i
 		k[i].join()
 
 	t = [None] * rows_size
 	for i in range(rows_size):
 		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i,qr,))
 		t[i].start()
-	for i in range (rows_size):
-		t[i].join()
-
-	variable_rows = []
-	variable_cols = []
-	for i in range(cols_size):
-		variable_cols.append(qc.get())
 	for i in range(rows_size):
 		variable_rows.append(qr.get())
+	for i in range (rows_size):
+		t[i].join()
+	print "Threads done"
 
 	variable_cols = bubble_sort(variable_cols)
 	variable_rows = bubble_sort(variable_rows)
@@ -75,12 +78,14 @@ def bubble_sort(items):
 def make_cols(cols_size, rows_size,cols,i,qc):
 	#print "making cols"
 	#variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
+	#qc.cancel_join_thread()
 	qc.put(Variable.Variable(False,i, cols[i], rows_size))
 	return True
 
 def make_rows(rows_size, cols_size,rows,i,qr):
 	#print "making rows"
 #	variable_rows.append( Variable.Variable(True,i, rows[i], cols_size) )
+	#qr.cancel_join_thread()
 	qr.put( Variable.Variable(True,i, rows[i], cols_size) )
 	return True
 
@@ -94,7 +99,7 @@ def getSizes(path): #Just for GUI debug
 if __name__ == '__main__':
 	qc = Queue(maxsize=0)
 	qr = Queue(maxsize=0)
-	s = read_graph("nono-chick.txt",qc,qr)
+	s = read_graph("nono-cat.txt",qc,qr)
 	print "done?"
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)
