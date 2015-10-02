@@ -33,7 +33,7 @@ def get_best_state(all_states):#get one of the best states from the dict
 #
 '''def create_state(state, assumption):
 	new_state=State.State(copy.deepcopy(state.get_rows()), copy.deepcopy(state.get_cols()), state))
-	
+
 	new_state.set_assumption(assumption)
 	return new_state'''
 #
@@ -81,13 +81,22 @@ def generate_child_states(state):
 #
 def create_GAC_queue(state, assumption):#Generates the queue of constraints to run
 	pass
-	
+
 #
 ###--- Revice methods ---###
 #
-
+def ex(q):
+	queue = deque()
+	if q.is_row:
+		rad,col
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
-	pass
+	while queue:
+		q                  = queue.popleft()   	  #popper constraint fra ko
+		length_pre_revise  = len(q[1].get_domain)
+		length_post_revice = revice(q)			  #kjorer revice paa constrainten som ble poppet
+		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
+			queue.extend( extend_queue(q[1]))
+#
 
 #
 ###--- Methods to check validity of a state ---###
@@ -144,9 +153,7 @@ def Astar(start_state):
 	print "GUI processing from astar"
 	time.sleep(0.5)'''
 
-
-
 if __name__ == '__main__':
 	qc = Queue(maxsize=0)
-	qr = Queue(maxsize=0) 
+	qr = Queue(maxsize=0)
 	Astar(rf.read_graph("nono-rabbit.txt", qc, qr))
