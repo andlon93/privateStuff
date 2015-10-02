@@ -14,6 +14,15 @@ class Variable:
 		#print "Creating variable, 222 is_row, index: ",is_row,index
 	#
 	def isValid(self,s,blocks):
+
+		total_1s = s.count('1')
+		total_in_blocks = 0
+		for j in blocks:
+			total_in_blocks += int(j)
+
+		if total_1s != total_in_blocks:
+			return False
+
 		b = copy.deepcopy(blocks) # Blocks
 		current_block = 0
 		group_done = False

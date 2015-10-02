@@ -6,6 +6,7 @@ import Node
 import math
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from multiprocessing import Queue
 from threading import *
 import AstarGac
 
@@ -80,26 +81,29 @@ def initialise_color_matrix():
 			color_matrix[c][r] = (Qt.blue)
 	return color_matrix
 
-color_matrix = []
-rectMatrix = []
-print ("Scenario:")
-# graph = "nono-"
-# graph += raw_input("")
-# graph += ".txt"
-graph = "nono-heart.txt"
-cols_size, rows_size = readfile.getSizes(graph)
 
-cols_px, rows_px = calculate_size(cols_size, rows_size)
-color_matrix = initialise_color_matrix()
-rectMatrix = generate_rectMatrix(color_matrix)
 
-t = Thread(target=worker)
-t.start()
+if __name__ == '__main__':
+	color_matrix = []
+	rectMatrix = []
+	print ("Scenario:")
+	# graph = "nono-"
+	# graph += raw_input("")
+	# graph += ".txt"
+	graph = "nono-heart.txt"
+	cols_size, rows_size = readfile.getSizes(graph)
 
-app = QApplication([])
-circles = Draw()
-circles.show()
-qc = Queue(maxsize=0)
-qr = Queue(maxsize=0)
-AstarGac.Astar(readfile.read_graph(graph,qc,qr))
-app.exec_()
+	cols_px, rows_px = calculate_size(cols_size, rows_size)
+	color_matrix = initialise_color_matrix()
+	rectMatrix = generate_rectMatrix(color_matrix)
+
+	t = Thread(target=worker)
+	t.start()
+
+	app = QApplication([])
+	circles = Draw()
+	circles.show()
+	qc = Queue(maxsize=0)
+	qr = Queue(maxsize=0)
+	AstarGac.Astar(readfile.read_graph(graph,qc,qr))
+	app.exec_()
