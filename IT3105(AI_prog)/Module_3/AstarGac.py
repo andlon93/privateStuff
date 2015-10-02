@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import State
 import Variable
 import readfile as rf
@@ -121,7 +123,7 @@ def revice(C, state):
 	else:
 		#print d_0
 		#print "index", index
-	
+
 		temp_val = d_0[0][index]
 		is_possible = True
 		#print temp_val
@@ -179,8 +181,14 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 ###--- Methods to check validity of a state ---###
 #
 def is_done(state):
-
-	return False
+	#TODO: Legg if på om row/col er storst, loop over minst
+	for row in state.rows:
+		if len(row.domain) != 1:
+			return False
+	for col in state.cols:
+		if len(col.domain) != 1:
+			return False
+	return True
 #
 ###--- Astar ---###
 def Astar(start_state):
@@ -207,7 +215,7 @@ def Astar(start_state):
 					print "after filter"
 					for row in current_state.cols:
 						print len(row.domain)
-			
+
 			all_states = add_states_to_dict(valid_children, all_states)
 			current_state = get_best_state(all_states)
 			children = generate_child_states(current_state)
