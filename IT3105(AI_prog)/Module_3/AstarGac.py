@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import State
 import Variable
 import readfile as rf
@@ -210,8 +212,14 @@ def is_in_closed(closed, state):
 	return True
 #
 def is_done(state):
-
-	return False
+	#TODO: Legg if på om row/col er storst, loop over minst
+	for row in state.rows:
+		if len(row.domain) != 1:
+			return False
+	for col in state.cols:
+		if len(col.domain) != 1:
+			return False
+	return True
 #
 ###--- Astar ---###
 def Astar(start_state):
@@ -248,8 +256,10 @@ def Astar(start_state):
 					print "\n"
 					for row in current_state.rows:
 						print len(row.domain)
+
 					print "\n"
 			print "valid_children",valid_children
+
 			all_states = add_states_to_dict(valid_children, all_states)
 			#for s in all_states:
 			#	print all_states[state]
