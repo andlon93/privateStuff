@@ -160,6 +160,4 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	qc = Queue(maxsize=0)
-	qr = Queue(maxsize=0)
-	Astar(rf.read_graph("nono-rabbit.txt", qc, qr))
+	Astar(rf.read_graph("nono-rabbit.txt"))
