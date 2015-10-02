@@ -7,9 +7,11 @@ class Variable:
 	index = None
 	#
 	def __init__(self, is_row, index, blocks, length):
+		#print "Creating variable, 111 is_row, index: ",is_row,index
 		self.is_row = is_row
 		self.index = index
 		self.create_full_domain(blocks, length)
+		#print "Creating variable, 222 is_row, index: ",is_row,index
 	#
 	def isValid(self,s,blocks):
 		b = copy.deepcopy(blocks) # Blocks
