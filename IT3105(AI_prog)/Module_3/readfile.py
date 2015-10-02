@@ -44,7 +44,6 @@ def read_graph(path,qc,qr):
 	for i in range(cols_size):
 		variable_cols.append(qc.get())
 	for i in range (cols_size):
-		print "Joining k: ",i
 		k[i].join()
 
 	t = [None] * rows_size
@@ -59,9 +58,6 @@ def read_graph(path,qc,qr):
 
 	variable_cols = bubble_sort(variable_cols)
 	variable_rows = bubble_sort(variable_rows)
-
-	for i in range(len(variable_cols)):
-		print "index",variable_cols[i].index
 
 	Start_state = State.State(variable_rows, variable_cols, None)
 
@@ -99,7 +95,6 @@ def getSizes(path): #Just for GUI debug
 if __name__ == '__main__':
 	qc = Queue(maxsize=0)
 	qr = Queue(maxsize=0)
-	s = read_graph("nono-cat.txt",qc,qr)
-	print "done?"
+	s = read_graph("nono-heart.txt",qc,qr)
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)
