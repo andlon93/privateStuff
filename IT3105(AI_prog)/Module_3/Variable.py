@@ -17,6 +17,15 @@ class Variable:
 		group_done = False
 		group_started = False
 		done = False
+
+		total_1s = s.count('1')
+		total_in_blocks = 0
+		for j in blocks:
+			total_in_blocks += int(j)
+
+		if total_1s != total_in_blocks:
+			return False
+
 		for c in s: #For character in string, aka 0 or 1
 
 			if c == '1' and done == True:
