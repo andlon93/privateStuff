@@ -27,10 +27,11 @@ def read_graph(path,qc,qr):
 
 	cols = []
 	rows = []
-	for i in range (cols_size):
-		cols.append((f.readline().split()))
 	for i in range (rows_size):
 		rows.append((f.readline().split()))
+	for i in range (cols_size):
+		cols.append((f.readline().split()))
+
 	var_rows = []
 	var_cols = []
 	variable_rows = []
