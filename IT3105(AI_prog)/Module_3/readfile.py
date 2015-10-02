@@ -13,7 +13,9 @@ rows_size = None
 k = None
 t = None
 
-def read_graph(path,qc,qr):
+def read_graph(path):
+	qc = Queue(maxsize=0)
+	qr = Queue(maxsize=0)
 	start_time = time.time()
 	#
 	f = open(path, 'r')
@@ -52,14 +54,14 @@ def read_graph(path,qc,qr):
 		variable_rows.append(qr.get())
 	for i in range (rows_size):
 		t[i].join()
-	print "Threads done"
 
 	variable_cols = bubble_sort(variable_cols)
 	variable_rows = bubble_sort(variable_rows)
 
 	Start_state = State.State(variable_rows, variable_cols, None)
 
-	print("--- %s seconds ---" % (time.time() - start_time))
+	print ""
+	print("--- Domains generated in %s seconds ---" % (time.time() - start_time))
 	return Start_state
 
 def bubble_sort(items):
@@ -70,16 +72,10 @@ def bubble_sort(items):
     return items
 
 def make_cols(cols_size, rows_size,cols,i,qc):
-	#print "making cols"
-	#variable_cols.append(Variable.Variable(False,i, cols[i], rows_size))
-	#qc.cancel_join_thread()
 	qc.put(Variable.Variable(False,i, cols[i], rows_size))
 	return True
 
 def make_rows(rows_size, cols_size,rows,i,qr):
-	#print "making rows"
-#	variable_rows.append( Variable.Variable(True,i, rows[i], cols_size) )
-	#qr.cancel_join_thread()
 	qr.put( Variable.Variable(True,i, rows[i], cols_size) )
 	return True
 
@@ -92,8 +88,6 @@ def getSizes(path): #Just for GUI debug
 
 
 if __name__ == '__main__':
-	qc = Queue(maxsize=0)
-	qr = Queue(maxsize=0)
-	s = read_graph("nono-rabbit.txt",qc,qr)
+	s = read_graph("nono-chick.txt")
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)
