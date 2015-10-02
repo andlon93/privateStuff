@@ -18,7 +18,7 @@ def create_dictionary(l):#The key is the F-value of the states
 def add_states_to_dict(states, d):#add newly created states to the dict
 	for state in states:
 		try:
-			d[state.get_h()].append(state)
+			d[state.get_h()+state.get_g()].append(state)
 		except:
 			print "Algorithm failed - add_states_to_dict"
 			return False
@@ -101,13 +101,14 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 #
 ###--- Revice methods ---###
 def revice(C, state):
+	#is_valid = True
 	d_0 = C[0].get_domain()
+	if len(d_0) == 0:
+		return False, []
 	index = C[1].get_index()
 	d_1 = C[1].get_domain()
 	#
 	#print d_0
-	#print len(d_1)
-	#print "index", index
 	new_domain = []
 	if len(d_0) == 1:
 		for n in xrange(len(d_1)):
@@ -116,8 +117,11 @@ def revice(C, state):
 			if d_0[0][index] == d_1[n][index]:
 				new_domain.append(d_1[0])
 		#print len(new_domain)
-		return new_domain
+		return True, new_domain
 	else:
+		#print d_0
+		#print "index", index
+	
 		temp_val = d_0[0][index]
 		is_possible = True
 		#print temp_val
@@ -136,41 +140,47 @@ def revice(C, state):
 
 		#print "len", len(new_domain)
 		if new_domain:
-			return new_domain
+			return True, new_domain
 		else:
-			return d_1
+			return True, d_1
 #
 ###--- Revice methods ---###
 #
 def extend_queue(state, var):
 	queue = deque()
-	if var.is_row:
-		for col in state.cols:
+	if var.get_is_row():
+		for col in state.get_cols():
 			temp = [var,col]
 			queue.append(temp)
 	else:
-		for row in state.rows:
+		for row in state.get_rows():
 			temp = [var,row]
 			queue.append(temp)
 	return queue
 
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 	while queue:
-		print len(queue)
-		time.sleep(0.2)
+		print "koLengde ",len(queue)
+		#time.sleep(0.2)
 		q                  = queue.popleft()   	  #popper constraint fra ko
 		length_pre_revise  = len(q[1].domain)
-		length_post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
-		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
+		is_valid, post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
+		#
+		if not is_valid: return False
+		if q[1].get_is_row():
+			state.get_row(q[1].get_index()).domain = post_revice
+		else:
+			state.get_col(q[1].get_index()).domain = post_revice
+		#
+		if length_pre_revise > len(post_revice):  #hvis domenet har blitt forkortet maa nye constarints inn i ko
 			queue.extend( extend_queue(state, q[1]))
-#
+	return True
 #
 ###--- Methods to check validity of a state ---###
-def is_valid_state(state):
-	pass
 #
 def is_done(state):
-	pass
+
+	return False
 #
 ###--- Astar ---###
 def Astar(start_state):
@@ -178,17 +188,38 @@ def Astar(start_state):
 
 	all_states = create_dictionary(start_state.get_h())
 	current_state = start_state
-	children = generate_child_states(start_state)
-	current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
-	queue = create_GAC_queue(current_state)
-	for row in current_state.rows:
-		print len(row.domain)
+	children = generate_child_states(current_state)
+	#
+	while True:
+		if len(children)>0:
+			valid_children = []
+			for child in children:
+				#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
+				current_state = child
+				queue = create_GAC_queue(current_state)
+				for row in current_state.cols:
+					print len(row.domain)
+				print "\n"
+				is_valid = Filter(current_state,queue)
+				if is_valid:
+					child.set_h(child.calculate_h())
+					valid_children.append(child)
+					print "after filter"
+					for row in current_state.cols:
+						print len(row.domain)
+			
+			all_states = add_states_to_dict(valid_children, all_states)
+			current_state = get_best_state(all_states)
+			children = generate_child_states(current_state)
+			all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
+			if is_done(current_state):
+				print "FERDIG"
+		else:
+			current_state = get_best_state(all_states)
+			children = generate_child_states(current_state)
+			all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
 
-	Filter(current_state,queue)
-
-	print "after filter"
-	for row in current_state.rows:
-		print len(row.domain)
+		print "\n"
 
 
 	#print len(children)
