@@ -41,8 +41,8 @@ def generate_child_states(state):
 	children = []
 	rows = state.get_rows()
 	cols = state.get_cols()
-	row_list = []
-	col_list = []
+	row_list = [-1]*len(rows)
+	col_list = [-1]*len(rows)
 	for row in rows:
 		if len(row.get_domain()) < 2:
 			row_list[row.get_index()] = -1
@@ -53,34 +53,61 @@ def generate_child_states(state):
 			col_list[col.get_index()] = -1
 		else:
 			col_list[col.get_index()] = len(col.get_domain())
+	print row_list,'\n',col_list
 	#
 	best_row_variable = 0#index
-	for n in xrange(1, row_list):
-		if row_list[best_row_variable] > row_list[n]:
+	for n in xrange(1, len(row_list)):
+		if row_list[best_row_variable] > row_list[n] and row_list[n] > 0:
 			best_row_variable = n
 	best_col_variable = 0#index
-	for n in xrange(1, col_list):
+	for n in xrange(1, len(col_list)):
 		if col_list[best_col_variable] > col_list[n]:
 			best_col_variable = n
 	#
-	if row_list[best_row_variable] < col_list[best_col_variable]:
+	print best_row_variable, best_col_variable
+	if row_list[best_row_variable] <= col_list[best_col_variable]:
 		for domain in rows[best_row_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
 			rows = copy.deepcopy(state.get_rows())
-			rows[best_row_variable].domain = domain
+			rows[best_row_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
+			children[-1].set_assumption( [children[-1].get_row(best_row_variable), children[-1].get_row(best_row_variable).get_domain()] )
+			print "is_row on new child: ", children[-1].get_assumption()[0].get_is_row()
 	else:
 		for domain in cols[best_col_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
 			rows = copy.deepcopy(state.get_rows())
-			cols[best_col_variable].domain = domain
+			cols[best_col_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
+			children[-1].set_assumption( [children[-1].get_col(best_col_variable), children[-1].get_col(best_col_variable).get_domain()] )
+			print "is_row on new child: ", children[-1].get_assumption()
+	#print len(children)
+	return children
 
 #
 ###--- GAC methods ---###
 #
-def create_GAC_queue(state, assumption):#Generates the queue of constraints to run
-	pass
+
+def create_GAC_queue(state):#Generates the queue of constraints to run
+	queue = deque()
+	assumption = state.get_assumption()[0]
+	if assumption.get_is_row():
+		for n in state.get_cols():
+			queue.append( [assumption, n] )
+	else:
+		for n in state.get_rows():
+			queue.append( [assumption, n] )
+	return queue
+#
+###--- Revice methods ---###
+def revice(C, state):
+	d = C[0].get_domain()
+	print len(d)
+	if len(d) == 1:
+		for n in d:
+			print n
+
+
 
 #
 ###--- Revice methods ---###
@@ -95,6 +122,7 @@ def extend_queue(state, var):
 			queue.append(var, row)
 	return queue
 
+
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 	while queue:
 		q                  = queue.popleft()   	  #popper constraint fra ko
@@ -107,53 +135,29 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 #
 ###--- Methods to check validity of a state ---###
 def is_valid_state(state):
-	for row in xrange(len(state.get_board())):
-		for col in xrange(len(state.get_board()[row])):
-			rute = state.get_board_cell(row, col)
-			#if rute == -1:
-			#	return False
-			is_possible = False
-			for d in state.get_row(row).get_domain():
-				if rute == d[col] or rute == -1:
-					is_possible = True
-			if not is_possible: return False
-			is_possible = False
-			for d in state.get_col(col).get_domain():
-				is_possible = False
-				if rute == d[row] or rute == -1:
-					is_possible = True
-			if not is_possible: return False
-	return True
+	pass
 
 #
 def is_done(state):
-	for row in xrange(len(state.get_board())):
-		for col in xrange(len(state.get_board()[row])):
-			rute = state.get_board_cell(row, col)
-			if rute == -1:
-				return False
-			for d in state.get_row(row).get_domain():
-				is_possible = False
-				if rute == d[col]:
-					is_possible = True
-			if not is_possible: return False
-			for d in state.get_col(col).get_domain():
-				is_possible = False
-				if rute == d[row]:
-					is_possible = True
-			if not is_possible: return False
-	return True
+	pass
 #
 #
 ###--- Astar ---###
 def Astar(start_state):
 	#import gui
 	print "Astar is running..."
-	#all_states = create_dictionary(start_state.get_h())
+	all_states = create_dictionary(start_state.get_h())
 	#all_states[start_state.get_h()].append(start_state)
 	#
-	#children = generate_child_states(start_state)
-
+	children = generate_child_states(start_state)
+	#print len(children)
+	for child in children:
+		queue = create_GAC_queue(child)
+		for q in queue:
+			#print q[0].get_domain(), q[1].get_domain(), '\n'
+			revice(q, child)
+			break
+		break
 	'''gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
 	gui.app.processEvents()
 	print "GUI processing from astar"
@@ -161,3 +165,4 @@ def Astar(start_state):
 
 if __name__ == '__main__':
 	Astar(rf.read_graph("nono-rabbit.txt"))
+
