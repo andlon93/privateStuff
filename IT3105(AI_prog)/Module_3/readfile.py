@@ -54,14 +54,14 @@ def read_graph(path):
 		variable_rows.append(qr.get())
 	for i in range (rows_size):
 		t[i].join()
-	print "Threads done"
 
 	variable_cols = bubble_sort(variable_cols)
 	variable_rows = bubble_sort(variable_rows)
 
 	Start_state = State.State(variable_rows, variable_cols, None)
 
-	print("--- %s seconds ---" % (time.time() - start_time))
+	print ""
+	print("--- Domains generated in %s seconds ---" % (time.time() - start_time))
 	return Start_state
 
 def bubble_sort(items):

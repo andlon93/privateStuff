@@ -102,12 +102,8 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 ###--- Revice methods ---###
 def revice(C, state):
 	d = C[0].get_domain()
-	print len(d)
-	if len(d) == 1:
-		for n in d:
-			print n
-
-
+	print "revicing"
+	return len(d)
 
 #
 ###--- Revice methods ---###
@@ -116,53 +112,63 @@ def extend_queue(state, var):
 	queue = deque()
 	if var.is_row:
 		for col in state.cols:
-			queue.append(var, col)
+			temp = [var,col]
+			queue.append(temp)
 	else:
 		for row in state.rows:
-			queue.append(var, row)
+			temp = [var,row]
+			queue.append(temp)
 	return queue
-
 
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 	while queue:
+		print len(queue)
+		time.sleep(0.2)
 		q                  = queue.popleft()   	  #popper constraint fra ko
-		length_pre_revise  = len(q[1].get_domain)
-		length_post_revice = revice(q)			  #kjorer revice paa constrainten som ble poppet
+		length_pre_revise  = len(q[1].domain)
+		length_post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
 		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
 			queue.extend( extend_queue(state, q[1]))
 #
-
 #
 ###--- Methods to check validity of a state ---###
 def is_valid_state(state):
 	pass
-
 #
 def is_done(state):
 	pass
 #
-#
 ###--- Astar ---###
 def Astar(start_state):
-	#import gui
 	print "Astar is running..."
+
 	all_states = create_dictionary(start_state.get_h())
-	#all_states[start_state.get_h()].append(start_state)
-	#
+	current_state = start_state
 	children = generate_child_states(start_state)
+	current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
+	queue = create_GAC_queue(current_state)
+	for row in current_state.rows:
+		print len(row.domain)
+
+	Filter(current_state,queue)
+
+	print "after filter"
+	for row in current_state.rows:
+		print len(row.domain)
+
+
 	#print len(children)
-	for child in children:
-		queue = create_GAC_queue(child)
-		for q in queue:
-			#print q[0].get_domain(), q[1].get_domain(), '\n'
-			revice(q, child)
-			break
-		break
+	# for child in children:
+	# 	queue = create_GAC_queue(child)
+	# 	for q in queue:
+	# 		revice(q, child)
+	# 		break
+	# 	break
 	'''gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
 	gui.app.processEvents()
 	print "GUI processing from astar"
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	Astar(rf.read_graph("nono-rabbit.txt"))
+	Astar(rf.read_graph("nono-heart.txt"))
 
