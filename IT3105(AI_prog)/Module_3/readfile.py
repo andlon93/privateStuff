@@ -33,11 +33,6 @@ def read_graph(path):
 	for i in range (cols_size):
 		cols.append((f.readline().split()))
 
-	for c in cols:
-		print "col",c
-	for c in rows:
-		print "row", c
-
 	var_rows = []
 	var_cols = []
 	variable_rows = []

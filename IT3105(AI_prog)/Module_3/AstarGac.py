@@ -230,32 +230,32 @@ def Astar(start_state):
 	current_state = start_state
 	children = generate_child_states(current_state)
 	#
-	#while True:
-	for xxx in xrange(2):
+	while True:
+	#for xxx in xrange(2):
 		if children:
 			valid_children = []
-			print children
+			#print children
 			for child in children:
 				if not is_in_closed(closed, child):
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					current_state = child
 					queue = create_GAC_queue(current_state)
-					for col in current_state.cols:
-						print len(col.domain)
-					print "\n"
-					for row in current_state.rows:
-						print len(row.domain)
+					# for col in current_state.cols:
+					# 	print len(col.domain)
+					# print "\n"
+					# for row in current_state.rows:
+					# 	print len(row.domain)
 					is_valid = Filter(current_state,queue)
 					print "is_valid", is_valid
 					if is_valid:
 						child.set_h(child.calculate_h())
 						valid_children.append(child)
-					print "\n\nafter filter"
-					for col in current_state.cols:
-						print len(col.domain)
-					print "\n"
-					for row in current_state.rows:
-						print len(row.domain)
+					# print "\n\nafter filter"
+					# for col in current_state.cols:
+					# 	print len(col.domain)
+					# print "\n"
+					# for row in current_state.rows:
+					# 	print len(row.domain)
 
 					print "\n"
 			print "valid_children",valid_children

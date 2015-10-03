@@ -2,7 +2,6 @@ from __future__ import division
 
 import readfile
 import time
-import Node
 import math
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -60,6 +59,15 @@ def generate_rectMatrix(color_matrix):
 			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[c][r]))
 	return rectMatrix
 
+def generate_board(rows,cols):
+	board = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+	for i in range (len(rows)):
+		if len(rows[i].domain)==1:
+			for k in range(len(rows[i])):
+				board[i][k] = rows[i].get_domain()[k]
+
+	pass
+
 def generate_color_matrix(board):
 	print "BOOOOOOOOOOARD", board
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
@@ -103,7 +111,5 @@ if __name__ == '__main__':
 	app = QApplication([])
 	circles = Draw()
 	circles.show()
-	qc = Queue(maxsize=0)
-	qr = Queue(maxsize=0)
-	AstarGac.Astar(readfile.read_graph(graph,qc,qr))
+	#AstarGac.Astar(readfile.read_graph(graph))
 	app.exec_()
