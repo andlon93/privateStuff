@@ -29,8 +29,14 @@ def read_graph(path):
 	rows = []
 	for i in range (rows_size):
 		rows.append((f.readline().split()))
+	rows = list(reversed(rows))
 	for i in range (cols_size):
 		cols.append((f.readline().split()))
+
+	for c in cols:
+		print "col",c
+	for c in rows:
+		print "row", c
 
 	var_rows = []
 	var_cols = []
@@ -89,5 +95,5 @@ def getSizes(path): #Just for GUI debug
 
 if __name__ == '__main__':
 	s = read_graph("nono-chick.txt")
-	for rad in s.rows:
-		print "DOmain: ",len(rad.domain)
+	# for rad in s.rows:
+	# 	print "DOmain: ",len(rad.domain)
