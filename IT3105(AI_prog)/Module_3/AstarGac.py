@@ -324,7 +324,6 @@ def is_in_closed(closed, state):
 	return True
 #
 def is_Valid_line(s, blocks):
-		#Generer alle muligheter for 2 -> 1/0, kjør denne på alle - profit
 		total_1s = s.count('1')
 		total_in_blocks = 0
 		for j in blocks:
@@ -446,14 +445,21 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			constraints.append([row, col])
 			constraints.append([col, row])
 
+	temp, board = current_state.make_board()
+	for r in board:
+		print r
 	Filter(current_state, constraints)
+	print "\nFirst filtering done \n"
+	temp, board = current_state.make_board()
+	for r in board:
+		print r
+	print ""
+	# for row in current_state.get_rows():
+	# 	print row.domain
+	# print '\n'
+	# for col in current_state.get_cols():
+	# 	print col.domain
 
-	for row in current_state.get_rows():
-		print row.domain
-	print '\n'
-	for col in current_state.get_cols():
-		print col.domain
-	print "FERDIG med forste filter"
 
 	children = generate_child_states(current_state)
 	#
@@ -487,15 +493,17 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						print col.get_domain()'''
 
 					temp, board = child.make_board()
-					for row in child.get_rows():
-						print row.get_domain()
-					print '\n'
-					for col in child.cols:
-						print col.domain
-					print '\n'
-					for r in board:
-						print r
-					print "Temp", temp
+					for b in board:
+						print b
+
+
+					# print '\n'
+					# for col in child.cols:
+					# 	print col.domain
+					# print '\n'
+					# for r in board:
+					# 	print r
+					# print "Temp", temp
 					if temp and is_valid_state(board, constraints_rows, constraints_columns):
 						print "H for filter: ",child.get_h()
 						child.set_h(child.calculate_h())
@@ -529,14 +537,14 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					print s, all_states[s]
 			current_state = get_best_state(all_states)
 			print "current_state", 	current_state
-			if True:
-				print "rows:"
-				for row in current_state.get_rows():
-					print row.get_domain()
-				print "\nCols:"
-				for col in current_state.get_cols():
-					print col.get_domain()
-				print "\n\n"
+			# if True:
+			# 	print "rows:"
+			# 	for row in current_state.get_rows():
+			# 		print row.get_domain()
+			# 	print "\nCols:"
+			# 	for col in current_state.get_cols():
+			# 		print col.get_domain()
+			# 	print "\n\n"
 
 			children = generate_child_states(current_state)
 			#
@@ -570,7 +578,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-rabbit.txt")
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
