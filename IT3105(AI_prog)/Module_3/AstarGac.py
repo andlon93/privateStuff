@@ -309,4 +309,4 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	Astar(rf.read_graph("nono-heart.txt"))
+	Astar(rf.read_graph("nono-cat.txt"))

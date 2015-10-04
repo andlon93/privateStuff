@@ -56,7 +56,7 @@ def calculate_size(cols_size,rows_size): #Calculates pixels per col/row
 def generate_rectMatrix(color_matrix):
 	for c in range(cols_size):
 		for r in range(rows_size):
-			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[c][r]))
+			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[r][c]))
 	return rectMatrix
 
 def generate_board(state):
@@ -89,15 +89,15 @@ def generate_color_matrix(board):
 
 def initialise_color_matrix():
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
-	for c in range(cols_size):
-		for r in range(rows_size):
-			print "c,r: ",c,r
-			color_matrix[c][r] = (Qt.blue)
+	# for c in range(cols_size):
+	# 	for r in range(rows_size):
+	# 		print "c,r: ",c,r
+	# 		color_matrix[c][r] = (Qt.blue)
 	return color_matrix
 
 color_matrix = []
 rectMatrix = []
-graph = "nono-heart.txt"
+graph = "nono-cat.txt"
 cols_size, rows_size = readfile.getSizes(graph)
 cols_px, rows_px = calculate_size(cols_size, rows_size)
 
