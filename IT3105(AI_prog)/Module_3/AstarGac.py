@@ -274,15 +274,18 @@ def Astar(start_state):
 					# 	print len(row.domain)
 					Filter(current_state,queue)
 					if is_valid_state(child):
+						child.set_h(child.calculate_h())
+						valid_children.append(child)
+						##-- check if if child is a solution --##
 						if is_done(child):
 							print "ER I MAAL!!!"
+							print "Antall steg til maal: ", child.get_g()
 							for row in child.get_rows():
 								print row.get_domain()[0]
 							for col in child.get_cols():
 								print col.get_domain()[0]
 						##
-						child.set_h(child.calculate_h())
-						valid_children.append(child)
+						
 					# print "\n\nafter filter"
 					# for col in current_state.cols:
 					# 	print len(col.domain)
