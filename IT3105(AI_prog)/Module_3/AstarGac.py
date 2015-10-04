@@ -233,14 +233,22 @@ def is_in_closed(closed, state):
 	return True
 #
 def is_done(state):
-	#TODO: Legg if på om row/col er storst, loop over minst
-	for row in state.rows:
-		if len(row.domain) != 1:
-			return False
-	for col in state.cols:
-		if len(col.domain) != 1:
-			return False
-	return True
+	if len(state.rows) < len(state.cols):
+		for row in state.rows:
+			if len(row.domain) != 1:
+				return False
+		for col in state.cols:
+			if len(col.domain) != 1:
+				return False
+		return True
+	else:
+		for col in state.cols:
+			if len(col.domain) != 1:
+				return False
+		for row in state.rows:
+			if len(row.domain) != 1:
+				return False
+		return True
 #
 ###--- Astar ---###
 def Astar(start_state):
