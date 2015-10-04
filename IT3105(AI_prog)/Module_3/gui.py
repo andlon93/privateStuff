@@ -74,7 +74,7 @@ def generate_board(state):
 
 
 def generate_color_matrix(board):
-	print "BOOOOOOOOOOARD", board
+	print "BOOOOOOOOOOARD"
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
 	for c in range(len(board)):
 		for r in range(len(board[c])):

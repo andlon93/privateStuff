@@ -472,8 +472,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					#print "child not in closed"
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					current_state = child
-
-					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(current_state.make_board()))
+					temp, board = current_state.make_board()
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 					gui.app.processEvents()
 					time.sleep(0.1)
 
@@ -543,7 +543,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			current_state = get_best_state(all_states)
 
 			gui.app.processEvents()
-			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(current_state.make_board()))
+			temp, board = current_state.make_board()
+			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 			gui.app.processEvents()
 			time.sleep(0.1)
 
