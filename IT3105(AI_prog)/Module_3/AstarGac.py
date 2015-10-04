@@ -283,18 +283,18 @@ def is_done(state):
 
 #
 def brute_force(start_state):
-	rows = [None] * len(start_state.rows)
-	cols = [None] * len(start_state.cols)
-	for i in range(len(start_state.rows)):
-		rows[i] = start_state.rows[i]
-		rows[i].domain = rows[i].domain[0]
-	for i in range(len(start_state.cols)):
-		cols[i] = start_state.cols[i]
-		cols[i].domain = cols[i].domain[0]
+	current_state = copy.deepcopy(start_state)
+	rows = [None] * len(current_state.rows)
+	cols = [None] * len(current_state.cols)
+	for i in range(len(current_state.rows)):
+		current_state.rows[i].domain = start_state.rows[i].domain[0]
+	for i in range(len(current_state.cols)):
+		current_state.cols[i].domain = start_state.cols[i].domain[0]
 
-	for row in rows:
+
+	for row in current_state.rows:
 		print row.domain
-	for col in cols:
+	for col in current_state.cols:
 		print col.domain
 
 
@@ -394,4 +394,4 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
+	er_i_maal = brute_force(rf.read_graph("nono-heart.txt"))
