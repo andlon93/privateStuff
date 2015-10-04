@@ -377,5 +377,4 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	print is_valid_state(rf.read_graph("nono-heart.txt"))
-	#er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
+	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
