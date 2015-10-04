@@ -361,31 +361,36 @@ valid_chars = ['0','1']
 combos = []
 
 def is_valid_state(board, constraints_rows, constraints_columns):
-
+	del combos[:]
 	rows_valid = [False] * len(board)
-	for r in range (len(board)):
-		generate_combos(board[r],"")
+	for row in range (len(board)):
+		generate_combos(board[row],"")
 		for combo in combos:
-			if is_Valid_line(combo, constraints_rows[r]):
-				rows_valid[r] = True
-	print board[0]
+			if is_Valid_line(combo, constraints_rows[row]):
+				rows_valid[row] = True
+		del combos[:]
+
+	del combos[:]
 	cols_valid = [False] * len(board[0])
 	temp_string = ""
 	for column_index in range (len(board[0])):
 		for row_index in range (len(board)):
 			temp_string += board[row_index][column_index]
 		generate_combos(temp_string,"")
+		temp_string += board[-1][column_index]
 		for combo in combos:
 			if is_Valid_line(combo, constraints_columns[column_index]):
 				cols_valid[column_index] = True
+				break
+		del combos[:]
 		temp_string = ""
-
-
 	for t in rows_valid:
 		if t == False:
+			print "NOT VALID STATE - rows"
 			return False
 	for t in cols_valid:
 		if t == False:
+			print "NOT VALID STATE - cols"
 			return False
 	return True
 
@@ -401,6 +406,7 @@ def is_done(state):
 
 def generate_combos(mask, combination):
 	# Takes string of form 0102211 and generates all possible strings, where 2 can be 1 or 0
+
 	if len(mask) <= 0:
 		combos.append(combination)
 		return
@@ -425,8 +431,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			valid_children = []
 			#print children
 			for child in children:
-				if True:
-				#if not is_in_closed(closed, child):
+				#if True:
+				if not is_in_closed(closed, child):
 					#print "child not in closed"
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					queue = create_GAC_queue(child)
@@ -450,8 +456,15 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						print col.get_domain()'''
 
 					temp, board = child.make_board()
+					for row in child.get_rows():
+						print row.get_domain()
+					print '\n'
+					for col in child.cols:
+						print col.domain
+					print '\n'
 					for r in board:
 						print r
+					print "Temp", temp
 					if temp and is_valid_state(board, constraints_rows, constraints_columns):
 						print "H for filter: ",child.get_h()
 						child.set_h(child.calculate_h())
@@ -526,8 +539,9 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	start_state, rows, cols = rf.read_graph("nono-cat.txt")
 	Astar(start_state,rows,cols)
-	# generate_combos("002211","")
+	# print is_Valid_line("0011111000",[4])
+	# generate_combos("00111112000","")
 	# for comb in combos:
 	# 	print comb
