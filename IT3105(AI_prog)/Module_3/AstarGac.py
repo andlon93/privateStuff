@@ -236,8 +236,8 @@ def revice(C, state):
 ##############################
 def revise(C, state):
 	if C[0].get_is_row():
-		index_d0 = state.get_col(C[0].get_index()).get_index()
-		index_d1 = state.get_row(C[1].get_index()).get_index()
+		index_d0 = state.get_row(C[0].get_index()).get_index()
+		index_d1 = state.get_col(C[1].get_index()).get_index()
 		#
 		is_possible = True
 		#
@@ -571,7 +571,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	start_state, rows, cols = rf.read_graph("nono-camel.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
