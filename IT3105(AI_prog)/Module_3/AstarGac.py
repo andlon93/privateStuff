@@ -284,6 +284,7 @@ def Astar(start_state):
 								print row.get_domain()[0]
 							for col in child.get_cols():
 								print col.get_domain()[0]
+							return True
 						##
 						
 					# print "\n\nafter filter"
@@ -306,8 +307,10 @@ def Astar(start_state):
 			all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
 			closed[current_state.get_h()].append(current_state)
 			#
+			'''
 			if is_done(current_state):
 				print "FERDIG"
+			'''
 		else:
 			current_state = get_best_state(all_states)
 			children = generate_child_states(current_state)
@@ -330,4 +333,4 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	Astar(rf.read_graph("nono-heart.txt"))
+	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
