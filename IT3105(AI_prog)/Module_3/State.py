@@ -113,7 +113,7 @@ class State:
 							self.board[col.index][n] = True
 						elif self.board[col.index][n] == False:
 							self.board[col.index][n] = False
-		for b in self.board:
+		#for b in self.board:
 			print b
 		b = []
 		for row in xrange(len(self.board)):
