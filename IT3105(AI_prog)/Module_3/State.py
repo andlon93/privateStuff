@@ -69,18 +69,15 @@ class State:
 		for col in self.cols:
 			if len(col.domain) == 1:
 				for n in xrange(len(col.domain[0])):
+					#print col.domain[0][n]
 					if self.board[n][col.index] == None:
-						if col[0][n] == '1':
+						if col.domain[0][n] == '1':
 							self.board[n][col.index] = True
-						elif col[0][n] == '0':
+						elif col.domain[0][n] == '0':
 							self.board[n][col.index] = False
-					elif col[0][n] == '1' and self.board[n][col.index] == False:
-						self.board[n][col.index] = None
-					elif col[0][n] == '0' and self.board[n][col.index] == True:
-						self.board[n][col.index] = None
-					elif col[0][n] == '1' and self.board[n][col.index] == False:
+					elif col.domain[0][n] == '1' and self.board[n][col.index] == False:
 						return False, []
-					elif col[0][n] == '0' and self.board[n][col.index] == True:
+					elif col.domain[0][n] == '0' and self.board[n][col.index] == True:
 						return False, []
 			else:
 				temp_list = [True]*len(col.domain[0])
@@ -128,7 +125,7 @@ class State:
 			b.append(rad)
 
 		return True, b
-					
+
 
 	#
 	def get_parent(self): return self.parent
