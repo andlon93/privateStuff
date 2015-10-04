@@ -434,6 +434,7 @@ def generate_combos(mask, combination):
 #
 ###--- Astar ---###
 def Astar(start_state, constraints_rows, constraints_columns):
+	start_time2 = time.time()
 	print "Astar is running..."
 	closed = create_dictionary(start_state.get_h())
 	##
@@ -511,6 +512,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						valid_children.append(child)
 						##-- check if if child is a solution --##
 						if child.get_h() == 0 and is_done(child):
+							print("--- Solved in %s seconds ---" % (time.time() - start_time2))
 							print "ER I MAAL!!!"
 							print "Antall steg til maal: ", child.get_g()
 							# for row in child.get_rows():
@@ -578,7 +580,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	start_state, rows, cols = rf.read_graph("nono-sailboat.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
