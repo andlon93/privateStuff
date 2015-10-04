@@ -223,6 +223,7 @@ def is_done(state):
 #
 ###--- Astar ---###
 def Astar(start_state):
+	import gui
 	print "Astar is running..."
 	closed = create_dictionary(start_state.get_h())
 	##
@@ -231,6 +232,7 @@ def Astar(start_state):
 	children = generate_child_states(current_state)
 	#
 	while True:
+		time.sleep(0.2)
 	#for xxx in xrange(2):
 		if children:
 			valid_children = []
@@ -239,6 +241,12 @@ def Astar(start_state):
 				if not is_in_closed(closed, child):
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					current_state = child
+
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(gui.generate_board(current_state)))
+					gui.app.processEvents()
+					time.sleep(0.1)
+
+
 					queue = create_GAC_queue(current_state)
 					# for col in current_state.cols:
 					# 	print len(col.domain)
@@ -264,6 +272,13 @@ def Astar(start_state):
 			#for s in all_states:
 			#	print all_states[state]
 			current_state = get_best_state(all_states)
+
+			gui.app.processEvents()
+			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(gui.generate_board(current_state)))
+			gui.app.processEvents()
+			time.sleep(0.1)
+
+
 			print "current_state", 	current_state
 			children = generate_child_states(current_state)
 			#

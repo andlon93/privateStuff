@@ -59,14 +59,19 @@ def generate_rectMatrix(color_matrix):
 			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[c][r]))
 	return rectMatrix
 
-def generate_board(rows,cols):
-	board = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+def generate_board(state):
+	rows = state.rows
+	cols = state.cols
+	board = [[-1 for x in xrange(cols_size)] for x in xrange(rows_size)]
 	for i in range (len(rows)):
 		if len(rows[i].domain)==1:
-			for k in range(len(rows[i])):
-				board[i][k] = rows[i].get_domain()[k]
+			for k in range(len(rows[i].get_domain())):
+				board[i][k] = int(rows[i].get_domain()[0][k])
+		else:
+			for k in range(len(rows[i].get_domain()[0])):
+				board[i][k] = -1
+	return board
 
-	pass
 
 def generate_color_matrix(board):
 	print "BOOOOOOOOOOARD", board
@@ -76,6 +81,7 @@ def generate_color_matrix(board):
 			if board[c][r] == -1:
 				color_matrix[c][r] = (Qt.gray)
 			elif board[c][r] == 0:
+				print "COLOR MATRIX FANT 0"
 				color_matrix[c][r] = (Qt.white)
 			elif board[c][r] == 1:
 				color_matrix[c][r] = (Qt.blue)
@@ -89,27 +95,34 @@ def initialise_color_matrix():
 			color_matrix[c][r] = (Qt.blue)
 	return color_matrix
 
+color_matrix = []
+rectMatrix = []
+graph = "nono-heart.txt"
+cols_size, rows_size = readfile.getSizes(graph)
+cols_px, rows_px = calculate_size(cols_size, rows_size)
 
+color_matrix = initialise_color_matrix()
+rectMatrix = generate_rectMatrix(color_matrix)
+app = QApplication([])
+circles = Draw()
+
+
+t = Thread(target=worker)
+t.start()
+
+
+circles.show()
+AstarGac.Astar(readfile.read_graph(graph))
+app.exec_()
 
 if __name__ == '__main__':
-	color_matrix = []
-	rectMatrix = []
+
 	print ("Scenario:")
 	# graph = "nono-"
 	# graph += raw_input("")
 	# graph += ".txt"
-	graph = "nono-heart.txt"
-	cols_size, rows_size = readfile.getSizes(graph)
 
-	cols_px, rows_px = calculate_size(cols_size, rows_size)
-	color_matrix = initialise_color_matrix()
-	rectMatrix = generate_rectMatrix(color_matrix)
 
-	t = Thread(target=worker)
-	t.start()
 
-	app = QApplication([])
-	circles = Draw()
-	circles.show()
-	#AstarGac.Astar(readfile.read_graph(graph))
-	app.exec_()
+
+
