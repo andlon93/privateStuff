@@ -19,55 +19,44 @@ class Variable:
 		total_in_blocks = 0
 		for j in blocks:
 			total_in_blocks += int(j)
-
-		if total_1s != total_in_blocks:
+		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
 			return False
 
-		b = copy.deepcopy(blocks) # Blocks
+		b = copy.deepcopy(blocks) # Blocks. e.g. [1,3,2]
 		current_block = 0
 		group_done = False
 		group_started = False
 		done = False
+
 		for c in s: #For character in string, aka 0 or 1
 
-			if c == '1' and done == True:
-				# Found a 1 after we are supposed to have found them all.
-				return False
-
-			elif c == '1' and group_done == False:
-				# Found a 1, while looking for 1
-				group_started = True
-				b[current_block] = int (b[current_block]) - 1 # Decrease remaining number of 1's in the current block
-				if b[current_block] == 0:			# If this is 0, it means all of the 1's in the current group has been found
-					group_done    = True    		# This group of 1's is done
-					group_started = False   		# There is currently no group of 1's
-					current_block += 1				# move to look for the next block of 1's
-					if current_block > (len(b)-1):  # If all blocks have been found:
-						done = True # If we find another 1 after done == True, there are too many.
-
-			elif c == '1' and group_done == True:
+			if c == '1' and group_done == True:
 				# Found a 1 when excepting a 0
 				return False
-
-			elif c == '0' and group_done == True:
-				# Found a 0 when excepting a 0
-				group_done = False
 
 			elif c == '0' and group_done == False and group_started == True:
 				# Found a 0 when excpecting a 1
 				return False
 
-		num_true = 0
-		tot_true = 0
-		for c in blocks:
-			tot_true += int(c)
-		for c in s:
-			if c == '1':
-				num_true += 1
+			elif c == '1' and group_done == False:
+				# Found a 1, when looking for 1
+				group_started = True
+				b[current_block] = int (b[current_block]) - 1 # Decrease remaining number of 1's in the current block
+				if b[current_block] == 0:			# If this is 0, it means all of the 1's in the current group has been found
+					group_done    = True    		# This group of 1's is done
+					group_started = False   		# There is currently no group of 1's active
+					current_block += 1				# move to look for the next block of 1's
+					if current_block > (len(b)-1):  # If all blocks have been found:
+						return True
+						done = True # If we find another 1 after done == True, there are too many.
 
-		#print "num_true, tot_true: ",num_true,tot_true
-		if (tot_true!=num_true):
-			return False
+			elif c == '0' and group_done == True:
+				# Found a 0 when excepting a 0
+				group_done = False
+
+			elif c == '1' and done == True:
+				# Found a 1 after we are supposed to have found them all.
+				return False
 		return True
 	#
 	def create_full_domain(self, blocks, length):#create the full domain
