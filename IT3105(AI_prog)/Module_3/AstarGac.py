@@ -473,7 +473,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					current_state = child
 
-					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(gui.generate_board(current_state)))
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(current_state.make_board()))
 					gui.app.processEvents()
 					time.sleep(0.1)
 
@@ -543,7 +543,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			current_state = get_best_state(all_states)
 
 			gui.app.processEvents()
-			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(gui.generate_board(current_state)))
+			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(current_state.make_board()))
 			gui.app.processEvents()
 			time.sleep(0.1)
 
@@ -584,13 +584,13 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	# 		revice(q, child)
 	# 		break
 	# 	break
-	'''gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(c.get_board()))
+	'''gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(current_state.make_board()))
 	gui.app.processEvents()
 	print "GUI processing from astar"
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-camel.txt")
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")

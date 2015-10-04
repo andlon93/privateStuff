@@ -81,7 +81,6 @@ def generate_color_matrix(board):
 			if board[c][r] == -1:
 				color_matrix[c][r] = (Qt.gray)
 			elif board[c][r] == 0:
-				print "COLOR MATRIX FANT 0"
 				color_matrix[c][r] = (Qt.white)
 			elif board[c][r] == 1:
 				color_matrix[c][r] = (Qt.blue)
@@ -111,12 +110,15 @@ t = Thread(target=worker)
 t.start()
 
 
-circles.show()
-AstarGac.Astar(readfile.read_graph(graph))
-app.exec_()
+
 
 if __name__ == '__main__':
-
+	circles.show()
+	start_state, rows, cols = readfile.read_graph("nono-heart.txt")
+	k = Thread(target=AstarGac.Astar, args=(start_state,rows,cols))
+	k.start()
+	#AstarGac.Astar(start_state,rows,cols)
+	app.exec_()
 	print ("Scenario:")
 	# graph = "nono-"
 	# graph += raw_input("")
