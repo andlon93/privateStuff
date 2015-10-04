@@ -56,7 +56,7 @@ def generate_child_states(state):
 			col_list[col.get_index()] = -1
 		else:
 			col_list[col.get_index()] = len(col.get_domain())
-	print row_list,'\n',col_list
+	#print row_list,'\n',col_list
 	#
 	best_row_variable = 0#index
 	for n in xrange(1, len(row_list)):
@@ -67,7 +67,7 @@ def generate_child_states(state):
 		if col_list[best_col_variable] > col_list[n]:
 			best_col_variable = n
 	#
-	print best_row_variable, best_col_variable
+	#print best_row_variable, best_col_variable
 	if row_list[best_row_variable] <= col_list[best_col_variable]:
 		for domain in rows[best_row_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
@@ -75,7 +75,7 @@ def generate_child_states(state):
 			rows[best_row_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
 			children[-1].set_assumption( [children[-1].get_row(best_row_variable), children[-1].get_row(best_row_variable).get_domain()] )
-			print "is_row on new child: ", children[-1].get_assumption()[0].get_is_row()
+			#print "is_row on new child: ", children[-1].get_assumption()[0].get_is_row()
 	else:
 		for domain in cols[best_col_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
@@ -243,13 +243,14 @@ def is_valid_state(state):
 	is_valid = [False] * len(state.rows) # Every row starts as invalid
 
 	for r in range (len(state.rows)): # r = row index
-		for c in range (len(state.rows[r])): # k = col index
-			for row_domain in state.rows[r].domain # Loop over all domains in row[i]
+		for c in range (len(state.cols)): # k = col index
+			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
 				#Check cell in all domains against all domains in corresponding column
 				cell_value = row_domain[c]
 				for col_domain in state.cols[c].domain:
 					if cell_value == col_domain[r]:
 						is_valid[r] = True
+						break
 	for val in is_valid:
 		if not val:
 			return False
@@ -312,7 +313,7 @@ def Astar(start_state):
 								print col.get_domain()[0]
 							return True
 						##
-						
+
 					# print "\n\nafter filter"
 					# for col in current_state.cols:
 					# 	print len(col.domain)
@@ -359,4 +360,5 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
+	print is_valid_state(rf.read_graph("nono-heart.txt"))
+	#er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
