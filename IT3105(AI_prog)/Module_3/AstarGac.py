@@ -314,8 +314,6 @@ def is_in_closed(closed, state):
 #
 def is_Valid_line(s, blocks):
 		#Generer alle muligheter for 2 -> 1/0, kjør denne på alle - profit
-
-		s = s.translate(None, ''.join(chars_to_remove))
 		total_1s = s.count('1')
 		total_in_blocks = 0
 		for j in blocks:
@@ -361,22 +359,34 @@ def is_Valid_line(s, blocks):
 
 valid_chars = ['0','1']
 combos = []
+
 def is_valid_state(board, constraints_rows, constraints_columns):
+
+	rows_valid = [False] * len(board)
 	for r in range (len(board)):
 		generate_combos(board[r],"")
 		for combo in combos:
-			if not is_Valid_line(combo, constraints_rows):
-				return False
-
-	temp_string = None
+			if is_Valid_line(combo, constraints_rows[r]):
+				rows_valid[r] = True
+	print board[0]
+	cols_valid = [False] * len(board[0])
+	temp_string = ""
 	for column_index in range (len(board[0])):
 		for row_index in range (len(board)):
 			temp_string += board[row_index][column_index]
 		generate_combos(temp_string,"")
 		for combo in combos:
-			if not is_Valid_line(combo, constraints_rows):
-				return False
-		temp_string = None
+			if is_Valid_line(combo, constraints_columns[column_index]):
+				cols_valid[column_index] = True
+		temp_string = ""
+
+
+	for t in rows_valid:
+		if t == False:
+			return False
+	for t in cols_valid:
+		if t == False:
+			return False
 	return True
 
 def is_done(state):
@@ -439,8 +449,10 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					for col in child.get_cols():
 						print col.get_domain()'''
 
-
-					if is_valid_state(child, constraints_rows, constraints_columns):
+					temp, board = child.make_board()
+					for r in board:
+						print r
+					if temp and is_valid_state(board, constraints_rows, constraints_columns):
 						print "H for filter: ",child.get_h()
 						child.set_h(child.calculate_h())
 						print "H etter filter: ",child.get_h(),"\n"
@@ -514,8 +526,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	# start_state, rows, cols = rf.read_graph("nono-heart.txt")
-	# Astar(start_state,rows,cols)
-	generate_combos("002211","")
-	for comb in combos:
-		print comb
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	Astar(start_state,rows,cols)
+	# generate_combos("002211","")
+	# for comb in combos:
+	# 	print comb
