@@ -467,7 +467,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	children = generate_child_states(current_state)
 	#
 	while True:
-		time.sleep(0.2)
+		time.sleep(1)
 	#for xxx in xrange(2):
 		if children:
 			valid_children = []
@@ -478,10 +478,11 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					#print "child not in closed"
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					current_state = child
+
 					temp, board = current_state.make_board()
 					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 					gui.app.processEvents()
-					time.sleep(0.1)
+					time.sleep(1)
 
 
 					queue = create_GAC_queue(current_state)
@@ -531,6 +532,11 @@ def Astar(start_state, constraints_rows, constraints_columns):
 							# 	print row.get_domain()[0]
 							# for col in child.get_cols():
 							# 	print col.get_domain()[0]
+							temp, board = child.make_board()
+							gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+
+							gui.app.processEvents()
+							time.sleep(20)
 							return True
 						##
 
@@ -599,8 +605,10 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	print "GUI processing from astar"
 	time.sleep(0.5)'''
 
+show_gui = True
+
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-sailboat.txt")
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
