@@ -205,15 +205,7 @@ def revice(C, state):
 			if is_row_C1:
 				#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
 				return len(state.get_row(C[1].get_index()).get_domain())
-<<<<<<< HEAD
-				#print "domain etter kol: ", state.get_row(C[1].get_index()).domain
-			else: 
-				#print "domain for nytt rad: ",state.get_col(C[1].get_index()).domain
-=======
-				#print "domain etter: ", state.get_row(C[1].get_index()).domain
-			else:
-				#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
->>>>>>> 3bc73b9fc6c860d457d7e952d43160489befc03c
+
 				return len(state.get_col(C[1].get_index()).get_domain())
 				#print "domain etter kol: ", state.get_col(C[1].get_index()).domain
 
@@ -332,11 +324,7 @@ def is_valid_state(state):
 	is_valid = [False] * len(state.rows) # Every row starts as invalid
 
 	for r in range (len(state.rows)): # r = row index
-<<<<<<< HEAD
 		for c in range (len(state.cols)): # k = col index
-=======
-		for c in range (len(state.cols)): # c = col index
->>>>>>> 3bc73b9fc6c860d457d7e952d43160489befc03c
 			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
 				#Check cell in all domains against all domains in corresponding column
 				cell_value = row_domain[c]
