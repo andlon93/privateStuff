@@ -13,7 +13,7 @@ class State:
 		self.parent = parent
 		self.g = self.calculate_g()
 		self.h = self.calculate_h()
-		self.board = [[-1 for x in xrange(len(self.cols))] for x in xrange(len(self.rows))]
+		self.board = [[None for x in xrange(len(self.cols))] for x in xrange(len(self.rows))]
 	#
 	def calculate_h(self):
 		h = 0
@@ -41,6 +41,95 @@ class State:
 	def get_board(self): return self.board
 	def get_board_cell(self, row, col): return self.board[row][col]
 	def set_board_cell(self, row, col, val): self.board[row][col] = val
+	def make_board(self):
+		for row in self.rows:
+			if len(row.domain) == 1:
+				for n in xrange(len(row.domain[0])):
+					if row.domain[0][n] == '1':
+						self.board[row.index][n] = True
+					elif row.domain[0][n] == '0':
+						self.board[row.index][n] = False
+			else:
+				#print len(row.domain[0])
+				temp_list = [True]*len(row.domain[0])
+				for d_index in xrange(1, len(row.domain)):
+					for n in xrange(0, len(row.domain[d_index])):
+						if temp_list[n] and row.domain[0][n] != row.domain[d_index][n]:
+							temp_list[n] = False
+				#
+				for n in xrange(len(temp_list)):
+					if temp_list[n] == True:
+						if row.domain[0][n] == '1':
+							self.board[row.index][n] = True
+						elif row.domain[0][n] == '0':
+							self.board[row.index][n] = False
+					else:
+						self.board[row.index][n] = None
+		######
+		for col in self.cols:
+			if len(col.domain) == 1:
+				for n in xrange(len(col.domain[0])):
+					if self.board[n][col.index] == None:
+						if col[0][n] == '1':
+							self.board[n][col.index] = True
+						elif col[0][n] == '0':
+							self.board[n][col.index] = False
+					elif col[0][n] == '1' and self.board[n][col.index] == False:
+						self.board[n][col.index] = None
+					elif col[0][n] == '0' and self.board[n][col.index] == True:
+						self.board[n][col.index] = None
+					elif col[0][n] == '1' and self.board[n][col.index] == False:
+						return False, []
+					elif col[0][n] == '0' and self.board[n][col.index] == True:
+						return False, []
+			else:
+				temp_list = [True]*len(col.domain[0])
+				for d_index in xrange(1, len(col.domain)):
+					for n in xrange(len(col.domain[d_index])):
+						if temp_list and col.domain[0][n] != col.domain[d_index][n]:
+							temp_list[n] = False
+				#
+				for n in xrange(len(temp_list)):
+					if temp_list[n]:
+						if col.domain[0][n] == '1':
+							if self.board[n][col.index] == None:
+								self.board[n][col.index] = True
+							elif self.board[n][col.index] == False:
+								return False, []
+							elif self.board[n][col.index] == True:
+								self.board[n][col.index] = True
+
+						elif col.domain[0][n] == '0':
+							if self.board[col.index][n] == None:
+								self.board[col.index][n] = False
+							elif self.board[col.index][n] == True:
+								return False, []
+							elif self.board[n][col.index] == False:
+								self.board[col.index][n] = False
+					else:
+						if self.board[col.index][n] == None:
+							self.board[col.index][n] = None
+						elif self.board[col.index][n] == True:
+							self.board[col.index][n] = True
+						elif self.board[col.index][n] == False:
+							self.board[col.index][n] = False
+		for b in self.board:
+			print b
+		b = []
+		for row in xrange(len(self.board)):
+			rad = ''
+			for col in xrange(len(self.board[row])):
+				if self.board[row][col] == True:
+					rad += '1'
+				elif self.board[row][col] == False:
+					rad += '0'
+				else:
+					rad += '2'
+			b.append(rad)
+
+		return True, b
+					
+
 	#
 	def get_parent(self): return self.parent
 	#
