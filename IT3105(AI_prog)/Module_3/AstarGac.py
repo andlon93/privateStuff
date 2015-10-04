@@ -277,7 +277,7 @@ def Astar(start_state):
 						child.set_h(child.calculate_h())
 						valid_children.append(child)
 						##-- check if if child is a solution --##
-						if is_done(child):
+						if child.get_h() == 0 and is_done(child):
 							print "ER I MAAL!!!"
 							print "Antall steg til maal: ", child.get_g()
 							for row in child.get_rows():
