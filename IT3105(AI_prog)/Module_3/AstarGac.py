@@ -20,7 +20,8 @@ def create_dictionary(l):#The key is the F-value of the states
 def add_states_to_dict(states, d):#add newly created states to the dict
 	for state in states:
 		try:
-			d[state.get_h()+state.get_g()].append(state)
+			#d[state.get_h()+state.get_g()].append(state)
+			d[state.get_h()].append(state)
 		except:
 			print "Algorithm failed - add_states_to_dict"
 			return False
@@ -121,7 +122,14 @@ def revice(C, state):
 
 
 	if len(d_0) == 0 or len(d_1) == 0 or len(d_1)==1:
-		return len(d_1)
+		if is_row_C1:
+			#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
+			#print state.get_row(C[1].get_index()).get_domain()
+			return len(state.get_row(C[1].get_index()).get_domain())
+		else:
+			#print "domain for nytt kol: ",state.get_col(C[1].get_index()).domain
+			#print state.get_col(C[1].get_index()).get_domain()
+			return len(state.get_col(C[1].get_index()).get_domain())
 	index_d0 = C[0].get_index()
 	index_d1 = C[1].get_index()
 	#print "index_d0", index_d0, "index_d1", index_d1
@@ -149,14 +157,26 @@ def revice(C, state):
 		#print new_domain
 		#print len(new_domain)
 		if is_row_C1:
+			#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
 			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
 			#print state.get_row(C[1].get_index()).get_domain()
 			return len(state.get_row(C[1].get_index()).get_domain())
 		else:
+			#print "domain for nytt kol: ",state.get_col(C[1].get_index()).domain
 			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
 			#print state.get_col(C[1].get_index()).get_domain()
 			return len(state.get_col(C[1].get_index()).get_domain())
 	else:
+		#####
+		if is_row_C1:
+			#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
+			#print state.get_row(C[1].get_index()).get_domain()
+			return len(state.get_row(C[1].get_index()).get_domain())
+		else:
+			#print "domain for nytt kol: ",state.get_col(C[1].get_index()).domain
+			#print state.get_col(C[1].get_index()).get_domain()
+			return len(state.get_col(C[1].get_index()).get_domain())
+		#####
 		#print "ER INNE I ELSE-CLAUSEN", "len d_0",len(d_0)
 		#print "index", index
 		is_possible = True
@@ -183,27 +203,73 @@ def revice(C, state):
 						state.get_col(C[1].get_index()).get_domain().remove(d_1[n])'''
 		else: 
 			if is_row_C1:
-				#print "domain for nytt: ",state.get_row(C[1].get_index()).domain
+				#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
 				return len(state.get_row(C[1].get_index()).get_domain())
-				#print "domain etter: ", state.get_row(C[1].get_index()).domain
+				#print "domain etter kol: ", state.get_row(C[1].get_index()).domain
 			else: 
-				#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
+				#print "domain for nytt rad: ",state.get_col(C[1].get_index()).domain
 				return len(state.get_col(C[1].get_index()).get_domain())
-				#print "domain etter: ", state.get_col(C[1].get_index()).domain
+				#print "domain etter kol: ", state.get_col(C[1].get_index()).domain
 
 
 		#print "New domain: ",new_domain
 		if is_row_C1:
-			#print "domain for nytt: ",state.get_row(C[1].get_index()).domain
+			#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
 			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
 			#print "domain etter: ", state.get_row(C[1].get_index()).domain
 			return len(state.get_row(C[1].get_index()).get_domain())
 		else:
-			#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
+			#print "domain for nytt kol: ",state.get_col(C[1].get_index()).domain
 			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
 			#print state.get_col(C[1].get_index()).domain
 			return len(state.get_col(C[1].get_index()).get_domain())
 #
+def revise(C, state):
+	if C[0].get_is_row():
+		index_d0 = state.get_col(C[0].get_index()).get_index()
+		index_d1 = state.get_row(C[1].get_index()).get_index()
+		#
+		is_possible = True
+		#
+		if len(state.get_row(C[0].get_index()).get_domain()) == 0 or len(state.get_col(C[1].get_index()).get_domain()) < 2: 
+			return len(state.get_col(C[1].get_index()).get_domain())
+		elif len(state.get_row(C[0].get_index()).get_domain()) > 1:
+			for n in xrange(1, len(state.get_row(C[0].get_index()).get_domain())):
+				check_val = state.get_row(C[0].get_index()).get_domain()[0][index_d1]
+				if check_val != state.get_row(C[0].get_index()).get_domain()[n][index_d1]:
+					is_possible = False
+		if not is_possible:
+			return len(state.get_col(C[1].get_index()).get_domain())
+		else: 
+			check_val = state.get_row(C[0].get_index()).get_domain()[0][index_d1]
+			for domain in state.get_col(C[1].get_index()).get_domain():
+				if domain[index_d0] != check_val:
+					state.get_col(C[1].get_index()).get_domain().remove( domain )
+		return len(state.get_col(C[1].get_index()).get_domain())
+	else:
+		##-- c[0] == kolonne --##
+		index_d0 = state.get_col(C[0].get_index()).get_index()
+		index_d1 = state.get_row(C[1].get_index()).get_index()
+		#
+		is_possible = True
+		#
+		if len(state.get_col(C[0].get_index()).get_domain()) == 0 or len(state.get_row(C[1].get_index()).get_domain()) < 2:
+			return len(state.get_row(C[1].get_index()).get_domain())
+		elif len(state.get_col(C[0].get_index()).get_domain()) > 1:
+			for n in xrange(1, len(state.get_col(C[0].get_index()).get_domain())):
+				check_val = state.get_col(C[0].get_index()).get_domain()[0][index_d1]
+				if check_val != state.get_col(C[0].get_index()).get_domain()[n][index_d1]:
+					is_possible = False
+		if not is_possible:
+			return len(state.get_row(C[1].get_index()).get_domain())
+		else: 
+			check_val = state.get_col(C[0].get_index()).get_domain()[0][index_d1]
+			for domain in state.get_row(C[1].get_index()).get_domain():
+				if domain[index_d0] != check_val:
+					state.get_row(C[1].get_index()).get_domain().remove( domain )
+		return len(state.get_row(C[1].get_index()).get_domain())
+
+
 ###--- Revice methods ---###
 #
 def extend_queue(state, var):
@@ -224,7 +290,8 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 		#time.sleep(0.2)
 		q                  = queue.popleft()   	  #popper constraint fra ko
 		length_pre_revise  = len(q[1].domain)
-		length_post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
+		#print "q[0]: ",q[0].get_is_row(), q[0].get_index(), "  q[1]:", q[1].get_is_row(), q[1].get_index()
+		length_post_revice = revise(q,state)			  #kjorer revice paa constrainten som ble poppet
 		#
 		#
 		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
@@ -259,7 +326,7 @@ def is_valid_state(state):
 	is_valid = [False] * len(state.rows) # Every row starts as invalid
 
 	for r in range (len(state.rows)): # r = row index
-		for c in range (len(state.rows[r])): # k = col index
+		for c in range (len(state.cols)): # k = col index
 			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
 				#Check cell in all domains against all domains in corresponding column
 				cell_value = row_domain[c]
@@ -295,7 +362,9 @@ def Astar(start_state):
 			valid_children = []
 			#print children
 			for child in children:
-				if not is_in_closed(closed, child):
+				if True:
+				#if not is_in_closed(closed, child):
+					#print "child not in closed"
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					queue = create_GAC_queue(child)
 					# for col in current_state.cols:
@@ -303,21 +372,24 @@ def Astar(start_state):
 					# print "\n"
 					# for row in current_state.rows:
 					# 	print len(row.domain)
-					print "for filter"
+					'''print "for filter"
 					for row in child.get_rows():
 						print row.get_domain()
 					for col in child.get_cols():
 						print col.get_domain()
-					print "\n\n"
+					print "\n\n"'''
+
 					Filter(child,queue)
-					print "etter filter"
+					'''print "etter filter"
 					for row in child.get_rows():
 						print row.get_domain()
 					for col in child.get_cols():
-						print col.get_domain()
+						print col.get_domain()'''
 
 					if is_valid_state(child):
+						print "H for filter: ",child.get_h()
 						child.set_h(child.calculate_h())
+						print "H etter filter: ",child.get_h(),"\n"
 						valid_children.append(child)
 						##-- check if if child is a solution --##
 						if child.get_h() == 0 and is_done(child):
@@ -338,16 +410,28 @@ def Astar(start_state):
 					# 	print len(row.domain)
 
 					print "\n"
+			#return True
 			print "valid_children",valid_children
 
 			all_states = add_states_to_dict(valid_children, all_states)
-			#for s in all_states:
-			#	print all_states[state]
+			for s in all_states:
+				if all_states[s]:
+					print s, all_states[s]
 			current_state = get_best_state(all_states)
 			print "current_state", 	current_state
+			if current_state.get_h() == 2:
+				print "rows:"
+				for row in current_state.get_rows():
+					print row.get_domain()
+				print "\nCols:"
+				for col in current_state.get_cols():
+					print col.get_domain()
+				print "\n\n"
+
 			children = generate_child_states(current_state)
 			#
-			all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
+			#all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
+			all_states[current_state.get_h()].remove(current_state)
 			closed[current_state.get_h()].append(current_state)
 			#
 			'''
