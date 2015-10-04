@@ -118,7 +118,7 @@ def revice(C, state):
 	else:
 		d_1 = state.get_col(C[1].get_index()).get_domain()
 
-	
+
 
 	if len(d_0) == 0 or len(d_1) == 0 :
 		return len(d_1)
@@ -232,23 +232,49 @@ def is_in_closed(closed, state):
 				return False
 	return True
 #
+def is_valid_state(state):
+	for row in state.rows:
+		if len(row.domain) == 0:
+			return False
+
+	for col in state.cols:
+		if len(col.domain) == 0:
+			return False
+
+	is_valid = [False] * len(state.rows) # Every row starts as invalid
+
+	for r in range (len(state.rows)): # r = row index
+		for c in range (len(state.rows[r])): # k = col index
+			for row_domain in state.rows[r].domain # Loop over all domains in row[i]
+				#Check cell in all domains against all domains in corresponding column
+				cell_value = row_domain[c]
+				for col_domain in state.cols[c].domain:
+					if cell_value == col_domain[r]:
+						is_valid[r] = True
+	for val in is_valid:
+		if not val:
+			return False
+	return True
+
+
+
+
+
+
+			# for alle domener i rute i,k, sjekk om det finnes
+
+
+
+	return False
 def is_done(state):
-	if len(state.rows) < len(state.cols):
-		for row in state.rows:
-			if len(row.domain) != 1:
-				return False
-		for col in state.cols:
-			if len(col.domain) != 1:
-				return False
-		return True
-	else:
-		for col in state.cols:
-			if len(col.domain) != 1:
-				return False
-		for row in state.rows:
-			if len(row.domain) != 1:
-				return False
-		return True
+	for row in state.rows:
+		if len(row.domain) != 1:
+			return False
+	for col in state.cols:
+		if len(col.domain) != 1:
+			return False
+	return True
+
 #
 ###--- Astar ---###
 def Astar(start_state):
