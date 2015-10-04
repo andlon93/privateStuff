@@ -221,7 +221,7 @@ def revice(C, state):
 			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
 			#print state.get_col(C[1].get_index()).domain
 			return len(state.get_col(C[1].get_index()).get_domain())
-#
+##############################
 def revise(C, state):
 	if C[0].get_is_row():
 		index_d0 = state.get_col(C[0].get_index()).get_index()
@@ -266,8 +266,7 @@ def revise(C, state):
 				if domain[index_d0] != check_val:
 					state.get_row(C[1].get_index()).get_domain().remove( domain )
 		return len(state.get_row(C[1].get_index()).get_domain())
-
-
+#
 ###--- Revice methods ---###
 #
 def extend_queue(state, var):
@@ -360,20 +359,30 @@ def is_Valid_line(s, blocks):
 valid_chars = ['0','1']
 combos = []
 
+
 def is_valid_state(board, constraints_rows, constraints_columns):
+	##
+
+	##
 
 	rows_valid = [False] * len(board)
 	for r in range (len(board)):
+		print "temp_string", board[r]
 		generate_combos(board[r],"")
+		print len(combos)
 		for combo in combos:
 			if is_Valid_line(combo, constraints_rows[r]):
 				rows_valid[r] = True
-	print board[0]
+	#print board[0]
 	cols_valid = [False] * len(board[0])
 	temp_string = ""
 	for column_index in range (len(board[0])):
 		for row_index in range (len(board)):
 			temp_string += board[row_index][column_index]
+		temp_string += board[-1][column_index]
+		#if column_index == 0:
+		#	print "temp_string",temp_string
+		#	print "constraint: ", constraints_columns[column_index]
 		generate_combos(temp_string,"")
 		for combo in combos:
 			if is_Valid_line(combo, constraints_columns[column_index]):

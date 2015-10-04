@@ -111,7 +111,7 @@ class State:
 						elif self.board[col.index][n] == False:
 							self.board[col.index][n] = False
 		#for b in self.board:
-			print b
+			#print b
 		b = []
 		for row in xrange(len(self.board)):
 			rad = ''
