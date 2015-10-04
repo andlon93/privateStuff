@@ -236,8 +236,8 @@ def revice(C, state):
 ##############################
 def revise(C, state):
 	if C[0].get_is_row():
-		index_d0 = state.get_col(C[0].get_index()).get_index()
-		index_d1 = state.get_row(C[1].get_index()).get_index()
+		index_d0 = state.get_row(C[0].get_index()).get_index()
+		index_d1 = state.get_col(C[1].get_index()).get_index()
 		#
 		is_possible = True
 		#
@@ -389,10 +389,7 @@ def is_valid_state(board, constraints_rows, constraints_columns):
 	for column_index in range (len(board[0])):
 		for row_index in range (len(board)):
 			temp_string += board[row_index][column_index]
-		temp_string += board[-1][column_index]
-		#if column_index == 0:
-		#	print "temp_string",temp_string
-		#	print "constraint: ", constraints_columns[column_index]
+		#temp_string += board[-1][column_index]
 		generate_combos(temp_string,"")
 		temp_string += board[-1][column_index]
 		for combo in combos:
@@ -405,8 +402,10 @@ def is_valid_state(board, constraints_rows, constraints_columns):
 		if t == False:
 			print "NOT VALID STATE - rows"
 			return False
+	print cols_valid
 	for t in cols_valid:
 		if t == False:
+			print
 			print "NOT VALID STATE - cols"
 			return False
 	return True
@@ -506,10 +505,10 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						if child.get_h() == 0 and is_done(child):
 							print "ER I MAAL!!!"
 							print "Antall steg til maal: ", child.get_g()
-							for row in child.get_rows():
-								print row.get_domain()[0]
-							for col in child.get_cols():
-								print col.get_domain()[0]
+							# for row in child.get_rows():
+							# 	print row.get_domain()[0]
+							# for col in child.get_cols():
+							# 	print col.get_domain()[0]
 							return True
 						##
 
@@ -571,7 +570,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	start_state, rows, cols = rf.read_graph("nono-rabbit.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
