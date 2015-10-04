@@ -429,6 +429,21 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	##
 	all_states = create_dictionary(start_state.get_h())
 	current_state = start_state
+	constraints = deque()
+	for row in current_state.get_rows():
+		for col in current_state.get_cols():
+			constraints.append([row, col])
+			constraints.append([col, row])
+
+	Filter(current_state, constraints)
+
+	for row in current_state.get_rows():
+		print row.domain
+	print '\n'
+	for col in current_state.get_cols():
+		print col.domain
+	print "FERDIG med forste filter"
+
 	children = generate_child_states(current_state)
 	#
 	while True:
@@ -544,7 +559,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-cat.txt")
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
