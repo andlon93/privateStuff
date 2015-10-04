@@ -105,11 +105,27 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 ###--- Revice methods ---###
 def revice(C, state):
 	#is_valid = True
-	d_0 = C[0].get_domain()
-	if len(d_0) == 0:
-		return False, []
-	index = C[1].get_index()
-	d_1 = C[1].get_domain()
+	if C[0].get_is_row():
+		d_0 = state.get_row(C[0].get_index()).get_domain()
+
+	else:
+		d_0 = state.get_col(C[0].get_index()).get_domain()
+
+
+	is_row_C1 = C[1].get_is_row()
+	if is_row_C1:
+		d_1 = state.get_row(C[1].get_index()).get_domain()
+	else:
+		d_1 = state.get_col(C[1].get_index()).get_domain()
+
+	
+
+	if len(d_0) == 0 or len(d_1) == 0 :
+		return len(d_1)
+	index_d0 = C[0].get_index()
+	index_d1 = C[1].get_index()
+	print "index_d0", index_d0, "index_d1", index_d1
+	#print d_0[0][index_d1]
 	#
 	#print d_0
 	##
@@ -118,29 +134,36 @@ def revice(C, state):
 	#	print d
 	##
 	new_domain = []
+	print "d0[0][index_d1]: ",d_0[0][index_d1]
 	if len(d_0) == 1:
 		for n in xrange(len(d_1)):
-			#print d_1[n]
-			#print d_0[0][index], d_1[n][index]
+			print n, ": ",	d_1[n]
+			print d_0[0][index_d1], d_1[n][index_d0]
 			#print index, len(d_0[0]), len(d_1[n])
-			if d_0[0][index] == d_1[n][index]:
-				new_domain.append(d_1[0])
-				'''if C[1].get_is_row():
-					state.get_row(C[1].get_index()).get_domain().remove(d_1[0])
+			if d_0[0][index_d1] == d_1[n][index_d0]:
+				new_domain.append(d_1[n])
+				'''if is_row_C1:
+					state.get_row(C[1].get_index()).get_domain().remove(d_1[n])
 				else:
-					state.get_col(C[1].get_index()).get_domain().remove(d_1[0])'''
+					state.get_col(C[1].get_index()).get_domain().remove(d_1[n])'''
+		#print new_domain
 		#print len(new_domain)
-		return True, new_domain
+		if is_row_C1:
+			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
+			print state.get_row(C[1].get_index()).get_domain()
+			return len(state.get_row(C[1].get_index()).get_domain())
+		else:
+			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
+			print state.get_col(C[1].get_index()).get_domain()
+			return len(state.get_col(C[1].get_index()).get_domain())
 	else:
 		#print d_0
 		#print "index", index
-
-		temp_val = d_0[0][index]
 		is_possible = True
 		#print temp_val
 		#print is_possible
 		for n in xrange(1, len(d_0)):
-			if d_0[n][index] != temp_val:
+			if d_0[n][index_d1] != d_0[0][index_d1]:
 				#print "test"
 				is_possible = False
 		#print temp_val
@@ -148,22 +171,22 @@ def revice(C, state):
 
 		if is_possible:
 			for n in xrange(len(d_1)):
-				if d_0[0][index] == d_1[n][index]:
+				if d_0[0][index_d1] == d_1[n][index_d0]:
 					new_domain.append(d_1[0])
-					'''if C[1].get_is_row():
-						state.get_row(C[1].get_index()).get_domain().remove(d_1[0])
+					'''if is_row_C1:
+						state.get_row(C[1].get_index()).get_domain().remove(d_1[n])
 					else:
-						state.get_col(C[1].get_index()).get_domain().remove(d_1[0])'''
+						state.get_col(C[1].get_index()).get_domain().remove(d_1[n])'''
 
 		#print "len", len(new_domain)
-		if new_domain:
-			return True, new_domain
+		if is_row_C1:
+			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
+			print state.get_row(C[1].get_index()).domain
+			return len(state.get_row(C[1].get_index()).get_domain())
 		else:
-			return True, d_1
-			'''if C[1].get_is_row():
-				return True, state.get_row(C[1].get_index()).get_domain()
-			else:
-				return True, state.get_col(C[1].get_index()).get_domain()'''
+			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
+			print state.get_col(C[1].get_index()).domain
+			return len(state.get_col(C[1].get_index()).get_domain())
 #
 ###--- Revice methods ---###
 #
@@ -185,16 +208,14 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 		#time.sleep(0.2)
 		q                  = queue.popleft()   	  #popper constraint fra ko
 		length_pre_revise  = len(q[1].domain)
-		is_valid, post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
+		length_post_revice = revice(q,state)			  #kjorer revice paa constrainten som ble poppet
 		#
-		if not is_valid: return False
-		'''if q[1].get_is_row():
-			state.get_row(q[1].get_index()).domain = post_revice
-		else:
-			state.get_col(q[1].get_index()).domain = post_revice'''
 		#
-		if length_pre_revise > len(post_revice):  #hvis domenet har blitt forkortet maa nye constarints inn i ko
-			queue.extend( extend_queue(state, q[1]))
+		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
+			if q[1].get_is_row():
+				queue.extend( extend_queue(state, state.get_row(q[1].get_index())))
+			else:
+				queue.extend( extend_queue(state, state.get_col(q[1].get_index())))
 	return True
 #
 ###--- Methods to check validity of a state ---###
@@ -231,7 +252,6 @@ def Astar(start_state):
 	children = generate_child_states(current_state)
 	#
 	while True:
-	#for xxx in xrange(2):
 		if children:
 			valid_children = []
 			#print children
