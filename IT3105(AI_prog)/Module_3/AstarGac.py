@@ -75,7 +75,7 @@ def generate_child_states(state):
 			rows[best_row_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
 			children[-1].set_assumption( [children[-1].get_row(best_row_variable), children[-1].get_row(best_row_variable).get_domain()] )
-			print "is_row on new child: ", children[-1].get_assumption()[0].get_is_row()
+			#print "is_row on new child: ", children[-1].get_assumption()[0].get_is_row()
 	else:
 		for domain in cols[best_col_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
@@ -83,7 +83,7 @@ def generate_child_states(state):
 			cols[best_col_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
 			children[-1].set_assumption( [children[-1].get_col(best_col_variable), children[-1].get_col(best_col_variable).get_domain()] )
-			print "is_row on new child: ", children[-1].get_assumption()
+			#print "is_row on new child: ", children[-1].get_assumption()
 	#print len(children)
 	return children
 
@@ -120,11 +120,11 @@ def revice(C, state):
 
 
 
-	if len(d_0) == 0 or len(d_1) == 0 :
+	if len(d_0) == 0 or len(d_1) == 0 or len(d_1)==1:
 		return len(d_1)
 	index_d0 = C[0].get_index()
 	index_d1 = C[1].get_index()
-	print "index_d0", index_d0, "index_d1", index_d1
+	#print "index_d0", index_d0, "index_d1", index_d1
 	#print d_0[0][index_d1]
 	#
 	#print d_0
@@ -134,11 +134,11 @@ def revice(C, state):
 	#	print d
 	##
 	new_domain = []
-	print "d0[0][index_d1]: ",d_0[0][index_d1]
+	#print "d0[0][index_d1]: ",d_0[0][index_d1]
 	if len(d_0) == 1:
 		for n in xrange(len(d_1)):
-			print n, ": ",	d_1[n]
-			print d_0[0][index_d1], d_1[n][index_d0]
+			#print n, ": ",	d_1[n]
+			#print d_0[0][index_d1], d_1[n][index_d0]
 			#print index, len(d_0[0]), len(d_1[n])
 			if d_0[0][index_d1] == d_1[n][index_d0]:
 				new_domain.append(d_1[n])
@@ -150,42 +150,58 @@ def revice(C, state):
 		#print len(new_domain)
 		if is_row_C1:
 			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
-			print state.get_row(C[1].get_index()).get_domain()
+			#print state.get_row(C[1].get_index()).get_domain()
 			return len(state.get_row(C[1].get_index()).get_domain())
 		else:
 			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
-			print state.get_col(C[1].get_index()).get_domain()
+			#print state.get_col(C[1].get_index()).get_domain()
 			return len(state.get_col(C[1].get_index()).get_domain())
 	else:
-		#print d_0
+		#print "ER INNE I ELSE-CLAUSEN", "len d_0",len(d_0)
 		#print "index", index
 		is_possible = True
 		#print temp_val
 		#print is_possible
 		for n in xrange(1, len(d_0)):
+			#print d_0[n][index_d1], d_0[0][index_d1]
 			if d_0[n][index_d1] != d_0[0][index_d1]:
 				#print "test"
 				is_possible = False
 		#print temp_val
-		#print is_possible
+		#print "is_possible", is_possible
 
 		if is_possible:
 			for n in xrange(len(d_1)):
+				#print n, ": ",	d_1[n]
+				#print d_0[0][index_d1], d_1[n][index_d0]
+				#print index, len(d_0[0]), len(d_1[n]) 
 				if d_0[0][index_d1] == d_1[n][index_d0]:
 					new_domain.append(d_1[0])
 					'''if is_row_C1:
 						state.get_row(C[1].get_index()).get_domain().remove(d_1[n])
 					else:
 						state.get_col(C[1].get_index()).get_domain().remove(d_1[n])'''
+		else: 
+			if is_row_C1:
+				#print "domain for nytt: ",state.get_row(C[1].get_index()).domain
+				return len(state.get_row(C[1].get_index()).get_domain())
+				#print "domain etter: ", state.get_row(C[1].get_index()).domain
+			else: 
+				#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
+				return len(state.get_col(C[1].get_index()).get_domain())
+				#print "domain etter: ", state.get_col(C[1].get_index()).domain
 
-		#print "len", len(new_domain)
+
+		#print "New domain: ",new_domain
 		if is_row_C1:
+			#print "domain for nytt: ",state.get_row(C[1].get_index()).domain
 			state.get_row(C[1].get_index()).domain = copy.deepcopy(new_domain)
-			print state.get_row(C[1].get_index()).domain
+			#print "domain etter: ", state.get_row(C[1].get_index()).domain
 			return len(state.get_row(C[1].get_index()).get_domain())
 		else:
+			#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
 			state.get_col(C[1].get_index()).domain = copy.deepcopy(new_domain)
-			print state.get_col(C[1].get_index()).domain
+			#print state.get_col(C[1].get_index()).domain
 			return len(state.get_col(C[1].get_index()).get_domain())
 #
 ###--- Revice methods ---###
@@ -244,7 +260,7 @@ def is_valid_state(state):
 
 	for r in range (len(state.rows)): # r = row index
 		for c in range (len(state.rows[r])): # k = col index
-			for row_domain in state.rows[r].domain # Loop over all domains in row[i]
+			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
 				#Check cell in all domains against all domains in corresponding column
 				cell_value = row_domain[c]
 				for col_domain in state.cols[c].domain:
@@ -255,16 +271,6 @@ def is_valid_state(state):
 			return False
 	return True
 
-
-
-
-
-
-			# for alle domener i rute i,k, sjekk om det finnes
-
-
-
-	return False
 def is_done(state):
 	for row in state.rows:
 		if len(row.domain) != 1:
@@ -291,14 +297,25 @@ def Astar(start_state):
 			for child in children:
 				if not is_in_closed(closed, child):
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
-					current_state = child
-					queue = create_GAC_queue(current_state)
+					queue = create_GAC_queue(child)
 					# for col in current_state.cols:
 					# 	print len(col.domain)
 					# print "\n"
 					# for row in current_state.rows:
 					# 	print len(row.domain)
-					Filter(current_state,queue)
+					print "for filter"
+					for row in child.get_rows():
+						print row.get_domain()
+					for col in child.get_cols():
+						print col.get_domain()
+					print "\n\n"
+					Filter(child,queue)
+					print "etter filter"
+					for row in child.get_rows():
+						print row.get_domain()
+					for col in child.get_cols():
+						print col.get_domain()
+
 					if is_valid_state(child):
 						child.set_h(child.calculate_h())
 						valid_children.append(child)
