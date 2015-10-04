@@ -62,6 +62,8 @@ def read_graph(path):
 	variable_rows = bubble_sort(variable_rows)
 
 	Start_state = State.State(variable_rows, variable_cols, None)
+	for row in Start_state.cols:
+		print "ROW:", row.index, row.is_row, row.domain
 	print ""
 	print("--- Domains generated in %s seconds ---" % (time.time() - start_time))
 	return Start_state
@@ -91,6 +93,6 @@ def getSizes(path): #Just for GUI debug
 
 
 if __name__ == '__main__':
-	s = read_graph("nono-rabbit.txt")
+	s = read_graph("nono-cat.txt")
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)

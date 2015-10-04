@@ -57,7 +57,7 @@ def generate_child_states(state):
 			col_list[col.get_index()] = -1
 		else:
 			col_list[col.get_index()] = len(col.get_domain())
-	print row_list,'\n',col_list
+	#print row_list,'\n',col_list
 	#
 	best_row_variable = 0#index
 	for n in xrange(1, len(row_list)):
@@ -68,7 +68,7 @@ def generate_child_states(state):
 		if col_list[best_col_variable] > col_list[n]:
 			best_col_variable = n
 	#
-	print best_row_variable, best_col_variable
+	#print best_row_variable, best_col_variable
 	if row_list[best_row_variable] <= col_list[best_col_variable]:
 		for domain in rows[best_row_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
@@ -194,20 +194,26 @@ def revice(C, state):
 			for n in xrange(len(d_1)):
 				#print n, ": ",	d_1[n]
 				#print d_0[0][index_d1], d_1[n][index_d0]
-				#print index, len(d_0[0]), len(d_1[n]) 
+				#print index, len(d_0[0]), len(d_1[n])
 				if d_0[0][index_d1] == d_1[n][index_d0]:
 					new_domain.append(d_1[0])
 					'''if is_row_C1:
 						state.get_row(C[1].get_index()).get_domain().remove(d_1[n])
 					else:
 						state.get_col(C[1].get_index()).get_domain().remove(d_1[n])'''
-		else: 
+		else:
 			if is_row_C1:
 				#print "domain for nytt rad: ",state.get_row(C[1].get_index()).domain
 				return len(state.get_row(C[1].get_index()).get_domain())
+<<<<<<< HEAD
 				#print "domain etter kol: ", state.get_row(C[1].get_index()).domain
 			else: 
 				#print "domain for nytt rad: ",state.get_col(C[1].get_index()).domain
+=======
+				#print "domain etter: ", state.get_row(C[1].get_index()).domain
+			else:
+				#print "domain for nytt: ",state.get_col(C[1].get_index()).domain
+>>>>>>> 3bc73b9fc6c860d457d7e952d43160489befc03c
 				return len(state.get_col(C[1].get_index()).get_domain())
 				#print "domain etter kol: ", state.get_col(C[1].get_index()).domain
 
@@ -326,13 +332,18 @@ def is_valid_state(state):
 	is_valid = [False] * len(state.rows) # Every row starts as invalid
 
 	for r in range (len(state.rows)): # r = row index
+<<<<<<< HEAD
 		for c in range (len(state.cols)): # k = col index
+=======
+		for c in range (len(state.cols)): # c = col index
+>>>>>>> 3bc73b9fc6c860d457d7e952d43160489befc03c
 			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
 				#Check cell in all domains against all domains in corresponding column
 				cell_value = row_domain[c]
 				for col_domain in state.cols[c].domain:
 					if cell_value == col_domain[r]:
 						is_valid[r] = True
+						break
 	for val in is_valid:
 		if not val:
 			return False
@@ -401,7 +412,7 @@ def Astar(start_state):
 								print col.get_domain()[0]
 							return True
 						##
-						
+
 					# print "\n\nafter filter"
 					# for col in current_state.cols:
 					# 	print len(col.domain)
