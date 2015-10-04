@@ -69,7 +69,7 @@ def generate_child_states(state):
 			best_col_variable = n
 	#
 	#print best_row_variable, best_col_variable
-	if row_list[best_row_variable] <= col_list[best_col_variable]:
+	'''if row_list[best_row_variable] <= col_list[best_col_variable]:
 		for domain in rows[best_row_variable].get_domain():
 			cols = copy.deepcopy(state.get_cols())
 			rows = copy.deepcopy(state.get_rows())
@@ -84,7 +84,19 @@ def generate_child_states(state):
 			cols[best_col_variable].domain = [domain]
 			children.append( State.State(rows, cols, state) )
 			children[-1].set_assumption( [children[-1].get_col(best_col_variable), children[-1].get_col(best_col_variable).get_domain()] )
-			#print "is_row on new child: ", children[-1].get_assumption()
+			#print "is_row on new child: ", children[-1].get_assumption()'''
+	for domain in rows[best_row_variable].get_domain():
+			cols = copy.deepcopy(state.get_cols())
+			rows = copy.deepcopy(state.get_rows())
+			rows[best_row_variable].domain = [domain]
+			children.append( State.State(rows, cols, state) )
+			children[-1].set_assumption( [children[-1].get_row(best_row_variable), children[-1].get_row(best_row_variable).get_domain()] )
+	for domain in cols[best_col_variable].get_domain():
+			cols = copy.deepcopy(state.get_cols())
+			rows = copy.deepcopy(state.get_rows())
+			cols[best_col_variable].domain = [domain]
+			children.append( State.State(rows, cols, state) )
+			children[-1].set_assumption( [children[-1].get_col(best_col_variable), children[-1].get_col(best_col_variable).get_domain()] )
 	#print len(children)
 	return children
 
@@ -518,7 +530,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					print s, all_states[s]
 			current_state = get_best_state(all_states)
 			print "current_state", 	current_state
-			if current_state.get_h() == 2:
+			if True:
 				print "rows:"
 				for row in current_state.get_rows():
 					print row.get_domain()
