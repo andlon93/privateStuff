@@ -42,6 +42,7 @@ class State:
 	def get_board_cell(self, row, col): return self.board[row][col]
 	def set_board_cell(self, row, col, val): self.board[row][col] = val
 	def make_board(self):
+		b = True
 		for row in self.rows:
 			if len(row.domain) == 1:
 				for n in xrange(len(row.domain[0])):
@@ -76,9 +77,11 @@ class State:
 						elif col.domain[0][n] == '0':
 							self.board[n][col.index] = False
 					elif col.domain[0][n] == '1' and self.board[n][col.index] == False:
-						return False, []
+						#return False, []
+						b = False
 					elif col.domain[0][n] == '0' and self.board[n][col.index] == True:
-						return False, []
+						#return False, []
+						b = False
 			else:
 				temp_list = [True]*len(col.domain[0])
 				for d_index in xrange(1, len(col.domain)):
@@ -92,27 +95,30 @@ class State:
 							if self.board[n][col.index] == None:
 								self.board[n][col.index] = True
 							elif self.board[n][col.index] == False:
-								return False, []
+								#return False, []
+								b = False
 							elif self.board[n][col.index] == True:
 								self.board[n][col.index] = True
 
 						elif col.domain[0][n] == '0':
-							if self.board[col.index][n] == None:
-								self.board[col.index][n] = False
-							elif self.board[col.index][n] == True:
-								return False, []
+							if self.board[n][col.index] == None:
+								self.board[n][col.index] = False
+							elif self.board[n][col.index] == True:
+								#return False, []
+								b = False
 							elif self.board[n][col.index] == False:
-								self.board[col.index][n] = False
+								self.board[n][col.index] = False
 					else:
-						if self.board[col.index][n] == None:
-							self.board[col.index][n] = None
-						elif self.board[col.index][n] == True:
-							self.board[col.index][n] = True
-						elif self.board[col.index][n] == False:
-							self.board[col.index][n] = False
+						if self.board[n][col.index] == None:
+							self.board[n][col.index] = None
+						elif self.board[n][col.index] == True:
+							self.board[n][col.index] = True
+						elif self.board[n][col.index] == False:
+							self.board[n][col.index] = False
 		#for b in self.board:
-			#print b
-		b = []
+
+		#	print b
+		bb = []
 		for row in xrange(len(self.board)):
 			rad = ''
 			for col in xrange(len(self.board[row])):
@@ -122,9 +128,9 @@ class State:
 					rad += '0'
 				else:
 					rad += '2'
-			b.append(rad)
+			bb.append(rad)
 
-		return True, b
+		return b, bb
 
 
 	#
