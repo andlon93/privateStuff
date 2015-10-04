@@ -39,7 +39,7 @@ def read_graph(path):
 	variable_rows = []
 	variable_cols = []
 
-	# These lines spawn a process per column(k), and row (t), and generates all possible domains
+	# These lines spawns a new process per column(k), and row(t), which generates all possible domains
 	k = [None] * cols_size
 	for i in range(cols_size):
 		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc,))
@@ -62,7 +62,7 @@ def read_graph(path):
 	variable_rows = bubble_sort(variable_rows)
 
 	Start_state = State.State(variable_rows, variable_cols, None)
-	for row in Start_state.cols:
+	for row in Start_state.rows:
 		print "ROW:", row.index, row.is_row, row.domain
 	print ""
 	print("--- Domains generated in %s seconds ---" % (time.time() - start_time))
@@ -93,6 +93,6 @@ def getSizes(path): #Just for GUI debug
 
 
 if __name__ == '__main__':
-	s = read_graph("nono-cat.txt")
+	s = read_graph("nono-heart.txt")
 	for rad in s.rows:
 		print "DOmain: ",len(rad.domain)

@@ -104,7 +104,7 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 #
 ###--- Revice methods ---###
 def revice(C, state):
-	#is_valid = True
+	#is_valid = True c0-> endret, c1-> endres(?)
 	if C[0].get_is_row():
 		d_0 = state.get_row(C[0].get_index()).get_domain()
 
@@ -282,6 +282,23 @@ def is_done(state):
 	return True
 
 #
+def brute_force(start_state):
+	rows = [None] * len(start_state.rows)
+	cols = [None] * len(start_state.cols)
+	for i in range(len(start_state.rows)):
+		rows[i] = start_state.rows[i]
+		rows[i].domain = rows[i].domain[0]
+	for i in range(len(start_state.cols)):
+		cols[i] = start_state.cols[i]
+		cols[i].domain = cols[i].domain[0]
+
+	for row in rows:
+		print row.domain
+	for col in cols:
+		print col.domain
+
+
+
 ###--- Astar ---###
 def Astar(start_state):
 	print "Astar is running..."
