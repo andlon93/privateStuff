@@ -229,7 +229,7 @@ def revise(C, state):
 		#
 		is_possible = True
 		#
-		if len(state.get_row(C[0].get_index()).get_domain()) == 0 or len(state.get_col(C[1].get_index()).get_domain()) < 2: 
+		if len(state.get_row(C[0].get_index()).get_domain()) == 0 or len(state.get_col(C[1].get_index()).get_domain()) < 2:
 			return len(state.get_col(C[1].get_index()).get_domain())
 		elif len(state.get_row(C[0].get_index()).get_domain()) > 1:
 			for n in xrange(1, len(state.get_row(C[0].get_index()).get_domain())):
@@ -238,7 +238,7 @@ def revise(C, state):
 					is_possible = False
 		if not is_possible:
 			return len(state.get_col(C[1].get_index()).get_domain())
-		else: 
+		else:
 			check_val = state.get_row(C[0].get_index()).get_domain()[0][index_d1]
 			for domain in state.get_col(C[1].get_index()).get_domain():
 				if domain[index_d0] != check_val:
@@ -260,7 +260,7 @@ def revise(C, state):
 					is_possible = False
 		if not is_possible:
 			return len(state.get_row(C[1].get_index()).get_domain())
-		else: 
+		else:
 			check_val = state.get_col(C[0].get_index()).get_domain()[0][index_d1]
 			for domain in state.get_row(C[1].get_index()).get_domain():
 				if domain[index_d0] != check_val:
@@ -312,29 +312,71 @@ def is_in_closed(closed, state):
 				return False
 	return True
 #
-def is_valid_state(state):
-	for row in state.rows:
-		if len(row.domain) == 0:
+def is_Valid_line(s, blocks):
+		#Generer alle muligheter for 2 -> 1/0, kjør denne på alle - profit
+
+		s = s.translate(None, ''.join(chars_to_remove))
+		total_1s = s.count('1')
+		total_in_blocks = 0
+		for j in blocks:
+			total_in_blocks += int(j)
+		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
 			return False
 
-	for col in state.cols:
-		if len(col.domain) == 0:
-			return False
+		b = copy.deepcopy(blocks) # Blocks. e.g. [1,3,2]
+		current_block = 0
+		group_done = False
+		group_started = False
+		done = False
 
-	is_valid = [False] * len(state.rows) # Every row starts as invalid
+		for c in s: #For character in string, aka 0 or 1
+			if c == '1' and group_done == True:
+				# Found a 1 when excepting a 0
+				return False
 
-	for r in range (len(state.rows)): # r = row index
-		for c in range (len(state.cols)): # k = col index
-			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
-				#Check cell in all domains against all domains in corresponding column
-				cell_value = row_domain[c]
-				for col_domain in state.cols[c].domain:
-					if cell_value == col_domain[r]:
-						is_valid[r] = True
-						break
-	for val in is_valid:
-		if not val:
-			return False
+			elif c == '0' and group_done == False and group_started == True:
+				# Found a 0 when excpecting a 1
+				return False
+
+			elif c == '1' and group_done == False:
+				# Found a 1, when looking for 1
+				group_started = True
+				b[current_block] = int (b[current_block]) - 1 # Decrease remaining number of 1's in the current block
+				if b[current_block] == 0:			# If this is 0, it means all of the 1's in the current group has been found
+					group_done    = True    		# This group of 1's is done
+					group_started = False   		# There is currently no group of 1's active
+					current_block += 1				# move to look for the next block of 1's
+					if current_block > (len(b)-1):  # If all blocks have been found:
+						return True
+						done = True # If we find another 1 after done == True, there are too many.
+
+			elif c == '0' and group_done == True:
+				# Found a 0 when excepting a 0
+				group_done = False
+
+			elif c == '1' and done == True:
+				# Found a 1 after we are supposed to have found them all.
+				return False
+		return True
+
+valid_chars = ['0','1']
+combos = []
+def is_valid_state(board, constraints_rows, constraints_columns):
+	for r in range (len(board)):
+		generate_combos(board[r],"")
+		for combo in combos:
+			if not is_Valid_line(combo, constraints_rows):
+				return False
+
+	temp_string = None
+	for column_index in range (len(board[0])):
+		for row_index in range (len(board)):
+			temp_string += board[row_index][column_index]
+		generate_combos(temp_string,"")
+		for combo in combos:
+			if not is_Valid_line(combo, constraints_rows):
+				return False
+		temp_string = None
 	return True
 
 def is_done(state):
@@ -346,9 +388,21 @@ def is_done(state):
 			return False
 	return True
 
+
+def generate_combos(mask, combination):
+	# Takes string of form 0102211 and generates all possible strings, where 2 can be 1 or 0
+	if len(mask) <= 0:
+		combos.append(combination)
+		return
+	if mask[0] != '2':
+		generate_combos(mask[1:], combination + mask[0])
+	else:
+		for cha in valid_chars:
+			generate_combos(mask[1:], combination + cha)
+
 #
 ###--- Astar ---###
-def Astar(start_state):
+def Astar(start_state, constraints_rows, constraints_columns):
 	print "Astar is running..."
 	closed = create_dictionary(start_state.get_h())
 	##
@@ -385,7 +439,8 @@ def Astar(start_state):
 					for col in child.get_cols():
 						print col.get_domain()'''
 
-					if is_valid_state(child):
+
+					if is_valid_state(child, constraints_rows, constraints_columns):
 						print "H for filter: ",child.get_h()
 						child.set_h(child.calculate_h())
 						print "H etter filter: ",child.get_h(),"\n"
@@ -459,4 +514,8 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
+	# start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	# Astar(start_state,rows,cols)
+	generate_combos("002211","")
+	for comb in combos:
+		print comb
