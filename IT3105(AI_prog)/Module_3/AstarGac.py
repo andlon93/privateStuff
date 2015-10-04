@@ -216,7 +216,6 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 				queue.extend( extend_queue(state, state.get_row(q[1].get_index())))
 			else:
 				queue.extend( extend_queue(state, state.get_col(q[1].get_index())))
-	return True
 #
 ###--- Methods to check validity of a state ---###
 #
@@ -273,9 +272,15 @@ def Astar(start_state):
 					# print "\n"
 					# for row in current_state.rows:
 					# 	print len(row.domain)
-					is_valid = Filter(current_state,queue)
-					print "is_valid", is_valid
-					if is_valid:
+					Filter(current_state,queue)
+					if is_valid_state(child):
+						if is_done(child):
+							print "ER I MAAL!!!"
+							for row in child.get_rows():
+								print row.get_domain()[0]
+							for col in child.get_cols():
+								print col.get_domain()[0]
+						##
 						child.set_h(child.calculate_h())
 						valid_children.append(child)
 					# print "\n\nafter filter"
