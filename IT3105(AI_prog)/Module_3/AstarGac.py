@@ -247,7 +247,52 @@ def is_in_closed(closed, state):
 				return False
 	return True
 #
-def is_valid_state(state):
+def is_Valid_line(s, blocks):
+		total_1s = s.count('1')
+		total_in_blocks = 0
+		for j in blocks:
+			total_in_blocks += int(j)
+		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
+			return False
+
+		b = copy.deepcopy(blocks) # Blocks. e.g. [1,3,2]
+		current_block = 0
+		group_done = False
+		group_started = False
+		done = False
+
+		for c in s: #For character in string, aka 0 or 1
+
+			if c == '1' and group_done == True:
+				# Found a 1 when excepting a 0
+				return False
+
+			elif c == '0' and group_done == False and group_started == True:
+				# Found a 0 when excpecting a 1
+				return False
+
+			elif c == '1' and group_done == False:
+				# Found a 1, when looking for 1
+				group_started = True
+				b[current_block] = int (b[current_block]) - 1 # Decrease remaining number of 1's in the current block
+				if b[current_block] == 0:			# If this is 0, it means all of the 1's in the current group has been found
+					group_done    = True    		# This group of 1's is done
+					group_started = False   		# There is currently no group of 1's active
+					current_block += 1				# move to look for the next block of 1's
+					if current_block > (len(b)-1):  # If all blocks have been found:
+						return True
+						done = True # If we find another 1 after done == True, there are too many.
+
+			elif c == '0' and group_done == True:
+				# Found a 0 when excepting a 0
+				group_done = False
+
+			elif c == '1' and done == True:
+				# Found a 1 after we are supposed to have found them all.
+				return False
+		return True
+
+def is_valid_state(state, constraints_rows, constraints_columns):
 	for row in state.rows:
 		if len(row.domain) == 0:
 			return False
@@ -256,8 +301,15 @@ def is_valid_state(state):
 		if len(col.domain) == 0:
 			return False
 
-	is_valid = [False] * len(state.rows) # Every row starts as invalid
+	for r in range (len(state.rows)):
+		if not is_Valid_line(state.rows[r],constraints_rows[r]):
+			return False
 
+	for c in range(len(state.cols)):
+		if not is_Valid_line(state.cols[c], constraints_columns[c]):
+			return False
+
+	is_valid = [False] * len(state.rows) # Every row starts as invalid
 	for r in range (len(state.rows)): # r = row index
 		for c in range (len(state.cols)): # c = col index
 			for row_domain in state.rows[r].domain: # Loop over all domains in row[i]
@@ -283,7 +335,7 @@ def is_done(state):
 
 #
 ###--- Astar ---###
-def Astar(start_state):
+def Astar(start_state, constraints_rows, constraints_columns):
 	print "Astar is running..."
 	closed = create_dictionary(start_state.get_h())
 	##
@@ -317,7 +369,7 @@ def Astar(start_state):
 					for col in child.get_cols():
 						print col.get_domain()
 
-					if is_valid_state(child):
+					if is_valid_state(child, constraints_rows, constraints_columns):
 						child.set_h(child.calculate_h())
 						valid_children.append(child)
 						##-- check if if child is a solution --##
@@ -377,4 +429,5 @@ def Astar(start_state):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	er_i_maal = Astar(rf.read_graph("nono-heart.txt"))
+	start_state, rows, cols = rf.read_graph("nono-heart.txt")
+	Astar(start_state,rows,cols)
