@@ -6,6 +6,7 @@ import readfile as rf
 import random
 import time
 import copy
+import threading
 from collections import deque
 from multiprocessing import Process, Queue
 #
@@ -95,6 +96,8 @@ def create_GAC_queue(state):#Generates the queue of constraints to run
 #
 ###--- Revice methods ---###
 def revise(C, state):
+	if show_gui_revise:
+		import gui
 	if C[0].get_is_row():
 		index_d0 = state.get_row(C[0].get_index()).get_index()
 		index_d1 = state.get_col(C[1].get_index()).get_index()
@@ -115,6 +118,11 @@ def revise(C, state):
 			for domain in state.get_col(C[1].get_index()).get_domain():
 				if domain[index_d0] != check_val:
 					state.get_col(C[1].get_index()).get_domain().remove( domain )
+					if show_gui_revise:
+						temp, board = state.make_board()
+						gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+						gui.app.processEvents()
+
 		return len(state.get_col(C[1].get_index()).get_domain())
 	else:
 		##-- c[0] == kolonne --##
@@ -137,6 +145,10 @@ def revise(C, state):
 			for domain in state.get_row(C[1].get_index()).get_domain():
 				if domain[index_d0] != check_val:
 					state.get_row(C[1].get_index()).get_domain().remove( domain )
+					if show_gui_revise:
+						temp, board = state.make_board()
+						gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+						gui.app.processEvents()
 		return len(state.get_row(C[1].get_index()).get_domain())
 #
 def extend_queue(state, var):
@@ -151,13 +163,31 @@ def extend_queue(state, var):
 			queue.append(temp)
 	return queue
 #
+
+def draw_gui(state):
+	import gui
+	print "drawing gui"
+	temp, board = state.make_board()
+	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+	gui.app.processEvents()
+
+
 def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
+	if show_gui_filter:
+		import gui
 	while queue:
 		q                  = queue.popleft()   	  #popper constraint fra ko
 		length_pre_revise  = len(q[1].domain)
 		length_post_revice = revise(q,state)			  #kjorer revice paa constrainten som ble poppet
 		#
 		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
+			if show_gui_filter:
+				if len(queue)% 5 == 0:
+					print "Showing gui from filter"
+					temp, board = state.make_board()
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+					gui.app.processEvents()
+
 			if q[1].get_is_row():
 				queue.extend( extend_queue(state, state.get_row(q[1].get_index())))
 			else:
@@ -203,7 +233,7 @@ combos = []
 def is_valid_state(board, constraints_rows, constraints_columns):
 	del combos[:]
 	rows_valid = [False] * len(board)
-	for row in range (len(board)):
+	for row in xrange (len(board)):
 		generate_combos(board[row],"")
 		for combo in combos:
 			if is_Valid_line(combo, constraints_rows[row]):
@@ -212,8 +242,8 @@ def is_valid_state(board, constraints_rows, constraints_columns):
 	del combos[:]
 	cols_valid = [False] * len(board[0])
 	temp_string = ""
-	for column_index in range (len(board[0])):
-		for row_index in range (len(board)):
+	for column_index in xrange (len(board[0])):
+		for row_index in xrange (len(board)):
 			temp_string += board[row_index][column_index]
 		#temp_string += board[-1][column_index]
 		generate_combos(temp_string,"")
@@ -270,7 +300,9 @@ def is_board_done(board):
 	return True
 ###--- Astar ---###
 def Astar(start_state, constraints_rows, constraints_columns):
-	import gui
+	if show_gui:
+		import gui
+
 	print "press any key to continue"
 	raw_input()
 	start_time2 = time.time()
@@ -278,19 +310,21 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	##
 	all_states = create_dictionary(start_state.get_h())
 	##
-	temp, board = start_state.make_board()
-	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
-	gui.app.processEvents()
+	if show_gui:
+		temp, board = start_state.make_board()
+		gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+		gui.app.processEvents()
 	print "for philter"
 	time.sleep(0.5+algorithm_delay)
 
 	Filter(start_state, make_all_constraints(start_state))
 
-	temp, board = start_state.make_board()
-	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
-	gui.app.processEvents()
-	time.sleep(0.2+algorithm_delay)
-	#print "\nFirst filtering done \n"
+	if show_gui:
+		temp, board = start_state.make_board()
+		gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+		gui.app.processEvents()
+		time.sleep(0.2+algorithm_delay)
+
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)
 	#
@@ -300,17 +334,19 @@ def Astar(start_state, constraints_rows, constraints_columns):
 		if children:
 			valid_children = []
 			for child in children:
-				gui.app.processEvents()
-				temp, board = child.make_board()
-				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
-				gui.app.processEvents()
-				time.sleep(algorithm_delay)
+				if show_gui:
+					gui.app.processEvents()
+					temp, board = child.make_board()
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+					gui.app.processEvents()
+					time.sleep(algorithm_delay)
 				#
 				Filter(child,create_GAC_queue(child))
 
-				temp, board = child.make_board()
-				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
-				gui.app.processEvents()
+				if show_gui:
+					temp, board = child.make_board()
+					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+					gui.app.processEvents()
 				#
 				temp, board = child.make_board()
 				#
@@ -331,6 +367,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						temp, board = child.make_board()
 						gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 						gui.app.processEvents()
+
 						print "Press ENTER to close gui, input 'n' to keep it open"
 						stri = str(raw_input(""))
 						if not (stri=="n" or stri=="N"):
@@ -360,7 +397,14 @@ def Astar(start_state, constraints_rows, constraints_columns):
 
 		#
 #
-algorithm_delay = 0.2
+
+
+show_gui = True
+show_gui_revise = False
+show_gui_filter = True
+
+
+algorithm_delay = 0
 if __name__ == '__main__':
 
 	start_state, rows, cols = rf.read_graph("nono-cat.txt") #Ikke ende her, endre i gui

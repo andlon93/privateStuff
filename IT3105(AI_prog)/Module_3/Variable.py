@@ -49,7 +49,7 @@ class Variable:
 		total_in_blocks = 0
 		for j in blocks:
 			total_in_blocks += int(j)
-		for x in range(2**n):
+		for x in xrange(2**n):
   			string =  ''.join(str((x>>i)&1) for i in xrange(n-1,-1,-1))
   			if self.isValid(string,blocks,total_in_blocks):
   				domain.append(string)

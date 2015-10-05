@@ -54,8 +54,8 @@ def calculate_size(cols_size,rows_size): #Calculates pixels per col/row
 
 
 def generate_rectMatrix(color_matrix):
-	for c in range(cols_size):
-		for r in range(rows_size):
+	for c in xrange(cols_size):
+		for r in xrange(rows_size):
 			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[r][c]))
 	return rectMatrix
 
@@ -64,19 +64,19 @@ def generate_board(state):
 	rows = state.rows
 	cols = state.cols
 	board = [[-1 for x in xrange(cols_size)] for x in xrange(rows_size)]
-	for i in range (len(rows)):
+	for i in xrange (len(rows)):
 		if len(rows[i].domain)==1:
-			for k in range(len(rows[i].get_domain())):
+			for k in xrange(len(rows[i].get_domain())):
 				board[i][k] = int(rows[i].get_domain()[0][k])
 		else:
-			for k in range(len(rows[i].get_domain()[0])):
+			for k in xrange(len(rows[i].get_domain()[0])):
 				board[i][k] = -1
 	return board
 
 def generate_color_matrix(board):
 	color_matrix = [[None for x in xrange(len(board[0]))] for x in xrange(len(board))]
-	for c in range(len(board)):
-		for r in range(len(board[c])):
+	for c in xrange(len(board)):
+		for r in xrange(len(board[c])):
 			if board[c][r] == '2':
 				#print "gray"
 				color_matrix[c][r] = (Qt.gray)
