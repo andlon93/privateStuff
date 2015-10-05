@@ -280,13 +280,23 @@ def is_board_done(board):
 	return True
 ###--- Astar ---###
 def Astar(start_state, constraints_rows, constraints_columns):
+	import gui
 	start_time2 = time.time()
 	print "Astar running..."
 	##
 	all_states = create_dictionary(start_state.get_h())
 	##
 	temp, board = start_state.make_board()
+	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+	gui.app.processEvents()
+	time.sleep(1)
+
 	Filter(start_state, make_all_constraints(start_state))
+
+	temp, board = start_state.make_board()
+	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+	gui.app.processEvents()
+	time.sleep(1)
 	#print "\nFirst filtering done \n"
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)
@@ -297,8 +307,17 @@ def Astar(start_state, constraints_rows, constraints_columns):
 		if children:
 			valid_children = []
 			for child in children:
+				gui.app.processEvents()
+				temp, board = child.make_board()
+				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+				gui.app.processEvents()
+				time.sleep(1)
 				#
 				Filter(child,create_GAC_queue(child))
+
+				temp, board = child.make_board()
+				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+				gui.app.processEvents()
 				#
 				temp, board = child.make_board()
 				#
@@ -315,6 +334,11 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						print "BRETTTET"
 						for b in board:
 							print b
+						gui.app.processEvents()
+						temp, board = child.make_board()
+						gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+						gui.app.processEvents()
+						time.sleep(10)
 						return True
 			#
 
@@ -326,7 +350,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			temp, board = current_state.make_board()
 			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 			gui.app.processEvents()
-			time.sleep(0.1)
+			time.sleep(1)
 
 			children = generate_child_states(current_state)
 			all_states[current_state.get_h()].remove(current_state)
@@ -338,6 +362,6 @@ def Astar(start_state, constraints_rows, constraints_columns):
 		#
 #
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-telephone.txt")
+	start_state, rows, cols = rf.read_graph("nono-cat.txt") #Ikke ende her, endre i gui
 	Astar(start_state,rows,cols)
 

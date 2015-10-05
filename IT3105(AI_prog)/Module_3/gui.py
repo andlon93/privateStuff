@@ -41,9 +41,7 @@ class Draw(QWidget):
         paint.setBrush(Qt.white)
         paint.drawRect(event.rect()) # make a white drawing background
         paint.setPen(Qt.red) # Color of the edges(lines)
-        rectMatrix = generate_rectMatrix(generate_color_matrix(AstarGac.current_state.make_board()))
         for tile in rectMatrix:
-        	print "farge: ",tile[4]
         	paint.setBrush(tile[4])
         	paint.drawRect(tile[0],tile[1],tile[2],tile[3])
         paint.setPen(Qt.darkRed) # Color of the edges(lines)
@@ -82,14 +80,15 @@ def generate_color_matrix(board):
 	for c in range(len(board)):
 		for r in range(len(board[c])):
 			if board[c][r] == '2':
-				print "gray"
+				#print "gray"
 				color_matrix[c][r] = (Qt.gray)
 			elif board[c][r] == '0':
-				print "white"
+				#print "white"
 				color_matrix[c][r] = (Qt.white)
 			elif board[c][r] == '1':
 				color_matrix[c][r] = (Qt.blue)
 			#print color_matrix[c][r]
+	print "Color matrix in generate_color_matrix"
 	for row in color_matrix:
 		print row
 	return color_matrix
@@ -104,7 +103,7 @@ def initialise_color_matrix():
 
 color_matrix = []
 rectMatrix = []
-graph = "nono-heart.txt"
+graph = "nono-sailboat.txt"
 cols_size, rows_size = readfile.getSizes(graph)
 cols_px, rows_px = calculate_size(cols_size, rows_size)
 
@@ -116,23 +115,23 @@ app = QApplication([])
 
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-	circles = Draw()
-	rectMatrix = generate_rectMatrix(color_matrix)
+circles = Draw()
+rectMatrix = generate_rectMatrix(color_matrix)
 
-	t = Thread(target=worker)
-	t.start()
-	circles.show()
-	start_state, rows, cols = readfile.read_graph("nono-heart.txt")
-	#k = Thread(target=AstarGac.Astar, args=(start_state,rows,cols))
-	#k.start()
-	AstarGac.Astar(start_state,rows,cols)
-	app.exec_()
-	print ("Scenario:")
-	# graph = "nono-"
-	# graph += raw_input("")
-	# graph += ".txt"
+t = Thread(target=worker)
+t.start()
+circles.show()
+start_state, rows, cols = readfile.read_graph(graph)
+#k = Thread(target=AstarGac.Astar, args=(start_state,rows,cols))
+#k.start()
+AstarGac.Astar(start_state,rows,cols)
+app.exec_()
+print ("Scenario:")
+# graph = "nono-"
+# graph += raw_input("")
+# graph += ".txt"
 
 
 
