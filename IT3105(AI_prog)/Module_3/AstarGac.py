@@ -11,6 +11,8 @@ from multiprocessing import Process, Queue
 #
 ###--- Dictionary methods(contains all states) ---###
 #
+
+
 def create_dictionary(l):#The key is the F-value of the states
 	d = {}
 	for n in xrange(l+1):
@@ -282,6 +284,8 @@ def is_board_done(board):
 ###--- Astar ---###
 def Astar(start_state, constraints_rows, constraints_columns):
 	import gui
+	print "press any key to continue"
+	raw_input()
 	start_time2 = time.time()
 	print "Astar running..."
 	##
@@ -290,14 +294,14 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	temp, board = start_state.make_board()
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
-	time.sleep(1)
+	time.sleep(2)
 
 	Filter(start_state, make_all_constraints(start_state))
 
 	temp, board = start_state.make_board()
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
-	time.sleep(1)
+	time.sleep(2)
 	#print "\nFirst filtering done \n"
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)

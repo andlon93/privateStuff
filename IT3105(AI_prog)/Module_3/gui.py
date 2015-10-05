@@ -76,7 +76,6 @@ def generate_board(state):
 
 def generate_color_matrix(board):
 	color_matrix = [[None for x in xrange(len(board[0]))] for x in xrange(len(board))]
-	print "col/rows_size", cols_size, rows_size
 	for c in range(len(board)):
 		for r in range(len(board[c])):
 			if board[c][r] == '2':
@@ -88,9 +87,6 @@ def generate_color_matrix(board):
 			elif board[c][r] == '1':
 				color_matrix[c][r] = (Qt.blue)
 			#print color_matrix[c][r]
-	print "Color matrix in generate_color_matrix"
-	for row in color_matrix:
-		print row
 	return color_matrix
 
 def initialise_color_matrix():
@@ -103,8 +99,13 @@ def initialise_color_matrix():
 
 color_matrix = []
 rectMatrix = []
+graphs=["camel","cat","heart","rabbit","telephone","sailboat"]
+print "Pick a picture:"
+print "1: camel \n2: cat \n3: heart \n4: rabbit \n5: telephone \n6: sailboat\n "
 graph = "nono-camel.txt"
-
+graph = "nono-"
+graph += graphs[int(raw_input(""))-1]
+graph += ".txt"
 
 cols_size, rows_size = readfile.getSizes(graph)
 cols_px, rows_px = calculate_size(cols_size, rows_size)
@@ -121,10 +122,8 @@ start_state, rows, cols = readfile.read_graph(graph)
 #k.start()
 AstarGac.Astar(start_state,rows,cols)
 app.exec_()
-print ("Scenario:")
-# graph = "nono-"
-# graph += raw_input("")
-# graph += ".txt"
+
+
 
 
 
