@@ -103,20 +103,13 @@ def initialise_color_matrix():
 
 color_matrix = []
 rectMatrix = []
-graph = "nono-sailboat.txt"
+graph = "nono-camel.txt"
+
+
 cols_size, rows_size = readfile.getSizes(graph)
 cols_px, rows_px = calculate_size(cols_size, rows_size)
-
 color_matrix = initialise_color_matrix()
-
 app = QApplication([])
-
-
-
-
-
-# if __name__ == '__main__':
-
 circles = Draw()
 rectMatrix = generate_rectMatrix(color_matrix)
 
