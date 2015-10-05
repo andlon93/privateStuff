@@ -5,7 +5,7 @@ import time
 from PyQt4 import QtCore, QtGui, QtDeclarative
 debug = False
 
-# 
+#
 
 #LINK for Astar online: https://qiao.github.io/PathFinding.js/visual/
 
@@ -15,7 +15,7 @@ debug = False
 #########---- Example sets ----########
 #        row  col start    goal    Barriers
 exapmle_sets = [
-[ 10, 10, [0,0],  [9,9],   [[2,3,5,5], [8,8,2,1]]                                          ],        
+[ 10, 10, [0,0],  [9,9],   [[2,3,5,5], [8,8,2,1]]                                          ],
 [ 20, 20, [19,3], [2,18],  [[5,5,10,10], [1,2,4,1]]                                        ],
 [ 20, 20, [0,0],  [19,19], [[17,10,2,1], [14,4,5,2], [3,16,10,2], [13,7,5,3], [15,15,3,3]] ],
 [ 10, 10, [0,0],  [9,5],   [[3,0,2,7], [6,0,4,4], [6, 6, 2, 4]]                            ],
@@ -25,7 +25,7 @@ exapmle_sets = [
 def run_sett(n): return exapmle_sets[n][0], exapmle_sets[n][1], exapmle_sets[n][2], exapmle_sets[n][3], exapmle_sets[n][4]
 #########---- Node Class ----########
 class Node:
-    children = None 
+    children = None
     typ = None
     parent = None
     x_pos = None
@@ -76,13 +76,13 @@ def user_input(): #get all input from user
         temp = False
         while not temp:
             user_done = str( raw_input("\n\nDo you want to retype the board?(y/n)") )
-            if user_done == "n": 
+            if user_done == "n":
                 done = True
                 temp = True
-            elif user_done == "y": 
+            elif user_done == "y":
                 done = False
                 temp = True
-            else: 
+            else:
                 print "\n\nWrong input given. You have to answer 'y' or 'n'."
     if debug:
         print "board_size: ", board_size
@@ -124,13 +124,13 @@ def add_Barriers(board, Barriers):#Add barreiers to the board
         for row in board:
             print row
         print '\n'
-    return board    
+    return board
 def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board using help functions
     board = create_empty_board(rows, cols)#create empty board
     board[ start_node[1] ][ start_node[0] ] = 3 #add start node marked 3
     board[ goal_node[1] ][ goal_node[0] ] = 4 #add goal node marked 4
     board = add_Barriers(board, Barriers)#add the barriers to the board
-    
+
     if debug:
         print '\n'
         print "Rows: ", rows, "columns: ", cols
@@ -138,9 +138,9 @@ def create_board(rows, cols, start_node, goal_node, Barriers):#Creates board usi
             print row
         print '\n'
     #print_board(board)
-    
+
     return board
-#########---- DFS ----########          
+#########---- DFS ----########
 def Depth_first_search(board, start_node):
     stack = []
     current = start_node
@@ -201,7 +201,7 @@ def Astar(board, start_node, end_node):
     current_node.h = Heuristic(current_node, end_node)
     current_node.f = current_node.g + current_node.h
     open_list.append(current_node)
-    
+
     while True:
         if len(open_list) < 1:
             return False
@@ -211,6 +211,8 @@ def Astar(board, start_node, end_node):
         closed.append(current_node)
 
         if (current_node == end_node):
+            print "open_list", len(open_list)
+            print "closed_list", len(closed)
             return True
         succ = current_node.children
 
@@ -241,7 +243,7 @@ def findPath(start_node, goal_node):
 #
 #########---- Class that represent the different tiles in the UI ----########
 class TileData(QtCore.QObject):
-    
+
     statusChanged = QtCore.pyqtSignal(int)
 
     def __init__(self, status):
@@ -299,7 +301,7 @@ class Game(QtCore.QObject):
                     if board[row][col] == 4:
                         goal = node
                     #if node != rot:
-                    #node.parent = 
+                    #node.parent =
                 else:
                     row_list.append(-1)
             class_board.append(row_list)
@@ -315,15 +317,15 @@ class Game(QtCore.QObject):
                     if row-1 > -1 and class_board[row-1][col] != -1:
                         class_board[row][col].children.append( class_board[row-1][col] )#add child nodes
                         class_board[row-1][col].parent = class_board[row][col]#add parent
-                    
+
                     if col-1 > -1 and class_board[row][col-1] != -1:
                         class_board[row][col].children.append( class_board[row][col-1] )#add child nodes
                         class_board[row][col-1].parent = class_board[row][col]#add parent
-                    
+
                     if row+1 < len(class_board) and class_board[row+1][col] != -1:
                         class_board[row][col].children.append( class_board[row+1][col] )#add child nodes
                         class_board[row+1][col].parent = class_board[row][col]#add parent
-                    
+
                     if col+1 < len(class_board[row]) and class_board[row][col+1] != -1:
                         class_board[row][col].children.append( class_board[row][col+1] )#add child nodes
                         class_board[row][col+1].parent = class_board[row][col] #add parent
@@ -338,7 +340,7 @@ class Game(QtCore.QObject):
     ######### BFS #############
     @QtCore.pyqtSlot(list, object, object, list)
     def BFS_update_board_with_path(self, board, start_node, goal_node, path):
-        for cell in path: 
+        for cell in path:
             if (cell != start_node and cell != goal_node ): self.algorithm_update_GUI(cell, start_node, goal_node, 2)
             #
     @QtCore.pyqtSlot(list, object, object)
@@ -355,7 +357,7 @@ class Game(QtCore.QObject):
             game.algorithm_update_GUI(current_node, start_node, goal_node, 1)
             #
             #board[current_node.x_pos][current_node.y_pos] = 1
-            if current_node == goal_node: 
+            if current_node == goal_node:
                 return path, board
             elif current_node not in visited:
                 for child in current_node.children:
@@ -371,7 +373,7 @@ class Game(QtCore.QObject):
 
     @QtCore.pyqtProperty(int, notify=numColsChanged)
     def numCols(self): return self._numCols
-# 
+#
     def setNumCols(self, nCols):
         if self._numCols != nCols:
             self._numCols = nCols
@@ -383,7 +385,7 @@ class Game(QtCore.QObject):
     def setNumCols(self, nRows):
         if self._numRows != nRows:
             self._numRows = nRows
-            self.numRowsChanged.emit()   
+            self.numRowsChanged.emit()
 
     # Public member functions
     @QtCore.pyqtSlot(object, object, object, int)
@@ -407,10 +409,10 @@ class Game(QtCore.QObject):
         # initialise board
         for ii in xrange(self._numRows * self._numCols):
             self._tiles.append( TileData( initialBoard[len(initialBoard)-(ii/self._numRows)-1] [ii - ii/self._numRows*self._numCols] ) )
-        
+
     @QtCore.pyqtSlot()
     def startGame(self):
-        rot, goal_node, class_board = self.create_linked_classes(initialBoard)       
+        rot, goal_node, class_board = self.create_linked_classes(initialBoard)
         if choose_algorithm == 0:
             ##--Astar--##
             found_path = Astar(initialBoard, rot, goal_node)
@@ -420,7 +422,7 @@ class Game(QtCore.QObject):
             ##--Astar--##
             path, board = self.Breadth_first_search(initialBoard, rot, goal_node)
             self.BFS_update_board_with_path(board, rot, goal_node, path)
-        
+
     @QtCore.pyqtSlot()
     def updateBoard(self):
         game.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), random.randint(-1, 4))
@@ -464,7 +466,7 @@ if __name__ == '__main__':
             print n, ":  ", exapmle_sets[n][0], exapmle_sets[n][1], exapmle_sets[n][2], exapmle_sets[n][3], exapmle_sets[n][4], "\n"
         sett = int( raw_input("Type in the number of the set you wish to run:  ") )
         rows, cols, start_node, goal_node, Barriers = run_sett(sett)
-        
+
     ###################################################################
     initialBoard = create_board(rows, cols, start_node, goal_node, Barriers)
     sleep_dur = 0.01
