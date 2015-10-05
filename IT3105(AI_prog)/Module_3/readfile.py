@@ -25,10 +25,10 @@ def read_graph(path):
 
 	cols = [] #List to hold lists of constraints per column
 	rows = [] #List to hold lists of constraints per row
-	for i in range (rows_size):
+	for i in xrange (rows_size):
 		rows.append((f.readline().split()))
 	rows = list(reversed(rows)) # Reversing because rows are read from bottom up in the file Index 0 will now be the most upper row
-	for i in range (cols_size):
+	for i in xrange (cols_size):
 		cols.append((f.readline().split()))
 
 	f.close() # Closing the open file
@@ -39,21 +39,21 @@ def read_graph(path):
 	variable_cols = []
 
 	k = [None] * cols_size
-	for i in range(cols_size):
+	for i in xrange(cols_size):
 		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc,))
 		k[i].start()
-	for i in range(cols_size):
+	for i in xrange(cols_size):
 		variable_cols.append(qc.get()) # Subprocesses put the computed row/column in the Queue (qr/qc), and the main process retrieves them here
-	for i in range (cols_size):
+	for i in xrange (cols_size):
 		k[i].join()
 
 	t = [None] * rows_size
-	for i in range(rows_size):
+	for i in xrange(rows_size):
 		t[i] = Process(target=make_rows, args=(rows_size,cols_size,rows,i,qr,))
 		t[i].start()
-	for i in range(rows_size):
+	for i in xrange(rows_size):
 		variable_rows.append(qr.get())
-	for i in range (rows_size):
+	for i in xrange (rows_size):
 		t[i].join()
 
 	variable_cols = bubble_sort(variable_cols)	# Because the processes don't always finish in the correct order, the lists are sorted here
@@ -66,8 +66,8 @@ def read_graph(path):
 	return (Start_state, rows, cols)
 
 def bubble_sort(items):
-    for i in range(len(items)):
-        for j in range(len(items)-1-i):
+    for i in xrange(len(items)):
+        for j in xrange(len(items)-1-i):
             if items[j].index > items[j+1].index:
                 items[j], items[j+1] = items[j+1], items[j]
     return items
