@@ -16,7 +16,7 @@ if __name__ == '__main__':
             # Connect to remote host
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect('caracal.stud.ntnu.no', username='olehda', password='Shamuix22')
+            client.connect('caracal.stud.ntnu.no', username='olehda', password='xxxxxx')
 
             # Setup sftp connection and transmit this script
             sftp = client.open_sftp()
@@ -24,13 +24,15 @@ if __name__ == '__main__':
             sftp.put('gui.py', 'gui.py')
             sftp.put('State.py', 'State.py')
             sftp.put('Variable.py', 'Variable.py')
-            sftp.put('nono-cat.txt', 'nono-cat.txt')
+            sftp.put('nono-sailboat.txt', 'nono-sailbot.txt')
+            sftp.put('AstarGac.py', 'AstarGac.py')
+
 
             sftp.close()
 
             # Run the transmitted script remotely without args and show its output.
             # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
-            stdout = client.exec_command('python readfile.py')[1]
+            stdout = client.exec_command('python AstarGac.py')[1]
             for line in stdout:
                 # Process each line in the remote output
                 print line

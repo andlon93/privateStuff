@@ -28,7 +28,6 @@ def read_graph(path):
 	for i in range (rows_size):
 		rows.append((f.readline().split()))
 	rows = list(reversed(rows)) # Reversing because rows are read from bottom up in the file Index 0 will now be the most upper row
-
 	for i in range (cols_size):
 		cols.append((f.readline().split()))
 
@@ -92,5 +91,5 @@ def getSizes(path): #Just for GUI debug
 
 
 if __name__ == '__main__':
-	s = read_graph("nono-cat.txt")
+	s = read_graph("nono-sailboat.txt")
 
