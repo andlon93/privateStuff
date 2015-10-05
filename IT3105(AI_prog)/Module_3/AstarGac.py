@@ -292,6 +292,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	children = generate_child_states(start_state)
 	#
 	while True:
+		time.sleep(1)
+	#for xxx in xrange(2):
 		if children:
 			valid_children = []
 			for child in children:
@@ -315,9 +317,17 @@ def Astar(start_state, constraints_rows, constraints_columns):
 							print b
 						return True
 			#
+
 			all_states = add_states_to_dict(valid_children, all_states)
 			current_state = get_best_state(all_states)
-			#print "current_state", 	current_state
+
+
+			gui.app.processEvents()
+			temp, board = current_state.make_board()
+			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
+			gui.app.processEvents()
+			time.sleep(0.1)
+
 			children = generate_child_states(current_state)
 			all_states[current_state.get_h()].remove(current_state)
 			#
@@ -330,3 +340,4 @@ def Astar(start_state, constraints_rows, constraints_columns):
 if __name__ == '__main__':
 	start_state, rows, cols = rf.read_graph("nono-telephone.txt")
 	Astar(start_state,rows,cols)
+

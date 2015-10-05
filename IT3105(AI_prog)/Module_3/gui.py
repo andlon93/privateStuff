@@ -15,7 +15,7 @@ window_size_y = 400 # Window Height
 board = []
 
 def worker():
-	sleeptime = 0.1
+	sleeptime = 0.2
 	try:
 		while True:
 			time.sleep(sleeptime)
@@ -41,7 +41,9 @@ class Draw(QWidget):
         paint.setBrush(Qt.white)
         paint.drawRect(event.rect()) # make a white drawing background
         paint.setPen(Qt.red) # Color of the edges(lines)
+        rectMatrix = generate_rectMatrix(generate_color_matrix(AstarGac.current_state.make_board()))
         for tile in rectMatrix:
+        	print "farge: ",tile[4]
         	paint.setBrush(tile[4])
         	paint.drawRect(tile[0],tile[1],tile[2],tile[3])
         paint.setPen(Qt.darkRed) # Color of the edges(lines)
@@ -56,60 +58,83 @@ def calculate_size(cols_size,rows_size): #Calculates pixels per col/row
 def generate_rectMatrix(color_matrix):
 	for c in range(cols_size):
 		for r in range(rows_size):
-			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[c][r]))
+			rectMatrix.append( ((c*cols_px),(r*rows_px),((c+1)*cols_px),((r+1)*rows_px), color_matrix[r][c]))
 	return rectMatrix
 
-def generate_board(rows,cols):
-	board = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+
+def generate_board(state):
+	rows = state.rows
+	cols = state.cols
+	board = [[-1 for x in xrange(cols_size)] for x in xrange(rows_size)]
 	for i in range (len(rows)):
 		if len(rows[i].domain)==1:
-			for k in range(len(rows[i])):
-				board[i][k] = rows[i].get_domain()[k]
+			for k in range(len(rows[i].get_domain())):
+				board[i][k] = int(rows[i].get_domain()[0][k])
+		else:
+			for k in range(len(rows[i].get_domain()[0])):
+				board[i][k] = -1
+	return board
 
-	pass
 
 def generate_color_matrix(board):
-	print "BOOOOOOOOOOARD", board
-	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+	color_matrix = [[None for x in xrange(len(board[0]))] for x in xrange(len(board))]
+	print "col/rows_size", cols_size, rows_size
 	for c in range(len(board)):
 		for r in range(len(board[c])):
-			if board[c][r] == -1:
+			if board[c][r] == '2':
+				print "gray"
 				color_matrix[c][r] = (Qt.gray)
-			elif board[c][r] == 0:
+			elif board[c][r] == '0':
+				print "white"
 				color_matrix[c][r] = (Qt.white)
-			elif board[c][r] == 1:
+			elif board[c][r] == '1':
 				color_matrix[c][r] = (Qt.blue)
+			#print color_matrix[c][r]
+	for row in color_matrix:
+		print row
 	return color_matrix
 
 def initialise_color_matrix():
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
-	for c in range(cols_size):
-		for r in range(rows_size):
-			print "c,r: ",c,r
-			color_matrix[c][r] = (Qt.blue)
+	# for c in range(cols_size):
+	# 	for r in range(rows_size):
+	# 		print "c,r: ",c,r
+	# 		color_matrix[c][r] = (Qt.blue)
 	return color_matrix
+
+color_matrix = []
+rectMatrix = []
+graph = "nono-heart.txt"
+cols_size, rows_size = readfile.getSizes(graph)
+cols_px, rows_px = calculate_size(cols_size, rows_size)
+
+color_matrix = initialise_color_matrix()
+
+app = QApplication([])
+
+
 
 
 
 if __name__ == '__main__':
-	color_matrix = []
-	rectMatrix = []
-	print ("Scenario:")
-	# graph = "nono-"
-	# graph += raw_input("")
-	# graph += ".txt"
-	graph = "nono-heart.txt"
-	cols_size, rows_size = readfile.getSizes(graph)
 
-	cols_px, rows_px = calculate_size(cols_size, rows_size)
-	color_matrix = initialise_color_matrix()
+	circles = Draw()
 	rectMatrix = generate_rectMatrix(color_matrix)
 
 	t = Thread(target=worker)
 	t.start()
-
-	app = QApplication([])
-	circles = Draw()
 	circles.show()
-	#AstarGac.Astar(readfile.read_graph(graph))
+	start_state, rows, cols = readfile.read_graph("nono-heart.txt")
+	#k = Thread(target=AstarGac.Astar, args=(start_state,rows,cols))
+	#k.start()
+	AstarGac.Astar(start_state,rows,cols)
 	app.exec_()
+	print ("Scenario:")
+	# graph = "nono-"
+	# graph += raw_input("")
+	# graph += ".txt"
+
+
+
+
+
