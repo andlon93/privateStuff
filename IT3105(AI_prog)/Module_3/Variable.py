@@ -15,7 +15,6 @@ class Variable:
 	#
 	def isValid(self,s,blocks,total_in_blocks):
 		total_1s = s.count('1')
-
 		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
 			return False
 
@@ -45,9 +44,8 @@ class Variable:
 				group_done = False
 		return True
 	#
-	def create_full_domain(self, blocks, length):#create the full domain
+	def create_full_domain(self, blocks, n):#create the full domain
 		domain = []
-		n = length
 		total_in_blocks = 0
 		for j in blocks:
 			total_in_blocks += int(j)
