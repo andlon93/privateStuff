@@ -38,7 +38,6 @@ def read_graph(path):
 	variable_rows = []
 	variable_cols = []
 
-	# These lines spawn a process per column(k), and row (t), and generates all possible domains
 	k = [None] * cols_size
 	for i in range(cols_size):
 		k[i] = Process(target=make_cols, args=(cols_size,rows_size,cols,i,qc,))
@@ -89,7 +88,6 @@ def getSizes(path): #Just for GUI debug
 	f.close()
 	return cols_size,rows_size
 
-
 if __name__ == '__main__':
-	s = read_graph("nono-sailboat.txt")
-
+	s = read_graph("nono-cat.txt")
+	#print s.get_row(0).get_domain()

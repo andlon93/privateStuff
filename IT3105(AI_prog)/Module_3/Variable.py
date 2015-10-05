@@ -68,8 +68,6 @@ class Variable:
   				domain.append(string)
   		self.domain = domain
 
-
-
 	##-- Getters --##
 	def get_domain(self): return self.domain
 	def get_is_row(self): return self.is_row
