@@ -264,6 +264,7 @@ def generate_combos(mask, combination):
 		for cha in valid_chars:
 			generate_combos(mask[1:], combination + cha)
 #
+
 def make_all_constraints(current_state):
 	constraints = deque()
 	for row in current_state.get_rows():
@@ -345,12 +346,12 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			all_states = add_states_to_dict(valid_children, all_states)
 			current_state = get_best_state(all_states)
 
-
 			gui.app.processEvents()
 			temp, board = current_state.make_board()
 			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 			gui.app.processEvents()
 			time.sleep(1)
+
 
 			children = generate_child_states(current_state)
 			all_states[current_state.get_h()].remove(current_state)
@@ -359,6 +360,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			current_state = get_best_state(all_states)
 			children = generate_child_states(current_state)
 			all_states[current_state.get_h()+current_state.get_g()].remove(current_state)
+
 		#
 #
 if __name__ == '__main__':
