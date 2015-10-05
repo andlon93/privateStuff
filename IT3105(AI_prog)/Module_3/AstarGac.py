@@ -469,8 +469,8 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			valid_children = []
 			#print children
 			for child in children:
-				#if True:
-				if not is_in_closed(closed, child):
+				if True:
+					#if not is_in_closed(closed, child):
 					#print "child not in closed"
 					#current_state.set_assumption((current_state.rows[0],current_state.rows[0].domain[0]))
 					queue = create_GAC_queue(child)
@@ -510,15 +510,32 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						child.set_h(child.calculate_h())
 						print "H etter filter: ",child.get_h(),"\n"
 						valid_children.append(child)
+						print "ROW"
+						for row in child.get_rows():
+							print row.get_domain()
+						print "COULMNS"
+						for col in child.get_cols():
+							print col.get_domain()
+						####
+						board_done = True
+						for row in board:
+							for c in row:
+								#print c
+								if c == '2':
+									board_done = False
+						####
 						##-- check if if child is a solution --##
-						if child.get_h() == 0 and is_done(child):
+						if board_done or is_done(child):
 							print("--- Solved in %s seconds ---" % (time.time() - start_time2))
 							print "ER I MAAL!!!"
 							print "Antall steg til maal: ", child.get_g()
-							# for row in child.get_rows():
+							print "\nBRETTTET"
+							for b in board:
+								print b
+							#for row in child.get_rows():
 							# 	print row.get_domain()[0]
-							# for col in child.get_cols():
-							# 	print col.get_domain()[0]
+							#for col in child.get_cols():
+							#	print col.get_domain()[0]
 							return True
 						##
 
@@ -531,12 +548,12 @@ def Astar(start_state, constraints_rows, constraints_columns):
 
 					print "\n"
 			#return True
-			print "valid_children",valid_children
+			#print "valid_children",valid_children
 
 			all_states = add_states_to_dict(valid_children, all_states)
-			for s in all_states:
-				if all_states[s]:
-					print s, all_states[s]
+			#for s in all_states:
+			#	if all_states[s]:
+			#		print s, all_states[s]
 			current_state = get_best_state(all_states)
 			print "current_state", 	current_state
 			# if True:
@@ -580,7 +597,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	time.sleep(0.5)'''
 
 if __name__ == '__main__':
-	start_state, rows, cols = rf.read_graph("nono-sailboat.txt")
+	start_state, rows, cols = rf.read_graph("nono-chick.txt")
 	Astar(start_state,rows,cols)
 	# print is_Valid_line("0011111000",[4])
 	# generate_combos("00111112000","")
