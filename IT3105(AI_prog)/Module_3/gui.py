@@ -89,7 +89,7 @@ def generate_color_matrix(board):
 	return color_matrix
 
 def initialise_color_matrix():
-	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
+	color_matrix = [[Qt.gray for x in xrange(cols_size)] for x in xrange(rows_size)]
 	return color_matrix
 
 color_matrix = []

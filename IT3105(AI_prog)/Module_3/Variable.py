@@ -14,30 +14,24 @@ class Variable:
 		#print "Creating variable, 222 is_row, index: ",is_row,index
 	#
 	def isValid(self,s,blocks):
-
 		total_1s = s.count('1')
 		total_in_blocks = 0
 		for j in blocks:
 			total_in_blocks += int(j)
 		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
 			return False
-
 		b = copy.deepcopy(blocks) # Blocks. e.g. [1,3,2]
 		current_block = 0
 		group_done = False
 		group_started = False
 		done = False
-
 		for c in s: #For character in string, aka 0 or 1
-
 			if c == '1' and group_done == True:
 				# Found a 1 when excepting a 0
 				return False
-
 			elif c == '0' and group_done == False and group_started == True:
 				# Found a 0 when excpecting a 1
 				return False
-
 			elif c == '1' and group_done == False:
 				# Found a 1, when looking for 1
 				group_started = True
@@ -49,11 +43,9 @@ class Variable:
 					if current_block > (len(b)-1):  # If all blocks have been found:
 						return True
 						done = True # If we find another 1 after done == True, there are too many.
-
 			elif c == '0' and group_done == True:
 				# Found a 0 when excepting a 0
 				group_done = False
-
 			elif c == '1' and done == True:
 				# Found a 1 after we are supposed to have found them all.
 				return False
@@ -68,10 +60,7 @@ class Variable:
   				domain.append(string)
   		self.domain = domain
 
-
-
 	##-- Getters --##
 	def get_domain(self): return self.domain
 	def get_is_row(self): return self.is_row
 	def get_index(self): return self.index
-#v = Variable(True, 0, [3,1,2], 10)

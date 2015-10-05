@@ -171,22 +171,17 @@ def is_Valid_line(s, blocks):
 			total_in_blocks += int(j)
 		if total_1s != total_in_blocks: # If there are more (or less) "1"s in the input string than there are supposed to, the string is invalid
 			return False
-
 		b = copy.deepcopy(blocks) # Blocks. e.g. [1,3,2]
 		current_block = 0
 		group_done = False
 		group_started = False
-		done = False
-
 		for c in s: #For character in string, aka 0 or 1
 			if c == '1' and group_done == True:
 				# Found a 1 when excepting a 0
 				return False
-
 			elif c == '0' and group_done == False and group_started == True:
 				# Found a 0 when excpecting a 1
 				return False
-
 			elif c == '1' and group_done == False:
 				# Found a 1, when looking for 1
 				group_started = True
@@ -197,15 +192,9 @@ def is_Valid_line(s, blocks):
 					current_block += 1				# move to look for the next block of 1's
 					if current_block > (len(b)-1):  # If all blocks have been found:
 						return True
-						done = True # If we find another 1 after done == True, there are too many.
-
 			elif c == '0' and group_done == True:
 				# Found a 0 when excepting a 0
 				group_done = False
-
-			elif c == '1' and done == True:
-				# Found a 1 after we are supposed to have found them all.
-				return False
 		return True
 ####
 valid_chars = ['0','1']
@@ -220,9 +209,7 @@ def is_valid_state(board, constraints_rows, constraints_columns):
 			if is_Valid_line(combo, constraints_rows[row]):
 				rows_valid[row] = True
 		del combos[:]
-
 	del combos[:]
-
 	cols_valid = [False] * len(board[0])
 	temp_string = ""
 	for column_index in range (len(board[0])):
@@ -295,20 +282,20 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
 	print "for philter"
-	#time.sleep(0)
+	time.sleep(0.5+algorithm_delay)
 
 	Filter(start_state, make_all_constraints(start_state))
 
 	temp, board = start_state.make_board()
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
-	#time.sleep(0)
+	time.sleep(0.2+algorithm_delay)
 	#print "\nFirst filtering done \n"
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)
 	#
 	while True:
-		#time.sleep(0.2)
+		time.sleep(algorithm_delay)
 	#for xxx in xrange(2):
 		if children:
 			valid_children = []
@@ -317,7 +304,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 				temp, board = child.make_board()
 				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 				gui.app.processEvents()
-				#time.sleep(0.2)
+				time.sleep(algorithm_delay)
 				#
 				Filter(child,create_GAC_queue(child))
 
@@ -349,7 +336,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						if not (stri=="n" or stri=="N"):
 							import subprocess
 							subprocess.call("taskkill /F /IM python.exe", shell=True)
-						#time.sleep(1)
+						time.sleep(10)
 						return True
 			#
 
@@ -360,7 +347,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			temp, board = current_state.make_board()
 			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 			gui.app.processEvents()
-			#time.sleep(0)
+			time.sleep(algorithm_delay)
 
 
 			children = generate_child_states(current_state)
@@ -373,7 +360,9 @@ def Astar(start_state, constraints_rows, constraints_columns):
 
 		#
 #
+algorithm_delay = 0.2
 if __name__ == '__main__':
+
 	start_state, rows, cols = rf.read_graph("nono-cat.txt") #Ikke ende her, endre i gui
 	Astar(start_state,rows,cols)
 
