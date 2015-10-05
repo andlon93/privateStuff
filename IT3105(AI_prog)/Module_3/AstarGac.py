@@ -183,7 +183,7 @@ def Filter(state, queue):#Iterates through the GAC_queue -> runs revice on them
 		if length_pre_revise > length_post_revice:  #hvis domenet har blitt forkortet maa nye constarints inn i ko
 			if show_gui_filter:
 				if len(queue)% 5 == 0:
-					print "Showing gui from filter"
+					#print "Showing gui from filter"
 					temp, board = state.make_board()
 					gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 					gui.app.processEvents()
@@ -328,10 +328,13 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)
 	#
+	nodes_generated = 0
+	nodes_expanded = 1
 	while True:
 		time.sleep(algorithm_delay)
 	#for xxx in xrange(2):
 		if children:
+			nodes_generated += len(children)
 			valid_children = []
 			for child in children:
 				if show_gui:
@@ -358,9 +361,11 @@ def Astar(start_state, constraints_rows, constraints_columns):
 					##-- check if if child is a solution --##
 					if is_board_done(board) or is_done(child):
 						print("--- Solved in %s seconds ---" % (time.time() - start_time2))
-						print "ER I MAAL!!!"
+						print "ER I MAAL!!!\n\n"
+						print "Number of nodes generated", nodes_generated
+						print "Number of nodes expanded", nodes_expanded
 						print "Antall steg til maal: ", child.get_g()
-						print "BRETTTET"
+						print "\n\nBRETTTET"
 						for b in board:
 							print b
 						gui.app.processEvents()
@@ -379,7 +384,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 
 			all_states = add_states_to_dict(valid_children, all_states)
 			current_state = get_best_state(all_states)
-
+			nodes_expanded += 1
 			gui.app.processEvents()
 			temp, board = current_state.make_board()
 			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
