@@ -294,6 +294,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	temp, board = start_state.make_board()
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
+	print "for philter"
 	time.sleep(2)
 
 	Filter(start_state, make_all_constraints(start_state))
@@ -343,7 +344,12 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						temp, board = child.make_board()
 						gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 						gui.app.processEvents()
-						time.sleep(10)
+						print "Press ENTER to close gui, input 'n' to keep it open"
+						stri = str(raw_input(""))
+						if not (stri=="n" or stri=="N"):
+							import subprocess
+							subprocess.call("taskkill /F /IM python.exe", shell=True)
+						time.sleep(1)
 						return True
 			#
 
