@@ -86,14 +86,16 @@ def Filter(state, queue, constraints):
 			queue.extend( extend_queue(constraint[0], constraints) )
 #
 def is_valid_state(state, constraints):
+	unsatisfied_constraints = 0
 	for node in state.nodes:
 		if len(state.nodes[node].domain) == 0:
 			return False
 	for C in constraints:
 		if len(state.nodes[C[0]].domain) == 1 and len(state.nodes[C[1]].domain) == 1:
 			if state.nodes[C[0]].domain[0] == state.nodes[C[1]].domain[0]:
-				return False
-	return True
+				unsatisfied_constraints += 1
+				return False, unsatisfied_constraints
+	return True, unsatisfied_constraints
 #
 def is_done(state, constraints):
 	for c in constraints:
@@ -120,8 +122,12 @@ def Astar(start_state, constraints):
 	all_states[start_state.get_heuristic()].append(start_state)
 	#
 	current_state = start_state
+	assumptions = 0
+	nodes_expanded = 0
 	while True:
 		new_states = generate_child_states2(current_state, constraints)
+		assumptions += 1
+		nodes_expanded += len(new_states) 
 		if len(new_states) != 0:
 			valid_states = []
 			parent = new_states[0].get_parent()
@@ -129,13 +135,15 @@ def Astar(start_state, constraints):
 			for new_state in new_states:
 				queue = create_GAC_constraint_queue(new_state.get_assumption()[0], constraints)
 				Filter(new_state, queue, constraints)
-				if is_valid_state(new_state, constraints):
+				state_is_valid, unsatisfied_constraints = is_valid_state(new_state, constraints)
+				if state_is_valid:
 					new_state.set_heuristic( new_state.calculate_heuristic() )
 					valid_states.append(new_state)
 				else:
 					parent.nodes[new_state.get_assumption()[0]].domain.remove(new_state.get_assumption()[1])
 			#
-			if is_valid_state(parent, constraints):
+			state_is_valid, unsatisfied_constraints = is_valid_state(new_state, constraints)
+			if state_is_valid:
 				parent.set_heuristic(parent.calculate_heuristic())
 				all_states[parent.get_heuristic()].append(parent)
 			#
@@ -144,7 +152,13 @@ def Astar(start_state, constraints):
 			time.sleep(algorithm_delay)
 			#
 			if is_done(current_state, constraints):
-				print "Done"
+				print "Done\n\n"
+				print "Number of vertices without color: 0"
+				print "Number of nodes in tree: ", len(current_state.nodes) 
+				print "Number of unsatisfied constraints: ", unsatisfied_constraints
+				print "assumptions done: ", assumptions
+				print "Nodes nodes_expanded: ", nodes_expanded
+				print "\n\n"
 				if show_gui:
 					gui.circle_matrix = gui.generate_circle_matrix(current_state)
 					gui.app.processEvents()
