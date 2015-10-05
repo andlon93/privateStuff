@@ -73,7 +73,6 @@ def generate_board(state):
 				board[i][k] = -1
 	return board
 
-
 def generate_color_matrix(board):
 	color_matrix = [[None for x in xrange(len(board[0]))] for x in xrange(len(board))]
 	for c in range(len(board)):
@@ -91,18 +90,13 @@ def generate_color_matrix(board):
 
 def initialise_color_matrix():
 	color_matrix = [[Qt.blue for x in xrange(cols_size)] for x in xrange(rows_size)]
-	# for c in range(cols_size):
-	# 	for r in range(rows_size):
-	# 		print "c,r: ",c,r
-	# 		color_matrix[c][r] = (Qt.blue)
 	return color_matrix
 
 color_matrix = []
 rectMatrix = []
-graphs=["camel","cat","heart","rabbit","telephone","sailboat"]
+graphs=["camel","cat","heart","rabbit","telephone","sailboat", "custom"]
 print "Pick a picture:"
-print "1: camel \n2: cat \n3: heart \n4: rabbit \n5: telephone \n6: sailboat\n "
-graph = "nono-camel.txt"
+print "1: camel \n2: cat \n3: heart \n4: rabbit \n5: telephone \n6: sailboat\n7: custom "
 graph = "nono-"
 graph += graphs[int(raw_input(""))-1]
 graph += ".txt"

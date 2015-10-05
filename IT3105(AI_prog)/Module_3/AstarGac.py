@@ -295,20 +295,20 @@ def Astar(start_state, constraints_rows, constraints_columns):
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
 	print "for philter"
-	time.sleep(2)
+	#time.sleep(0)
 
 	Filter(start_state, make_all_constraints(start_state))
 
 	temp, board = start_state.make_board()
 	gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 	gui.app.processEvents()
-	time.sleep(2)
+	#time.sleep(0)
 	#print "\nFirst filtering done \n"
 	temp, board = start_state.make_board()
 	children = generate_child_states(start_state)
 	#
 	while True:
-		time.sleep(1)
+		#time.sleep(0.2)
 	#for xxx in xrange(2):
 		if children:
 			valid_children = []
@@ -317,7 +317,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 				temp, board = child.make_board()
 				gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 				gui.app.processEvents()
-				time.sleep(1)
+				#time.sleep(0.2)
 				#
 				Filter(child,create_GAC_queue(child))
 
@@ -349,7 +349,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 						if not (stri=="n" or stri=="N"):
 							import subprocess
 							subprocess.call("taskkill /F /IM python.exe", shell=True)
-						time.sleep(1)
+						#time.sleep(1)
 						return True
 			#
 
@@ -360,7 +360,7 @@ def Astar(start_state, constraints_rows, constraints_columns):
 			temp, board = current_state.make_board()
 			gui.rectMatrix = gui.generate_rectMatrix(gui.generate_color_matrix(board))
 			gui.app.processEvents()
-			time.sleep(1)
+			#time.sleep(0)
 
 
 			children = generate_child_states(current_state)
