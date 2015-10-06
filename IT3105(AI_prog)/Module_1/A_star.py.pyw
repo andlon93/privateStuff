@@ -170,11 +170,11 @@ def Heuristic(node, goal_node):
     #print "H(y): ", abs(goal_node.y_pos - node.y_pos), "  H(x): ", abs(goal_node.x_pos - node.x_pos), '\n'
     return  (abs(goal_node.y_pos - node.y_pos) + abs(goal_node.x_pos - node.x_pos))
 #
-def attach_and_eval(child, parent, end_node, is_dfs):
+def attach_and_eval(child, parent, end_node, is_GBF):
     child.parent = parent
     child.g = parent.g + 1
     child.h = Heuristic(child, end_node)
-    if is_dfs:
+    if is_GBF:
         child.f = child.h
     else:
         child.f = child.h + child.g
@@ -195,7 +195,7 @@ def bubble_sort(items):
             if items[j].f > items[j+1].f:
                 items[j], items[j+1] = items[j+1], items[j]
 #
-def Astar(board, start_node, end_node, is_dfs):
+def Astar(board, start_node, end_node, is_dfs, is_bfs, is_GBF):
     closed=[]
     open_list=[]
 
@@ -208,14 +208,17 @@ def Astar(board, start_node, end_node, is_dfs):
     while True:
         if len(open_list) < 1:
             return False
-
-        current_node = open_list.pop(0)
+        if is_dfs:
+            current_node = open_list.pop()
+        else:
+            current_node = open_list.pop(0)
         game.algorithm_update_GUI(current_node, start_node, end_node, 1)#Write to GUI
         closed.append(current_node)
 
         if (current_node == end_node):
-            print "open_list", len(open_list)
+            print "\n\nopen_list", len(open_list)
             print "closed_list", len(closed)
+            print "\n\n"
             return True
         succ = current_node.children
 
@@ -223,13 +226,15 @@ def Astar(board, start_node, end_node, is_dfs):
             if child not in open_list and child not in closed:
                 game.algorithm_update_GUI(child, start_node, end_node, 5) #Write to GUI
 
-                attach_and_eval(child, current_node, end_node, is_dfs)
+                attach_and_eval(child, current_node, end_node, is_GBF)
                 open_list.append(child)
-                bubble_sort(open_list)
+                if not is_bfs and not is_dfs:
+                    bubble_sort(open_list)
             elif ((current_node.g + 1) < child.g):
-                attach_and_eval(child, current_node, end_node, is_dfs)
-                if child in closed and not is_dfs:
-                    prop_path_imp(child, end_node)
+                attach_and_eval(child, current_node, end_node, is_GBF)
+                if child in closed:
+                    if not is_dfs and not is_GBF:
+                        prop_path_imp(child, end_node)
 #
 def findPath(start_node, goal_node):
     current_node = goal_node
@@ -421,16 +426,22 @@ class Game(QtCore.QObject):
         rot, goal_node, class_board = self.create_linked_classes(initialBoard)
         if choose_algorithm == 0:
             ##--Astar--##
-            found_path = Astar(initialBoard, rot, goal_node, False)
+            found_path = Astar(initialBoard, rot, goal_node, False, False, False)
             if found_path: findPath(rot, goal_node)
             else: print 'Path not found'
         elif choose_algorithm == 1:
-            ##--Astar--##
-            path, board = self.Breadth_first_search(initialBoard, rot, goal_node)
-            self.BFS_update_board_with_path(board, rot, goal_node, path)
+            ##--BFS--##
+            found_path = Astar(initialBoard, rot, goal_node, False, True, False)
+            if found_path: findPath(rot, goal_node)
+            else: print 'Path not found'
         elif choose_algorithm == 2:
             ##--DFS--##
-            found_path = Astar(initialBoard, rot, goal_node, True)
+            found_path = Astar(initialBoard, rot, goal_node, True, False, False)
+            if found_path: findPath(rot, goal_node)
+            else: print 'Path not found'
+        elif choose_algorithm == 3:
+            ##--Greedy Best First--##
+            found_path = Astar(initialBoard, rot, goal_node, False, False, True)
             if found_path: findPath(rot, goal_node)
             else: print 'Path not found'
 
@@ -464,8 +475,10 @@ if __name__ == '__main__':
         if run_example_set == 1 or run_example_set == 0: right = True
 
         print "Which algorithm do you want to run?"
-        choose_algorithm = int( raw_input("Astar: '0',   BFS: '1',  DFS: 2") )
-        if choose_algorithm == 1 or choose_algorithm == 0 or choose_algorithm == 2: right = True
+        print "Astar: '0',   BFS: '1',  DFS: 2,  Greedy Best First: 3"
+        choose_algorithm = int( raw_input("Type choice here:  "))
+        if choose_algorithm == 1 or choose_algorithm == 0 or choose_algorithm == 2 or choose_algorithm == 3: 
+            right = True
 
         if not right: print "some input given was wrong. We will start again\n\n"
 
@@ -480,7 +493,7 @@ if __name__ == '__main__':
 
     ###################################################################
     initialBoard = create_board(rows, cols, start_node, goal_node, Barriers)
-    sleep_dur = 0.01
+    sleep_dur = 0.002
     game = Game()
 
     app = QtGui.QApplication(sys.argv)
