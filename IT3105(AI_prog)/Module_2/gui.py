@@ -9,8 +9,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
 #
-window_size_x = 800 # Window width
-window_size_y = 600 # Window Height
+window_size_x = 900 # Window width
+window_size_y = 700 # Window Height
 is_done=False
 #
 def worker():
