@@ -90,6 +90,12 @@ def generate_circle_matrix(state):
 				color = Qt.green
 			elif domain[0] == 5:
 				color = Qt.orange
+			elif domain[0] == 6:
+				color = Qt.darkBlue
+			elif domain[0] == 7:
+				color = Qt.darkRed
+			elif domain[0] == 8:
+				color = Qt.darkYellow
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix
