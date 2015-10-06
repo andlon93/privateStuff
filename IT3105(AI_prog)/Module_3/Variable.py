@@ -59,5 +59,3 @@ class Variable:
 	def get_domain(self): return self.domain
 	def get_is_row(self): return self.is_row
 	def get_index(self): return self.index
-
-#v = Variable(True, 0, [3,1,2], 10)
