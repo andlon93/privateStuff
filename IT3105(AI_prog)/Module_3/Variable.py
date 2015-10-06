@@ -59,7 +59,4 @@ class Variable:
 	def get_domain(self): return self.domain
 	def get_is_row(self): return self.is_row
 	def get_index(self): return self.index
-<<<<<<< HEAD
-#v = Variable(True, 0, [3,1,2], 10)
-=======
->>>>>>> 89068689e2a08ca5364a3a4bf866113d449d2a1a
+
