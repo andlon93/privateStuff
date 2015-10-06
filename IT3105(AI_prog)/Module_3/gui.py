@@ -97,9 +97,9 @@ def initialise_color_matrix():
 
 color_matrix = []
 rectMatrix = []
-graphs=["camel","cat","heart","rabbit","telephone","sailboat", "custom2"]
+graphs=["camel","cat","heart","rabbit","telephone","sailboat", "custom2","1","2","3","4","5"]
 print "Pick a picture:"
-print "1: camel \n2: cat \n3: heart \n4: rabbit \n5: telephone \n6: sailboat\n7: custom "
+print "1: camel \n2: cat \n3: heart \n4: rabbit \n5: telephone \n6: sailboat\n7: custom\n8: 1 \n9: 2 \n 10: 3 \n 11: 4 \n 12: 5 "
 graph = "nono-"
 graph += graphs[int(raw_input(""))-1]
 graph += ".txt"
