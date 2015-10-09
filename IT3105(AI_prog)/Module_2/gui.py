@@ -9,8 +9,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from threading import *
 #
-window_size_x = 800 # Window width
-window_size_y = 600 # Window Height
+window_size_x = 900 # Window width
+window_size_y = 700 # Window Height
 is_done=False
 #
 def worker():
@@ -90,6 +90,12 @@ def generate_circle_matrix(state):
 				color = Qt.green
 			elif domain[0] == 5:
 				color = Qt.orange
+			elif domain[0] == 6:
+				color = Qt.darkBlue
+			elif domain[0] == 7:
+				color = Qt.darkRed
+			elif domain[0] == 8:
+				color = Qt.darkYellow
 		circle_matrix[i][2]=color
 		i=i+1
 	return circle_matrix

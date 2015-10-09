@@ -126,8 +126,8 @@ def Astar(start_state, constraints):
 	nodes_expanded = 0
 	while True:
 		new_states = generate_child_states2(current_state, constraints)
-		assumptions += 1
-		nodes_expanded += len(new_states) 
+		assumptions += len(new_states)
+		#nodes_expanded += len(new_states)
 		if len(new_states) != 0:
 			valid_states = []
 			parent = new_states[0].get_parent()
@@ -149,12 +149,13 @@ def Astar(start_state, constraints):
 			#
 			all_states = add_states_to_dict(valid_states, all_states)
 			current_state = get_best_state(all_states)
+			nodes_expanded += 1
 			time.sleep(algorithm_delay)
 			#
 			if is_done(current_state, constraints):
 				print "Done\n\n"
 				print "Number of vertices without color: 0"
-				print "Number of nodes in tree: ", len(current_state.nodes) 
+				print "Number of nodes in tree: ", len(current_state.nodes)
 				print "Number of unsatisfied constraints: ", unsatisfied_constraints
 				print "assumptions done: ", assumptions
 				print "Nodes nodes_expanded: ", nodes_expanded
@@ -182,6 +183,7 @@ def Astar(start_state, constraints):
 		else:
 			all_states[current_state.get_heuristic()].remove(current_state)
 			current_state = get_best_state(all_states)
+			nodes_expanded += 1
 			#
 			if is_done(current_state, constraints):
 				print "ER FERDIG"
