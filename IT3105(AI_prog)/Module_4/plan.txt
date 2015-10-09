@@ -14,7 +14,7 @@ class State:
 class GUI:
 	-guishit
 
-class mini_max_
+class mini_max:
 	def alpha_beta_pruning()
 	def make_tree(depth)
 	def move_possible()
