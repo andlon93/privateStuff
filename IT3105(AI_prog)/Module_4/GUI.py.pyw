@@ -84,7 +84,9 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def updateBoard(self):
-        self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), random.randint(-1, 4))
+        tiles = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
+        t = random.randint(0, len(tiles)-1)
+        self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), tiles[t])
     #
     @QtCore.pyqtSlot()
     def resetBoard(self):
