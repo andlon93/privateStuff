@@ -24,7 +24,6 @@ class State:
 					self.board[row][col] = 0
 					rute_ledig.popleft()
 					rute_ledig.append([row, col])
-	#
 	def move_down(self, col):
 		'''For code explanation see move_up()'''
 		rute_ledig = deque()
@@ -36,7 +35,6 @@ class State:
 					self.board[row][col] = 0
 					rute_ledig.popleft()
 					rute_ledig.append([row, col])
-	#
 	def move_right(self, row):
 		'''For code explanation see move_up()'''
 		rute_ledig = deque()
@@ -48,7 +46,6 @@ class State:
 					self.board[row][col] = 0
 					rute_ledig.popleft()
 					rute_ledig.append([row, col])
-	#
 	def move_left(self, row):
 		'''For code explanation see move_up()'''
 		rute_ledig = deque()
@@ -117,6 +114,7 @@ class State:
 		else:
 			print "wrong direction input given"
 	#
+	####--- Spawn a 2 or 4 ---####
 	def spawn(self):
 		'''A new 2 or 4 tile spawns on the board.
 		   P(2) = 0.9  --  P(4) = 0.1
@@ -135,12 +133,33 @@ class State:
 		else:#P(2) = 0.9
 			self.board[chosen_tile[0]][chosen_tile[1]] = 2
 	#
+	####--- Can make a move ---####
+	def can_make_a_move(self):
+		'''If a tile is empty or
+		   a tile has an equal tile to merge with
+		   then a move can be made
+		'''
+		for row in xrange(4):
+			for col in xrange(4):
+				if self.board[row][col] == 0: return True
+				elif row-1 > -1:
+					if board[row][col] == board[row-1][col]: return True
+				elif row+1 < 4:
+					if board[row][col] == board[row+1][col]: return True
+				elif col-1 > -1:
+					if board[row][col] == board[row][col-1]: return True
+				elif col+1 < 4:
+					if board[row][col] == board[row][col+1]: return True
+		return False
+	#
+	####--- Heuristic methods ---####
 	def calculate_heuristic(self):
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
 		h = 0
 		return h
+	#
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
 	def set_tile(self, row, column, value): self.board[row][column] = value
