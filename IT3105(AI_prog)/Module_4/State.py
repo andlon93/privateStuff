@@ -1,4 +1,5 @@
 import random
+from collections import deque
 #
 class State:
 	#
@@ -10,7 +11,30 @@ class State:
 	#
 	def move(self, direction):
 		'''updates the board based on a move in a given direction
-		   May add submethods for moving the tiles and merging tiles'''
+		   May add submethods for moving the tiles and merging tiles
+		   0 = up
+		   1 = right
+		   2 = down
+		   3 = left
+		'''
+		
+		if direction == 0:#hvis move er oppover
+			for col in xrange(4):#iterer over brett kolonne for kolonne
+				rute_ledig = deque()#legger inn tomme ruter i en ko
+				for row in xrange(4):
+					if self.board[row][col] == 0:#hvis ledig rute -> legg inn i ko
+						rute_ledig.append([row, col])
+					else:#hvis ikke
+						if rute_ledig:
+							'''Hvis ledig rute finnes:
+							   legg inn verdi i forste rute i ko og fjern den fra ko
+							   gjor verdi i denne rute til 0 og legg den inn i ko 
+							'''
+							self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
+							self.board[row][col] = 0
+							rute_ledig.popleft()
+							rute_ledig.append([row, col])
+
 		pass
 	#
 	def spawn(self):
@@ -44,13 +68,16 @@ class State:
 	def get_board(self): return self.board
 	#
 	def get_h(self): return self.h
-
-board =[[0,0,0,0],
-		[0,0,0,0],
-		[0,0,0,0],
-		[0,0,0,0]]
-s = State(board)
-print s.get_board()
-for n in xrange(16):
-	s.spawn()
-print s.get_board()
+#
+if __name__ == '__main__':
+	board =[[0,1,0,1],
+			[0,0,2,0],
+			[0,1,0,0],
+			[0,1,1,2]]
+	s = State(board)
+	for row in s.get_board():
+		print row
+	print '\n'
+	s.move(0)
+	for row in s.get_board():
+		print row
