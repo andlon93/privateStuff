@@ -169,14 +169,14 @@ class State:
 	def get_h(self): return self.h
 #
 if __name__ == '__main__':
-	board =[[4,4,0,4],
-			[4,4,2,0],
-			[0,2,0,2],
-			[2,2,2,2]]
+	board =[[4,2,4,2],
+			[2,4,2,4],
+			[4,2,4,2],
+			[2,4,2,4]]
 	s = State(board)
 	for row in s.get_board():
 		print row
 	print '\n'
-	s.move(3)
-	for row in s.get_board():
-		print row
+	print s.can_make_a_move()
+	#for row in s.get_board():
+	#	print row
