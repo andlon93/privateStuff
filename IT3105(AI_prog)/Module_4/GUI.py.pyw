@@ -70,7 +70,7 @@ class Game(QtCore.QObject):
         else:
             t.setStatus(status)
             return True
-    #
+    ###############################################################
     @QtCore.pyqtSlot()
     def setUp(self):
         print("Setting up the game.")
@@ -81,7 +81,7 @@ class Game(QtCore.QObject):
     def startGame(self):
         print "game started"
         self.updateBoard()
-    #
+    ################################################################
     @QtCore.pyqtSlot()
     def updateBoard(self):
         tiles = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
