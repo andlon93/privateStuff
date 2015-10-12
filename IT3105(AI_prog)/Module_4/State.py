@@ -1,5 +1,6 @@
 import random
 from collections import deque
+import copy
 #
 class State:
 	#
@@ -126,12 +127,17 @@ class State:
 				#if tile is zero, a spawn may happen in it
 				if self.board[row][col] == 0: open_tiles.append([row, col])
 		#
-		chosen_tile = open_tiles[random.randint(0, len(open_tiles)-1)]#choose a random tile
-		print chosen_tile
+		if open_tiles:
+			chosen_tile = open_tiles[random.randint(0, len(open_tiles)-1)]#choose a random tile
+		else:
+			print "ingen steder aa spawne en tile"
+			return False
 		if random.randint(0, 100) < 10:#P(4) = 0.1
 			self.board[chosen_tile[0]][chosen_tile[1]] = 4
+			return True
 		else:#P(2) = 0.9
 			self.board[chosen_tile[0]][chosen_tile[1]] = 2
+			return True
 	#
 	####--- Can make a move ---####
 	def can_make_a_move(self):
@@ -152,6 +158,19 @@ class State:
 					if self.board[row][col] == self.board[row][col+1]: return True
 		return False
 	#
+	def is_valid_move(self, direction):
+		'''Checks whether the move changes the position of the board.
+		   If it does not the move does not count as move
+		'''
+		board_pre_move = copy.deepcopy(state.get_board())
+		temp_state = copy.deepcopy(self)
+		temp_state.move(direction)
+		for row in xrange(4):
+			for col in xrange(4):
+				if temp_state.get_tile(row, col) != board_pre_move[row][col]:
+					return True
+		return False
+	#
 	####--- Heuristic methods ---####
 	def calculate_heuristic(self):
 		'''Based on one or more algorithms the quality/closeness to target
@@ -167,16 +186,71 @@ class State:
 	def get_board(self): return self.board
 	#
 	def get_h(self): return self.h
+	def get_highest_tile(self):
+		highest_tile = 0
+		for row in xrange(4):
+			for col in xrange(4):
+				if self.get_tile(row, col) > highest_tile:
+					highest_tile = self.get_tile(row, col)
+		return highest_tile
 #
+#
+def do_moves(state):
+	moves = [0, 1, 3, 2]
+	while state.can_make_a_move():
+		for direction in moves:
+			if state.is_valid_move(direction):
+				state.move(direction)
+				break
+		state.spawn()
+	return state.get_highest_tile()
+
+	
+		
+#
+
 if __name__ == '__main__':
-	board =[[4,2,4,2],
-			[2,4,2,4],
-			[4,2,4,2],
-			[2,4,2,4]]
-	s = State(board)
-	for row in s.get_board():
-		print row
-	print '\n'
-	print s.can_make_a_move()
-	#for row in s.get_board():
-	#	print row
+	n64_ = 0
+	n128_ = 0
+	n256_ = 0
+	n512_ = 0
+	n1024_ = 0
+	n2048_ = 0
+	board =[[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0]]
+	n = 1000
+	for iii in xrange(n):
+		if iii%100 == 0: print "Kjoring nummer ", iii
+		board =[[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0]]
+		state = State(board)
+		highest_tile = do_moves(state)
+
+		if highest_tile == 64: n64_ += 1
+		if highest_tile == 128: n128_ += 1
+		elif highest_tile == 256: n256_ += 1
+		elif highest_tile == 512: n512_ += 1
+		elif highest_tile == 1024: n1024_ += 1
+		elif highest_tile == 2048: n2048_ += 1
+
+	#
+	print n, " runs:"
+	print "64: ", 100.0*float(n64_)/n, "%"
+	print "128: ", 100.0*float(n128_)/n, "%"
+	print "256: ", 100.0*float(n256_)/n, "%"
+	print "512: ", 100.0*float(n512_)/n, "%"
+	print "1024: ", 100.0*float(n1024_)/n, "%"
+	print "2048: ", 100.0*float(n2048_)/n, "%"
+
+'''Resultat:
+64: 18.4%
+128: 50.4%
+256: 28.3%
+512: 0.8%
+1024: 0.0%
+2048: 0.0%'''
+	

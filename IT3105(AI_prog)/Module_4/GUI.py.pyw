@@ -4,6 +4,7 @@ import sys
 import random
 import time
 from PyQt4 import QtCore, QtGui, QtDeclarative
+import copy
 #
 #########---- Class that represent the different tiles in the UI ----########
 class TileData(QtCore.QObject):
@@ -79,50 +80,26 @@ class Game(QtCore.QObject):
         for ii in xrange(16):
             self._tiles.append( TileData( 0 ) )
     #
-    @QtCore.pyqtSlot()
-    def temp(self, state):
-        for move in xrange(3):
-            state.move(move)
-            for row in xrange(4):
-                for col in xrange(4):
-                    if state.board[row][col] == 0: break
 
 
-    @QtCore.pyqtSlot()
-    def make_some_moves(self, state):
-        moves = [0,1,3,2]
-        while state.can_make_a_move():
-            for move in moves:
-                state.move(move)
-                for row in xrange(4):
-                    for col in xrange(4):
-                        if state.board[row][col] == 0: break
-
-            self.setBoard(state.get_board())
-            #time.sleep(2)
-            state.spawn()
-            self.setBoard(state.get_board())
-            #time.sleep(1)
+    
     @QtCore.pyqtSlot()
     def startGame(self):
         
         print "game started"
         
-        state.spawn()
-        self.setBoard(state.get_board())
-        #time.sleep(2)
-        self.make_some_moves(state)
+        
         
         
         
 
         
     ################################################################
-    @QtCore.pyqtSlot()
-    def updateBoard(self):
-        tiles = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
-        t = random.randint(0, len(tiles)-1)
-        self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), tiles[t])
+    #@QtCore.pyqtSlot()
+    #def updateBoard(self):
+    #    tiles = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
+    #    t = random.randint(0, len(tiles)-1)
+    #    self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), tiles[t])
     #
     @QtCore.pyqtSlot()
     def setBoard(self, board):
@@ -145,7 +122,7 @@ if __name__ == '__main__':
              [0,0,0,0],
              [0,0,0,0],
              [0,0,0,0]]
-    state = State.State(board)
+    
     game = Game()
     #
     app = QtGui.QApplication(sys.argv)
@@ -153,7 +130,7 @@ if __name__ == '__main__':
     engine = view.engine()
     #
     game.setUp()
-    #
+    
     engine.rootContext().setContextObject(game)
     view.setSource(QtCore.QUrl.fromLocalFile('grid.qml'))
     view.show()
