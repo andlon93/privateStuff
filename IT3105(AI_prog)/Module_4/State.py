@@ -143,13 +143,13 @@ class State:
 			for col in xrange(4):
 				if self.board[row][col] == 0: return True
 				elif row-1 > -1:
-					if board[row][col] == board[row-1][col]: return True
+					if self.board[row][col] == self.board[row-1][col]: return True
 				elif row+1 < 4:
-					if board[row][col] == board[row+1][col]: return True
+					if self.board[row][col] == self.board[row+1][col]: return True
 				elif col-1 > -1:
-					if board[row][col] == board[row][col-1]: return True
+					if self.board[row][col] == self.board[row][col-1]: return True
 				elif col+1 < 4:
-					if board[row][col] == board[row][col+1]: return True
+					if self.board[row][col] == self.board[row][col+1]: return True
 		return False
 	#
 	####--- Heuristic methods ---####

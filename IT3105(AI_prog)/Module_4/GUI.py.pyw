@@ -80,15 +80,40 @@ class Game(QtCore.QObject):
             self._tiles.append( TileData( 0 ) )
     #
     @QtCore.pyqtSlot()
+    def temp(self, state):
+        for move in xrange(3):
+            state.move(move)
+            for row in xrange(4):
+                for col in xrange(4):
+                    if state.board[row][col] == 0: break
+
+
+    @QtCore.pyqtSlot()
+    def make_some_moves(self, state):
+        moves = [0,1,3,2]
+        while state.can_make_a_move():
+            for move in moves:
+                state.move(move)
+                for row in xrange(4):
+                    for col in xrange(4):
+                        if state.board[row][col] == 0: break
+
+            self.setBoard(state.get_board())
+            #time.sleep(2)
+            state.spawn()
+            self.setBoard(state.get_board())
+            #time.sleep(1)
+    @QtCore.pyqtSlot()
     def startGame(self):
         
         print "game started"
         
         state.spawn()
         self.setBoard(state.get_board())
-        time.sleep(1)
-        state.move(random.randint(0, 3))
-        self.setBoard(state.get_board())
+        #time.sleep(2)
+        self.make_some_moves(state)
+        
+        
         
 
         
