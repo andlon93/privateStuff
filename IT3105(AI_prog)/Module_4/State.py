@@ -26,7 +26,7 @@ class State:
 					rute_ledig.append([row, col])
 	#
 	def move_down(self, col):
-		'''For forklaring se move_up()'''
+		'''For code explanation see move_up()'''
 		rute_ledig = deque()
 		for row in xrange(3, -1, -1):
 			if self.board[row][col] == 0: rute_ledig.append([row, col])
@@ -38,8 +38,21 @@ class State:
 					rute_ledig.append([row, col])
 	#
 	def move_right(self, row):
+		'''For code explanation see move_up()'''
 		rute_ledig = deque()
 		for col in xrange(3, -1, -1):
+			if self.board[row][col] == 0: rute_ledig.append([row, col])
+			else:
+				if rute_ledig:
+					self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
+					self.board[row][col] = 0
+					rute_ledig.popleft()
+					rute_ledig.append([row, col])
+	#
+	def move_left(self, row):
+		'''For code explanation see move_up()'''
+		rute_ledig = deque()
+		for col in xrange(4):
 			if self.board[row][col] == 0: rute_ledig.append([row, col])
 			else:
 				if rute_ledig:
@@ -55,6 +68,7 @@ class State:
 		   1 = right
 		   2 = down
 		   3 = left
+		   direction == 0 has code explanation. almost identical for every move
 		'''	
 		if direction == 0:#hvis move er up
 			for col in xrange(4):#iterer over brett kolonne for kolonne
@@ -63,7 +77,7 @@ class State:
 				rute_ledig = deque()
 				for row in xrange(3):
 					if self.board[row][col] == self.board[row+1][col]:#merge ruter om de er like
-						board[row][col] = board[row][col] * 2#sett overste til dobbel verdi
+						self.board[row][col] = self.board[row][col] * 2#sett overste til dobbel verdi
 						self.board[row+1][col] = 0#sett den under til 0
 				##-- Merge end --##
 				self.move_up(col)#move tiles up again
@@ -73,9 +87,9 @@ class State:
 				##-- Merge start --##
 				rute_ledig = deque()
 				for row in xrange(3, 0, -1):
-					if self.board[row][col] == self.board[row-1][col]:#merge ruter om de er like
-						board[row][col] = board[row][col] * 2#sett overste til dobbel verdi
-						self.board[row-1][col] = 0#sett den under til 0
+					if self.board[row][col] == self.board[row-1][col]:
+						self.board[row][col] = self.board[row][col] * 2
+						self.board[row-1][col] = 0
 				##-- Merge end --##
 				self.move_down(col)
 		elif direction == 1:#hvis move er right
@@ -84,14 +98,24 @@ class State:
 				##-- Merge start --##
 				rute_ledig = deque()
 				for col in xrange(3, 0, -1):
-					if self.board[row][col] == self.board[row][col-1]:#merge ruter om de er like
-						board[row][col] = board[row][col] * 2#sett overste til dobbel verdi
-						self.board[row][col-1] = 0#sett den under til 0
+					if self.board[row][col] == self.board[row][col-1]:
+						self.board[row][col] = self.board[row][col] * 2
+						self.board[row][col-1] = 0
 				##-- Merge end --##
 				self.move_right(row)
-
-
-		pass
+		elif direction == 3:#move left
+			for row in xrange(4):
+				self.move_left(row)
+				##-- Merge start --##
+				rute_ledig = deque()
+				for col in xrange(3):
+					if self.board[row][col] == self.board[row][col+1]:
+						self.board[row][col] = self.board[row][col] * 2
+						self.board[row][col+1] = 0
+				##-- Merge end --##
+				self.move_left(row)
+		else:
+			print "wrong direction input given"
 	#
 	def spawn(self):
 		'''A new 2 or 4 tile spawns on the board.
@@ -128,12 +152,12 @@ class State:
 if __name__ == '__main__':
 	board =[[4,4,0,4],
 			[4,4,2,0],
-			[0,2,0,0],
+			[0,2,0,2],
 			[2,2,2,2]]
 	s = State(board)
 	for row in s.get_board():
 		print row
 	print '\n'
-	s.move(1)
+	s.move(3)
 	for row in s.get_board():
 		print row

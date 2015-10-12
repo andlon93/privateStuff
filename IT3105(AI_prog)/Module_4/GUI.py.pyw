@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import State
 import sys
 import random
 import time
@@ -74,13 +75,23 @@ class Game(QtCore.QObject):
     @QtCore.pyqtSlot()
     def setUp(self):
         print("Setting up the game.")
+
         for ii in xrange(16):
             self._tiles.append( TileData( 0 ) )
     #
     @QtCore.pyqtSlot()
     def startGame(self):
+        
         print "game started"
-        self.updateBoard()
+        
+        state.spawn()
+        self.setBoard(state.get_board())
+        time.sleep(1)
+        state.move(random.randint(0, 3))
+        self.setBoard(state.get_board())
+        
+
+        
     ################################################################
     @QtCore.pyqtSlot()
     def updateBoard(self):
@@ -89,10 +100,10 @@ class Game(QtCore.QObject):
         self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), tiles[t])
     #
     @QtCore.pyqtSlot()
-    def resetBoard(self):
-        for r in range (self._numRows):
-            for c in range(self._numCols):
-                self.setStatusOfTile(r, c, 0)
+    def setBoard(self, board):
+        for r in xrange(4):
+            for c in xrange(4):
+                self.setStatusOfTile(r, c, board[r][c])
     # Private member functions
     def _onBoard(self, row, col):
         return (row >= 0 and row < self._numRows and col >= 0 and col < self._numCols)
@@ -104,7 +115,12 @@ class Game(QtCore.QObject):
 #
 #
 if __name__ == '__main__':
-    #    
+    #
+    board = [[0,0,0,0],
+             [0,0,0,0],
+             [0,0,0,0],
+             [0,0,0,0]]
+    state = State.State(board)
     game = Game()
     #
     app = QtGui.QApplication(sys.argv)
