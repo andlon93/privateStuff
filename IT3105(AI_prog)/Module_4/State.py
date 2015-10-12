@@ -8,7 +8,23 @@ class State:
 	#
 	def __init__(self, board):
 		self.board = board
-	#
+	####--- Move methods ---####
+	def move_up(self, col):
+		rute_ledig = deque()#legger inn tomme ruter i en ko
+		for row in xrange(4):
+			if self.board[row][col] == 0:#hvis ledig rute -> legg inn i ko
+				rute_ledig.append([row, col])
+			else:#hvis ikke
+				if rute_ledig:
+					'''Hvis ledig rute finnes:
+					   legg inn verdi i forste rute i ko og fjern den fra ko
+					   gjor verdi i denne rute til 0 og legg den inn i ko 
+					'''
+					self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
+					self.board[row][col] = 0
+					rute_ledig.popleft()
+					rute_ledig.append([row, col])
+#
 	def move(self, direction):
 		'''updates the board based on a move in a given direction
 		   May add submethods for moving the tiles and merging tiles
@@ -20,20 +36,16 @@ class State:
 		
 		if direction == 0:#hvis move er oppover
 			for col in xrange(4):#iterer over brett kolonne for kolonne
-				rute_ledig = deque()#legger inn tomme ruter i en ko
-				for row in xrange(4):
-					if self.board[row][col] == 0:#hvis ledig rute -> legg inn i ko
-						rute_ledig.append([row, col])
-					else:#hvis ikke
-						if rute_ledig:
-							'''Hvis ledig rute finnes:
-							   legg inn verdi i forste rute i ko og fjern den fra ko
-							   gjor verdi i denne rute til 0 og legg den inn i ko 
-							'''
-							self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
-							self.board[row][col] = 0
-							rute_ledig.popleft()
-							rute_ledig.append([row, col])
+				self.move_up(col)#Move tiles up
+				##-- Merge start --##
+				rute_ledig = deque()
+				for row in xrange(3):
+					if self.board[row][col] == self.board[row+1][col]:
+						board[row][col] = board[row][col] * 2
+						self.board[row+1][col] = 0
+				##-- Merge end --##
+				self.move_up(col)#move tiles up again
+
 
 		pass
 	#
@@ -70,10 +82,10 @@ class State:
 	def get_h(self): return self.h
 #
 if __name__ == '__main__':
-	board =[[0,1,0,1],
-			[0,0,2,0],
-			[0,1,0,0],
-			[0,1,1,2]]
+	board =[[0,2,0,4],
+			[0,2,2,0],
+			[0,2,0,0],
+			[0,2,2,2]]
 	s = State(board)
 	for row in s.get_board():
 		print row
