@@ -24,7 +24,7 @@ class State:
 					self.board[row][col] = 0
 					rute_ledig.popleft()
 					rute_ledig.append([row, col])
-#
+	#
 	def move_down(self, col):
 		'''For forklaring se move_up()'''
 		rute_ledig = deque()
@@ -36,7 +36,18 @@ class State:
 					self.board[row][col] = 0
 					rute_ledig.popleft()
 					rute_ledig.append([row, col])
-#
+	#
+	def move_right(self, row):
+		rute_ledig = deque()
+		for col in xrange(3, -1, -1):
+			if self.board[row][col] == 0: rute_ledig.append([row, col])
+			else:
+				if rute_ledig:
+					self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
+					self.board[row][col] = 0
+					rute_ledig.popleft()
+					rute_ledig.append([row, col])
+	#
 	def move(self, direction):
 		'''updates the board based on a move in a given direction
 		   May add submethods for moving the tiles and merging tiles
@@ -45,7 +56,7 @@ class State:
 		   2 = down
 		   3 = left
 		'''	
-		if direction == 0:#hvis move er oppover
+		if direction == 0:#hvis move er up
 			for col in xrange(4):#iterer over brett kolonne for kolonne
 				self.move_up(col)#Move tiles up
 				##-- Merge start --##
@@ -56,7 +67,7 @@ class State:
 						self.board[row+1][col] = 0#sett den under til 0
 				##-- Merge end --##
 				self.move_up(col)#move tiles up again
-		elif direction == 2:
+		elif direction == 2:#hvis move er down
 			for col in xrange(3, -1, -1):
 				self.move_down(col)
 				##-- Merge start --##
@@ -67,7 +78,17 @@ class State:
 						self.board[row-1][col] = 0#sett den under til 0
 				##-- Merge end --##
 				self.move_down(col)
-
+		elif direction == 1:#hvis move er right
+			for row in xrange(4):
+				self.move_right(row)
+				##-- Merge start --##
+				rute_ledig = deque()
+				for col in xrange(3, 0, -1):
+					if self.board[row][col] == self.board[row][col-1]:#merge ruter om de er like
+						board[row][col] = board[row][col] * 2#sett overste til dobbel verdi
+						self.board[row][col-1] = 0#sett den under til 0
+				##-- Merge end --##
+				self.move_right(row)
 
 
 		pass
@@ -106,13 +127,13 @@ class State:
 #
 if __name__ == '__main__':
 	board =[[4,4,0,4],
-			[0,4,2,0],
+			[4,4,2,0],
 			[0,2,0,0],
-			[4,2,2,2]]
+			[2,2,2,2]]
 	s = State(board)
 	for row in s.get_board():
 		print row
 	print '\n'
-	s.move(2)
+	s.move(1)
 	for row in s.get_board():
 		print row
