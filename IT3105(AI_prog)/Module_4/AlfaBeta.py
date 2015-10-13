@@ -34,27 +34,27 @@ def ab_prun(state, depth, alfa, beta, is_max):
 		return state.calculate_utility()
 	if is_max:
 		#print "is_max"
-		alfas = []
+		v = -1
 		#print state.all_valid_moves()
 		for move in state.all_valid_moves():
 			#print "move", move
-			alfas.append( ab_prun(new_state_move(state, move), depth-1, alfa, beta, False) )
-			alfa = max(alfas)
+			v = max(v, ab_prun(new_state_move(state, move), depth-1, alfa, beta, False) )
+			alfa = max(alfa, v)
 			#print "alfa", alfa
 			if beta <= alfa:
 				break
 		#print "return alfa"
-		return alfa
+		return v
 	else:
-		betas = []
+		v = 101
 		for spawn in state.all_spawns():
 			#print "spawn", spawn
-			betas.append( ab_prun(new_state_spawn(state, spawn), depth-1, alfa, beta, True) )
-			beta = min(betas)
+			v = min(v, ab_prun(new_state_spawn(state, spawn), depth-1, alfa, beta, True) )
+			beta = min(beta, v)
 			if beta <= alfa:
 				break
 		#print "return beta"
-		return beta
+		return v
 ##
 board = [[0,0,0,0],
 		 [0,0,0,0],
@@ -73,6 +73,7 @@ while state.can_make_a_move:
 		if temp_state.calculate_utility() == val:
 			state.move(move)
 			break
+	break
 	state.spawn()
 
 
