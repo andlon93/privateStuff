@@ -141,7 +141,7 @@ class State:
 			self.board[chosen_tile[0]][chosen_tile[1]] = 2
 			return True
 	#
-	####--- Can make a move ---####
+	####--- valid and find all moves and spawns methods ---####
 	def can_make_a_move(self):
 		'''If a tile is empty or
 		   a tile has an equal tile to merge with
@@ -164,7 +164,7 @@ class State:
 		'''Checks whether the move changes the position of the board.
 		   If it does not the move does not count as move
 		'''
-		board_pre_move = copy.deepcopy(state.get_board())
+		board_pre_move = copy.deepcopy(self.get_board())
 		temp_state = copy.deepcopy(self)
 		temp_state.move(direction)
 		for row in xrange(4):
@@ -173,7 +173,22 @@ class State:
 					return True
 		return False
 	#
-	####--- Heuristic methods ---####
+	def all_valid_moves(self):
+		valid_moves = []
+		for move in xrange(4):
+			if self.is_valid_move(move): valid_moves.append(move)
+		return valid_moves
+	#
+	def all_spawns(self):
+		all_spawns = []
+		for r in xrange(4):
+			for c in xrange(4):
+				if self.board[r][c] == 0:
+					all_spawns.append([r, c, 2])
+					all_spawns.append([r, c, 4])
+		return all_spawns
+	#
+	####--- Utility methods ---####
 	def calculate_utility(self):
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
@@ -191,13 +206,14 @@ class State:
 		return utility
 	#
 	def highest_tile_utility(self):
-		highest_tile = 0
+		'''highest_tile = 0
 		for row in self.board:
 			for tile in row:
 				if tile > highest_tile:
 					highest_tile = tile
 		utility = highest_tile * 0.04882
-		return utility
+		return utility'''
+		return float(self.get_highest_tile()) * 0.04882
 
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
@@ -232,7 +248,14 @@ def do_moves(state):
 #
 
 if __name__ == '__main__':
-	n64_ = 0
+	board =[[2,4,2,4],
+			[4,2,4,8],
+			[16,8,16,2],
+			[2,4,8,0]]
+	s = State(board)
+	l = s.all_valid_moves()
+	print len(l)
+	'''n64_ = 0
 	n128_ = 0
 	n256_ = 0
 	n512_ = 0
@@ -267,7 +290,7 @@ if __name__ == '__main__':
 	print "256: ", 100.0*float(n256_)/n, "%"
 	print "512: ", 100.0*float(n512_)/n, "%"
 	print "1024: ", 100.0*float(n1024_)/n, "%"
-	print "2048: ", 100.0*float(n2048_)/n, "%"
+	print "2048: ", 100.0*float(n2048_)/n, "%"'''
 
 '''Resultat:
 64: 18.4%
