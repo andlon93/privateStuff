@@ -1,11 +1,13 @@
+from __future__ import division
 import random
 from collections import deque
 import copy
+
 #
 class State:
 	#
 	board = []
-	h = None
+	utility = None
 	#
 	def __init__(self, board):
 		self.board = board
@@ -19,7 +21,7 @@ class State:
 				if rute_ledig:
 					'''Hvis ledig rute finnes:
 					   legg inn verdi i forste rute i ko og fjern den fra ko
-					   gjor verdi i denne rute til 0 og legg den inn i ko 
+					   gjor verdi i denne rute til 0 og legg den inn i ko
 					'''
 					self.board[rute_ledig[0][0]][rute_ledig[0][1]] = self.board[row][col]
 					self.board[row][col] = 0
@@ -67,7 +69,7 @@ class State:
 		   2 = down
 		   3 = left
 		   direction == 0 has code explanation. almost identical for every move
-		'''	
+		'''
 		if direction == 0:#hvis move er up
 			for col in xrange(4):#iterer over brett kolonne for kolonne
 				self.move_up(col)#Move tiles up
@@ -172,12 +174,19 @@ class State:
 		return False
 	#
 	####--- Heuristic methods ---####
-	def calculate_heuristic(self):
+	def calculate_utility(self):
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		h = 0
-		return h
+		total_tiles = 16
+		total_empty_tiles = 0
+		for row in self.board:
+			for tile in row:
+				if tile == 0:
+					total_empty_tiles += 1
+		print "total empty ", total_empty_tiles
+		utility = (total_empty_tiles / total_tiles) * 100
+		return utility
 	#
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
@@ -202,11 +211,12 @@ def do_moves(state):
 			if state.is_valid_move(direction):
 				state.move(direction)
 				break
+		print state.calculate_utility()
 		state.spawn()
 	return state.get_highest_tile()
 
-	
-		
+
+
 #
 
 if __name__ == '__main__':
@@ -229,6 +239,7 @@ if __name__ == '__main__':
 			[0,0,0,0]]
 		state = State(board)
 		highest_tile = do_moves(state)
+
 
 		if highest_tile == 64: n64_ += 1
 		if highest_tile == 128: n128_ += 1
@@ -253,4 +264,3 @@ if __name__ == '__main__':
 512: 0.8%
 1024: 0.0%
 2048: 0.0%'''
-	
