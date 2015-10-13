@@ -12,15 +12,21 @@ def terminal(state, is_max):
 					return True
 		return False
 #
-def new_state_move(state, move):
+def new_state_move(parent, move):
 	'''Lage ny state basert på et move'''
-	new_board = copy.deepcopy(state.get_board())#copy parents board
+	new_board = copy.deepcopy(parent.get_board())#copy parents board
 	new_state = S.State(new_board)#make new state from the copied board
 	new_state.move(move)#make the move in the new state
 	return new_state#return the new state
 #
-def new_state_spawn(state, spawn):
+def new_state_spawn(parent, spawn):
 	'''Make a new state with a spawn'''
-	new_board = copy.deepcopy(state.get_board())#copy parents board
+	new_board = copy.deepcopy(parent.get_board())#copy parents board
 	new_board[spawn[0]][spawn[1]] = spawn[2]
 	return S.State(new_board)
+#
+board = [[0,0,0,0],
+		 [0,0,0,0],
+		 [0,0,0,0],
+		 [0,0,0,0]]
+state = S.State(board)
