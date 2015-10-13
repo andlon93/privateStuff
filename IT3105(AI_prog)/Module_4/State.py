@@ -178,16 +178,27 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
+		return self.free_tiles_utility()
+	#
+	def free_tiles_utility(self):
 		total_tiles = 16
 		total_empty_tiles = 0
 		for row in self.board:
 			for tile in row:
 				if tile == 0:
 					total_empty_tiles += 1
-		print "total empty ", total_empty_tiles
 		utility = (total_empty_tiles / total_tiles) * 100
 		return utility
 	#
+	def highest_tile_utility(self):
+		highest_tile = 0
+		for row in self.board:
+			for tile in row:
+				if tile > highest_tile:
+					highest_tile = tile
+		utility = highest_tile * 0.04882
+		return utility
+
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
 	def set_tile(self, row, column, value): self.board[row][column] = value
@@ -211,7 +222,8 @@ def do_moves(state):
 			if state.is_valid_move(direction):
 				state.move(direction)
 				break
-		print state.calculate_utility()
+		state.calculate_utility()
+
 		state.spawn()
 	return state.get_highest_tile()
 
@@ -230,7 +242,7 @@ if __name__ == '__main__':
 			[0,0,0,0],
 			[0,0,0,0],
 			[0,0,0,0]]
-	n = 1000
+	n = 500
 	for iii in xrange(n):
 		if iii%100 == 0: print "Kjoring nummer ", iii
 		board =[[0,0,0,0],
