@@ -98,13 +98,38 @@ class Game(QtCore.QObject):
             #val = ab_prun(state, 3, -1, 101, True)
             best_move = None
             best_val = -1
+<<<<<<< HEAD
             all_vals = []
             if depth < 4 and state.get_highest_tile() == 256:
                 print "256"
                 depth = 4
             elif depth < 5 and state.get_highest_tile() == 512:
                 print "512"
+=======
+            #all_vals = []
+            if depth < 5 and state.get_highest_tile() == 512: 
+>>>>>>> b4fe7e9194ae0b12cf592c8b6953a7aebb3ddbe0
                 depth = 5
+                print "depth = ", depth
+            if depth < 6 and state.get_highest_tile() == 1024: 
+                depth = 6
+                print "depth = ", depth
+            if state.number_of_empty_tiles() < 2:
+                depth = 9
+                print "depth = ", depth
+            elif state.number_of_empty_tiles() < 3:
+                depth = 8
+                print "depth = ", depth
+            elif state.number_of_empty_tiles() < 5:
+                depth = 7
+                print "depth = ", depth
+            else:
+                if depth < 5 and state.get_highest_tile() == 512: 
+                    depth = 5
+                    print "depth = ", depth
+                else:
+                    depth = 3
+                    #print "depth = ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
@@ -112,7 +137,7 @@ class Game(QtCore.QObject):
                 #   print r
                 #print '\n\n\n'
                 val = AB.ab_prun(temp_state, depth, -1, 101, False)
-                all_vals.append(val)
+                #all_vals.append(val)
                 if val > best_val:
                     best_val = val
                     best_move = move

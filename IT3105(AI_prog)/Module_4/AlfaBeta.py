@@ -54,12 +54,16 @@ def runAB(board):
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
-		'''if depth < 4 and state.get_highest_tile() == 256:
-			print "256"
-			depth = 4
-		elif depth < 5 and state.get_highest_tile() == 512:
-			print "512"
-			depth = 5'''
+		if depth < 5 and state.get_highest_tile() == 512:
+			depth = 5
+			print "depth = ", depth
+		if state.number_of_empty_tiles() < 5:
+			depth = 10
+		else:
+			if depth < 5 and state.get_highest_tile() == 512:
+				depth = 5
+			else:
+				depth = 3
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
@@ -84,7 +88,7 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-	n = 1000
+	n = 1
 	for x in xrange(n):
 		board = [[0,0,0,0],
 			 [0,0,0,0],

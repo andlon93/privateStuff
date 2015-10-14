@@ -205,13 +205,16 @@ class State:
 		return sum_utilities
 	#return self.highest_tile_utility()
 	#
-	def free_tiles_utility(self):
-		total_tiles = 16.0
+	def number_of_empty_tiles(self):
 		total_empty_tiles = 0.0
 		for row in self.board:
 			for tile in row:
 				if tile == 0:
 					total_empty_tiles += 1.0
+		return total_empty_tiles
+	def free_tiles_utility(self):
+		total_tiles = 16.0
+		total_empty_tiles = self.number_of_empty_tiles()
 		utility = (total_empty_tiles / total_tiles) * 100.0
 		return utility
 	#
