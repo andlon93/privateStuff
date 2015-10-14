@@ -83,24 +83,24 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-        
+
         print "game started"
         state = S.State(board)
         state.spawn()
         ##
         self.setBoard(state.get_board())
-        time.sleep(0.5)
+        #time.sleep(0.5)
         ##
         depth = 3
         while state.can_make_a_move():
-            #for n in range(10):    
+            #for n in range(10):
             #print "new iteration"
             #val = ab_prun(state, 3, -1, 101, True)
             best_move = None
             best_val = -1
             all_vals = []
             if depth < 4 and state.get_highest_tile() == 256:
-                print "256" 
+                print "256"
                 depth = 4
             elif depth < 5 and state.get_highest_tile() == 512:
                 print "512"
@@ -126,7 +126,7 @@ class Game(QtCore.QObject):
             state.move(best_move)
             ##
             self.setBoard(state.get_board())
-            time.sleep(0.3)
+            #time.sleep(0.3)
             ##
             #break
             state.spawn()
@@ -134,7 +134,7 @@ class Game(QtCore.QObject):
             self.setBoard(state.get_board())
             #time.sleep()
 
-             
+
     @QtCore.pyqtSlot()
     def setBoard(self, board):
         for r in xrange(4):
@@ -156,7 +156,7 @@ if __name__ == '__main__':
              [0,0,0,0],
              [0,0,0,0],
              [0,0,0,0]]
-    
+
     game = Game()
     #
     app = QtGui.QApplication(sys.argv)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     engine = view.engine()
     #
     game.setUp()
-    
+
     engine.rootContext().setContextObject(game)
     view.setSource(QtCore.QUrl.fromLocalFile('grid.qml'))
     view.show()
