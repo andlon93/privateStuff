@@ -91,7 +91,7 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        depth = 3
+        depth = 4
         while state.can_make_a_move():
             #for n in range(10):    
             #print "new iteration"
@@ -99,46 +99,36 @@ class Game(QtCore.QObject):
             best_move = None
             best_val = -1
             #all_vals = []
-            if depth < 5 and state.get_highest_tile() == 512: 
-                depth = 5
-                print "depth = ", depth
             if depth < 6 and state.get_highest_tile() == 1024: 
                 depth = 6
                 print "depth = ", depth
-            if state.number_of_empty_tiles() < 2:
-                depth = 9
+            elif depth < 5 and state.get_highest_tile() == 512: 
+                depth = 5
                 print "depth = ", depth
-            elif state.number_of_empty_tiles() < 3:
+            
+
+            if state.number_of_empty_tiles() < 4:
                 depth = 8
                 print "depth = ", depth
             elif state.number_of_empty_tiles() < 5:
                 depth = 7
                 print "depth = ", depth
             else:
-                if depth < 5 and state.get_highest_tile() == 512: 
+                if depth < 6 and state.get_highest_tile() == 1024: 
+                    depth = 6
+                    print "depth = ", depth
+                elif depth < 5 and state.get_highest_tile() == 512: 
                     depth = 5
                     print "depth = ", depth
                 else:
                     depth = 3
-                    #print "depth = ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
-                #for r in temp_state.get_board():
-                #   print r
-                #print '\n\n\n'
                 val = AB.ab_prun(temp_state, depth, -1, 101, False)
-                #all_vals.append(val)
                 if val > best_val:
                     best_val = val
                     best_move = move
-                #break
-            #print all_vals
-            #print best_val, best_move
-            #if best_val == 0:
-            #   for r in state.get_board():
-            #       print r
-            #   print '\n\n'
             state.move(best_move)
             ##
             self.setBoard(state.get_board())
@@ -148,7 +138,6 @@ class Game(QtCore.QObject):
             state.spawn()
             ##
             self.setBoard(state.get_board())
-            #time.sleep()
 
              
     @QtCore.pyqtSlot()
