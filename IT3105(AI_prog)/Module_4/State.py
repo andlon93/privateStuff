@@ -196,9 +196,9 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		free_tiles_utility = self.free_tiles_utility() * 0.5
-		highest_tile_utility = self.highest_tile_utility() * 0.2
-		largest_tile_corner_util = self.largest_tile_corner_util() *0.3
+		free_tiles_utility = self.free_tiles_utility() * 0.8
+		highest_tile_utility = self.highest_tile_utility() * 0.05
+		largest_tile_corner_util = self.largest_tile_corner_util() *0.15
 
 		sum_utilities = free_tiles_utility + highest_tile_utility + largest_tile_corner_util
 
