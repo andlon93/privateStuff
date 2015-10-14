@@ -69,7 +69,6 @@ def runAB(board):
 				best_move = move
 		state.move(best_move)
 		state.spawn()
-		#OINOIFJNSOIF
 	return state
 #
 if __name__ == '__main__':

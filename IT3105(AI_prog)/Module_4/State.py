@@ -151,7 +151,7 @@ class State:
 		'''
 		for row in xrange(4):
 			for col in xrange(4):
-				if self.board[row][col] == 0: 
+				if self.board[row][col] == 0:
 					return True
 				if row > 0:
 					if self.board[row][col] == self.board[row-1][col]: return True
@@ -196,7 +196,13 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		return self.free_tiles_utility()
+		free_tiles_utility = self.free_tiles_utility() * 0.5
+		highest_tile_utility = self.highest_tile_utility() * 0.2
+		largest_tile_corner_util = self.largest_tile_corner_util() *0.3
+
+		sum_utilities = free_tiles_utility + highest_tile_utility + largest_tile_corner_util
+
+		return sum_utilities
 	#return self.highest_tile_utility()
 	#
 	def free_tiles_utility(self):
@@ -218,6 +224,15 @@ class State:
 		utility = highest_tile * 0.04882
 		return utility'''
 		return float(self.get_highest_tile()) * 0.04882
+
+	def largest_tile_corner_util(self):
+		highest_tile = self.get_highest_tile()
+		for r in range (len(self.board)):
+			for c in range (len(self.board[0])):
+				if self.board[r][c]==highest_tile:
+					if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
+						return 100
+		return 0
 
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
