@@ -30,7 +30,11 @@ def new_state_spawn(parent, spawn):
 def ab_prun(state, depth, alfa, beta, is_max):
 	#print "depth", depth
 	if depth == 0 or terminal(state, is_max):
-		#print "utility"
+		'''
+		for r in state.board:
+			print r
+		print '\n'
+		'''
 		return state.calculate_utility()
 	if is_max:
 		#print "is_max"
@@ -44,6 +48,8 @@ def ab_prun(state, depth, alfa, beta, is_max):
 			if beta <= alfa:
 				break
 		#print "return alfa"
+		#for r in state.board:
+		#	print r
 		return v
 	else:
 		v = 101
@@ -54,6 +60,8 @@ def ab_prun(state, depth, alfa, beta, is_max):
 			if beta <= alfa:
 				break
 		#print "return beta"
+		#for r in state.board:
+		#	print r
 		return v
 ##
 board = [[0,0,0,0],
@@ -62,19 +70,38 @@ board = [[0,0,0,0],
 		 [0,0,0,0]]
 state = S.State(board)
 state.spawn()
-while state.can_make_a_move:
+for r in state.get_board():
+	print r
+while state.can_make_a_move():
+	#for n in range(10):	
 	print "new iteration"
-	val = ab_prun(state, 3, -1, 101, True)
-
+	#val = ab_prun(state, 3, -1, 101, True)
+	best_move = None
+	best_val = -1
+	all_vals = []
 	for move in state.all_valid_moves():
 		temp_state = copy.deepcopy(state)
 		temp_state.move(move)
-		print temp_state.calculate_utility(), "   ", val
-		if temp_state.calculate_utility() == val:
-			state.move(move)
-			break
-	break
+		#for r in temp_state.get_board():
+		#	print r
+		#print '\n\n\n'
+		val = ab_prun(temp_state, 4, -1, 101, False)
+		all_vals.append(val)
+		if val > best_val:
+			best_val = val
+			best_move = move
+		#break
+	print all_vals
+	print best_val, best_move
+	
+	state.move(best_move)
+	#break
 	state.spawn()
+	#for r in state.get_board():
+	#	print r
+	#print '\n'
+	
+	
 
 
 	
@@ -85,4 +112,4 @@ while state.can_make_a_move:
 #new_state = new_state_spawn(state, [0,3,4])
 #new_state = new_state_move(state, 0)
 for r in state.get_board():
-	print r
+		print r
