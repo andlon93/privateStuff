@@ -133,6 +133,8 @@ class State:
 			chosen_tile = open_tiles[random.randint(0, len(open_tiles)-1)]#choose a random tile
 		else:
 			print "ingen steder aa spawne en tile"
+			for row in self.board:
+				print row
 			return False
 		if random.randint(0, 100) < 10:#P(4) = 0.1
 			self.board[chosen_tile[0]][chosen_tile[1]] = 4
@@ -149,14 +151,15 @@ class State:
 		'''
 		for row in xrange(4):
 			for col in xrange(4):
-				if self.board[row][col] == 0: return True
-				elif row-1 > -1:
+				if self.board[row][col] == 0: 
+					return True
+				if row > 0:
 					if self.board[row][col] == self.board[row-1][col]: return True
-				elif row+1 < 4:
+				if row < 3:
 					if self.board[row][col] == self.board[row+1][col]: return True
-				elif col-1 > -1:
+				if col > 0:
 					if self.board[row][col] == self.board[row][col-1]: return True
-				elif col+1 < 4:
+				if col < 3:
 					if self.board[row][col] == self.board[row][col+1]: return True
 		return False
 	#
@@ -194,15 +197,16 @@ class State:
 		   is calculated
 		'''
 		return self.free_tiles_utility()
+	#return self.highest_tile_utility()
 	#
 	def free_tiles_utility(self):
-		total_tiles = 16
-		total_empty_tiles = 0
+		total_tiles = 16.0
+		total_empty_tiles = 0.0
 		for row in self.board:
 			for tile in row:
 				if tile == 0:
-					total_empty_tiles += 1
-		utility = (total_empty_tiles / total_tiles) * 100
+					total_empty_tiles += 1.0
+		utility = (total_empty_tiles / total_tiles) * 100.0
 		return utility
 	#
 	def highest_tile_utility(self):
