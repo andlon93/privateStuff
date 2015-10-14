@@ -55,7 +55,7 @@ def runAB(board):
 		best_move = None
 		best_val = -1
 		'''if depth < 4 and state.get_highest_tile() == 256:
-			print "256" 
+			print "256"
 			depth = 4
 		elif depth < 5 and state.get_highest_tile() == 512:
 			print "512"
@@ -69,6 +69,7 @@ def runAB(board):
 				best_move = move
 		state.move(best_move)
 		state.spawn()
+		#OINOIFJNSOIF
 	return state
 #
 if __name__ == '__main__':
