@@ -50,20 +50,29 @@ def ab_prun(state, depth, alfa, beta, is_max):
 def runAB(board):
 	state = S.State(board)
 	state.spawn()
-	depth = 3
+	depth = 4
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
-		if depth < 5 and state.get_highest_tile() == 512:
-			depth = 5
-			print "depth = ", depth
-		if state.number_of_empty_tiles() < 5:
-			depth = 10
-		else:
-			if depth < 5 and state.get_highest_tile() == 512:
-				depth = 5
-			else:
-				depth = 3
+
+		if depth < 6 and state.get_highest_tile() == 1024:
+			depth = 6
+            #print "depth = ", depth
+		elif depth < 5 and state.get_highest_tile() == 512:
+            depth = 5
+            #print "depth = ", depth
+        if state.number_of_empty_tiles() < 5:
+            depth = 8
+            #print "depth = ", depth
+        else:
+            if depth < 6 and state.get_highest_tile() == 1024:
+				depth = 6
+            	#print "depth = ", depth
+			elif depth < 5 and state.get_highest_tile() == 512:
+            	depth = 5
+            	#print "depth = ", depth
+            else:
+                depth = 4
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
