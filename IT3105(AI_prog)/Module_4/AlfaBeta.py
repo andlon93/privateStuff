@@ -46,21 +46,14 @@ def ab_prun(state, depth, alfa, beta, is_max):
 			if beta <= alfa:
 				break
 		return v
-##
-if __name__ == '__main__':
-	board = [[0,0,0,0],
-			 [0,0,0,0],
-			 [0,0,0,0],
-			 [0,0,0,0]]
+####-- run alfaBeta and make moves --####
+def runAB(board):
 	state = S.State(board)
 	state.spawn()
-	#for r in state.get_board():
-	#	print r
 	depth = 3
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
-		all_vals = []
 		'''if depth < 4 and state.get_highest_tile() == 256:
 			print "256" 
 			depth = 4
@@ -70,17 +63,49 @@ if __name__ == '__main__':
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
-			#for r in temp_state.get_board():
-			#	print r
-			#print '\n\n\n'
 			val = ab_prun(temp_state, depth, -1, 101, False)
-			all_vals.append(val)
 			if val > best_val:
 				best_val = val
 				best_move = move
-
 		state.move(best_move)
 		state.spawn()
+	return state
+#
+if __name__ == '__main__':
+	board = [[0,0,0,0],
+			 [0,0,0,0],
+			 [0,0,0,0],
+			 [0,0,0,0]]
+	###--- To get statistics ---###
+	n64 = 0
+	n128 = 0
+	n256 = 0
+	n512 = 0
+	n1024 = 0
+	n2048 = 0
 
-	for r in state.get_board():
-			print r
+	n = 1000
+	for x in xrange(n):
+		board = [[0,0,0,0],
+			 [0,0,0,0],
+			 [0,0,0,0],
+			 [0,0,0,0]]
+		state = runAB(board)
+		highest_tile = state.get_highest_tile()
+		#
+		print x
+		if highest_tile == 64: n64 += 1
+		if highest_tile == 128: n128 += 1
+		elif highest_tile == 256: n256 += 1
+		elif highest_tile == 512: n512 += 1
+		elif highest_tile == 1024: n1024 += 1
+		elif highest_tile == 2048: n2048 += 1
+	#
+	print highest_tile
+	print n, " runs:"
+	print "64: ", 100.0*float(n64)/n, "%"
+	print "128: ", 100.0*float(n128)/n, "%"
+	print "256: ", 100.0*float(n256)/n, "%"
+	print "512: ", 100.0*float(n512)/n, "%"
+	print "1024: ", 100.0*float(n1024)/n, "%"
+	print "2048: ", 100.0*float(n2048)/n, "%"
