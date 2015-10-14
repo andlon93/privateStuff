@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import State
+import State as S
+import AlfaBeta as AB
 import sys
 import random
 import time
@@ -80,27 +81,60 @@ class Game(QtCore.QObject):
         for ii in xrange(16):
             self._tiles.append( TileData( 0 ) )
     #
-
-
-    
     @QtCore.pyqtSlot()
     def startGame(self):
         
         print "game started"
-        
-        
-        
-        
-        
+        state = S.State(board)
+        state.spawn()
+        ##
+        self.setBoard(state.get_board())
+        time.sleep(0.5)
+        ##
+        depth = 3
+        while state.can_make_a_move():
+            #for n in range(10):    
+            #print "new iteration"
+            #val = ab_prun(state, 3, -1, 101, True)
+            best_move = None
+            best_val = -1
+            all_vals = []
+            if depth < 4 and state.get_highest_tile() == 256:
+                print "256" 
+                depth = 4
+            elif depth < 5 and state.get_highest_tile() == 512:
+                print "512"
+                depth = 5
+            for move in state.all_valid_moves():
+                temp_state = copy.deepcopy(state)
+                temp_state.move(move)
+                #for r in temp_state.get_board():
+                #   print r
+                #print '\n\n\n'
+                val = AB.ab_prun(temp_state, depth, -1, 101, False)
+                all_vals.append(val)
+                if val > best_val:
+                    best_val = val
+                    best_move = move
+                #break
+            #print all_vals
+            #print best_val, best_move
+            #if best_val == 0:
+            #   for r in state.get_board():
+            #       print r
+            #   print '\n\n'
+            state.move(best_move)
+            ##
+            self.setBoard(state.get_board())
+            time.sleep(0.3)
+            ##
+            #break
+            state.spawn()
+            ##
+            self.setBoard(state.get_board())
+            #time.sleep()
 
-        
-    ################################################################
-    #@QtCore.pyqtSlot()
-    #def updateBoard(self):
-    #    tiles = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
-    #    t = random.randint(0, len(tiles)-1)
-    #    self.setStatusOfTile(random.randint(0, self._numRows-1), random.randint(0, self._numCols-1), tiles[t])
-    #
+             
     @QtCore.pyqtSlot()
     def setBoard(self, board):
         for r in xrange(4):

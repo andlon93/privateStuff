@@ -28,40 +28,23 @@ def new_state_spawn(parent, spawn):
 	return S.State(new_board)
 #
 def ab_prun(state, depth, alfa, beta, is_max):
-	#print "depth", depth
 	if depth == 0 or terminal(state, is_max):
-		'''
-		for r in state.board:
-			print r
-		print '\n'
-		'''
 		return state.calculate_utility()
 	if is_max:
-		#print "is_max"
 		v = -1
-		#print state.all_valid_moves()
 		for move in state.all_valid_moves():
-			#print "move", move
 			v = max(v, ab_prun(new_state_move(state, move), depth-1, alfa, beta, False) )
 			alfa = max(alfa, v)
-			#print "alfa", alfa
 			if beta <= alfa:
 				break
-		#print "return alfa"
-		#for r in state.board:
-		#	print r
 		return v
 	else:
 		v = 101
 		for spawn in state.all_spawns():
-			#print "spawn", spawn
 			v = min(v, ab_prun(new_state_spawn(state, spawn), depth-1, alfa, beta, True) )
 			beta = min(beta, v)
 			if beta <= alfa:
 				break
-		#print "return beta"
-		#for r in state.board:
-		#	print r
 		return v
 ##
 if __name__ == '__main__':
@@ -71,22 +54,18 @@ if __name__ == '__main__':
 			 [0,0,0,0]]
 	state = S.State(board)
 	state.spawn()
-	for r in state.get_board():
-		print r
-
-	depth = 2
+	#for r in state.get_board():
+	#	print r
+	depth = 3
 	while state.can_make_a_move():
-		#for n in range(10):	
-		print "new iteration"
-		#val = ab_prun(state, 3, -1, 101, True)
 		best_move = None
 		best_val = -1
 		all_vals = []
-		'''if state.get_highest_tile() > 255:
-			print "256 -- 256" 
+		'''if depth < 4 and state.get_highest_tile() == 256:
+			print "256" 
 			depth = 4
-		elif state.get_highest_tile() > 511:
-			print "512 -- 512"
+		elif depth < 5 and state.get_highest_tile() == 512:
+			print "512"
 			depth = 5'''
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
@@ -99,27 +78,9 @@ if __name__ == '__main__':
 			if val > best_val:
 				best_val = val
 				best_move = move
-			#break
-		print all_vals
-		print best_val, best_move
-		if best_val == 0:
-			for r in state.get_board():
-				print r
-			print '\n\n'
+
 		state.move(best_move)
-		#break
 		state.spawn()
-		if best_val == 0:
-			for r in state.get_board():
-				print r
-			print "can_make_a_move ",state.can_make_a_move()
-	
-	
-	#alfas = []
-	#for move in state.all_valid_moves():
-	#	print move
-	#print terminal(state, True)
-	#new_state = new_state_spawn(state, [0,3,4])
-	#new_state = new_state_move(state, 0)
+
 	for r in state.get_board():
 			print r

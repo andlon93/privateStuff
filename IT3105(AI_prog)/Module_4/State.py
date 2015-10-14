@@ -66,8 +66,8 @@ class State:
 		   May add submethods for moving the tiles and merging tiles
 		   0 = up
 		   1 = right
-		   2 = down
-		   3 = left
+		   2 = left
+		   3 = down
 		   direction == 0 has code explanation. almost identical for every move
 		'''
 		if direction == 0:#hvis move er up
@@ -81,7 +81,7 @@ class State:
 						self.board[row+1][col] = 0#sett den under til 0
 				##-- Merge end --##
 				self.move_up(col)#move tiles up again
-		elif direction == 2:#hvis move er down
+		elif direction == 3:#hvis move er down
 			for col in xrange(3, -1, -1):
 				self.move_down(col)
 				##-- Merge start --##
@@ -103,7 +103,7 @@ class State:
 						self.board[row][col-1] = 0
 				##-- Merge end --##
 				self.move_right(row)
-		elif direction == 3:#move left
+		elif direction == 2:#move left
 			for row in xrange(4):
 				self.move_left(row)
 				##-- Merge start --##
@@ -246,9 +246,6 @@ def do_moves(state):
 
 		state.spawn()
 	return state.get_highest_tile()
-
-
-
 #
 
 if __name__ == '__main__':
