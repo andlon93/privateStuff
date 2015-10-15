@@ -196,15 +196,46 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		free_tiles_utility = self.free_tiles_utility() * 0.8
-		highest_tile_utility = self.highest_tile_utility() * 0.05
-		largest_tile_corner_util = self.largest_tile_corner_util() *0.15
+		for row in self.board:
+			for tile in row:
+				if tile == 2048:
+					print "2048 in sight!"
+					return 100
 
-		sum_utilities = free_tiles_utility + highest_tile_utility + largest_tile_corner_util
+		free_tiles_utility = self.free_tiles_utility() * 0.65
+		highest_tile_utility = self.highest_tile_utility() * 0.05
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
+		cluster_score = self.cluster_score() * 0.2
+		twos_fours = self.number_of_2s4s() * 0.05
+
+		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours) / 5
+		sum_utilities = ( twos_fours + free_tiles_utility + highest_tile_utility )
 
 		return sum_utilities
 	#return self.highest_tile_utility()
 	#
+
+	def number_of_2s4s(self):
+		twos = 0
+		fours = 0
+		score = 0
+		for row in self.board:
+			for tile in row:
+				if tile == 2:
+					twos += 1
+				elif tile == 4:
+					fours += 1
+		if twos > 1:
+			score = twos -1
+		if fours > 1:
+			score = score + fours -1
+		return (100 - (score*10))
+
+	def number_of_similar_tiles(self): #NOT DONE
+		for row in self.board:
+			for tile in row:
+				return False
+
 	def number_of_empty_tiles(self):
 		total_empty_tiles = 0.0
 		for row in self.board:
@@ -212,6 +243,7 @@ class State:
 				if tile == 0:
 					total_empty_tiles += 1.0
 		return total_empty_tiles
+
 	def free_tiles_utility(self):
 		total_tiles = 16.0
 		total_empty_tiles = self.number_of_empty_tiles()
@@ -236,6 +268,37 @@ class State:
 					if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
 						return 100
 		return 0
+
+	def cluster_score(self):
+		cluster_score = 0
+		neighbours = [-1,0,1]
+		board = self.board
+		for i in range (len(board)):
+			for j in range (len(board[0])):
+				if board[i][j] == 0:
+					continue
+				num_neighbors = 0
+				temp_sum = 0
+				for k in neighbours:
+					x = i+k
+					if x<0 or x >= len(board):
+						continue
+					for l in neighbours:
+						y = j + l
+						if y<0 or y >= len(board):
+							continue
+						if board[i][j]>0:
+							num_neighbors += 1
+							temp_sum += abs(board[i][j]-board[x][y])
+				cluster_score += temp_sum / num_neighbors
+		cluster_score = cluster_score / 20
+		cluster_score = 100 - cluster_score
+		if cluster_score < 0:
+			return 0
+		elif cluster_score > 100:
+			return 100
+		else:
+			return cluster_score
 
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]

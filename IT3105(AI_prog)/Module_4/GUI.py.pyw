@@ -93,34 +93,20 @@ class Game(QtCore.QObject):
         ##
         depth = 3
         while state.can_make_a_move():
-            #for n in range(10):
-            #print "new iteration"
-            #val = ab_prun(state, 3, -1, 101, True)
             best_move = None
             best_val = -1
-            #all_vals = []
-            if depth < 5 and state.get_highest_tile() == 512:
-                depth = 3
-                print "depth = ", depth
-            if depth < 6 and state.get_highest_tile() == 1024:
+            depth = 3
+            if state.get_highest_tile() == 256:
                 depth = 4
-                print "depth = ", depth
-            if state.number_of_empty_tiles() < 2:
+            elif state.get_highest_tile() == 1024:
+                depth = 5
+            if state.number_of_empty_tiles() < 5:
+                depth = 5
+            if state.number_of_empty_tiles() < 4:
                 depth = 6
-                print "depth = ", depth
-            elif state.number_of_empty_tiles() < 3:
+            if state.number_of_empty_tiles() < 3:
                 depth = 7
-                print "depth = ", depth
-            elif state.number_of_empty_tiles() < 5:
-                depth = 6
-                print "depth = ", depth
-            else:
-                if depth < 4 and state.get_highest_tile() == 512:
-                    depth = 4
-                    print "depth = ", depth
-                else:
-                    depth = 3
-                    #print "depth = ", depth
+            print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
@@ -140,9 +126,11 @@ class Game(QtCore.QObject):
             #       print r
             #   print '\n\n'
             state.move(best_move)
+            #print "Cluster score: ", state.cluster_score()
+            print "utility score: ", state.calculate_utility()
             ##
             self.setBoard(state.get_board())
-            #time.sleep(0.3)
+            #time.sleep(0.1)
             ##
             #break
             state.spawn()
