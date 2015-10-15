@@ -68,7 +68,7 @@ def runAB(board):
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
-			val = ab_prun(temp_state, depth, -1, 101, False)
+			val = ab_prun(temp_state, depth, best_val, 101, False)
 			if val > best_val:
 				best_val = val
 				best_move = move
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-	n = 10
+	n = 2
 	for x in xrange(n):
 		board = [[0,0,0,0],
 			 [0,0,0,0],

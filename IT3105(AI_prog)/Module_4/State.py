@@ -202,14 +202,14 @@ class State:
 					print "2048 in sight!"
 					return 100
 
-		free_tiles_utility = self.free_tiles_utility() * 0.65
-		highest_tile_utility = self.highest_tile_utility() * 0.05
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
-		cluster_score = self.cluster_score() * 0.2
-		twos_fours = self.number_of_2s4s() * 0.05
+		free_tiles_utility = self.free_tiles_utility() * 0.35
+		highest_tile_utility = self.highest_tile_utility() * 0.1
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.2
+		cluster_score = self.cluster_score() * 0.35
+		twos_fours = self.number_of_2s4s() * 0
 
-		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours) / 5
-		sum_utilities = ( twos_fours + free_tiles_utility + highest_tile_utility )
+		sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
+		#sum_utilities = ( twos_fours + free_tiles_utility + highest_tile_utility )
 
 		return sum_utilities
 	#return self.highest_tile_utility()
@@ -290,8 +290,8 @@ class State:
 						if board[i][j]>0:
 							num_neighbors += 1
 							temp_sum += abs(board[i][j]-board[x][y])
-				cluster_score += temp_sum / num_neighbors
-		cluster_score = cluster_score / 20
+				cluster_score += abs(temp_sum) / num_neighbors
+		cluster_score = cluster_score / 40
 		cluster_score = 100 - cluster_score
 		if cluster_score < 0:
 			return 0
