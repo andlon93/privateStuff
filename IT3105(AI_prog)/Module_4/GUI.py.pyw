@@ -91,7 +91,7 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        original_depth = 4
+        original_depth = 3
         while state.can_make_a_move():
             best_move = None
             best_val = -1
@@ -138,12 +138,7 @@ class Game(QtCore.QObject):
             state.spawn()
             ##
             self.setBoard(state.get_board())
-<<<<<<< HEAD
 
-=======
-            #time.sleep()
-            #Olebranch
->>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 
     @QtCore.pyqtSlot()
     def setBoard(self, board):

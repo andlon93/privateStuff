@@ -101,11 +101,7 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-<<<<<<< HEAD
-	n = 200
-=======
 	n = 100
->>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
@@ -116,7 +112,7 @@ if __name__ == '__main__':
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
-		
+
 		if highest_tile == 64: n64 += 1
 		if highest_tile == 128: n128 += 1
 		elif highest_tile == 256: n256 += 1
