@@ -203,9 +203,9 @@ class State:
 					return 100
 		'''
 
-		free_tiles_utility = self.free_tiles_utility() * 0.7
+		free_tiles_utility = self.free_tiles_utility() * 0.5
 		highest_tile_utility = self.highest_tile_utility() * 0
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.2
 		cluster_score = self.cluster_score() * 0
 		twos_fours = self.number_of_2s4s() * 0
 		number_of_same = self.number_of_same() * 0
