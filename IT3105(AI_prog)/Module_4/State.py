@@ -265,11 +265,12 @@ class State:
 		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
 		cluster_score = self.cluster_score() * 0.05
 		twos_fours = self.number_of_2s4s() * 0.05
-		number_of_same = self.number_of_same() * 0.15
-		brute_method = self.brute_method() * 0.1
+		number_of_same = self.number_of_same() * 0.05
+		brute_method = self.brute_method() * 0.15
+		upper_vs_lower = self.sum_greater_upper() * 0.1
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
-		sum_utilities = ( brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
+		sum_utilities = ( upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 
 		return sum_utilities
 	#return self.highest_tile_utility()
@@ -279,13 +280,27 @@ class State:
 		upper_sum = 0
 		for tile in board[0]:
 			upper_sum += tile
-		lower_sum
+		lower_sum = 0
 		for row in range(len(board)):
 			if row == 0:
 				continue
-			for tile in row:
+			for tile in board[row]:
 				lower_sum += tile
+		if lower_sum == 0:
+			lower_sum = 1
 		ratio = upper_sum / lower_sum
+		if ratio > 3:
+			return 100
+		if ratio > 2:
+			return 75
+		if ratio > 1:
+			return 30
+		if ratio < 0.01:
+			return 10
+		if ratio < 0.1:
+			return 20
+		else:
+			return 0
 		return ratio
 
 	def brute_method(self):

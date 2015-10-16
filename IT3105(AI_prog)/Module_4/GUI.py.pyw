@@ -91,7 +91,7 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        original_depth = 3
+        original_depth = 1
         while state.can_make_a_move():
             best_move = None
             best_val = -1
@@ -129,7 +129,8 @@ class Game(QtCore.QObject):
             print "largest in corner :", state.largest_tile_corner_util()
             print "cluster_score :", state.cluster_score()
             print "Number of same: ", state.number_of_same()
-            print "brute method: ", state.brute_method()'''
+            print "brute method: ", state.brute_method()
+            print "Upper vs lower: ", state.sum_greater_upper()'''
             print "utility score: ", state.calculate_utility()
             #print "highest numbers: ", state.highest_four()
             ##

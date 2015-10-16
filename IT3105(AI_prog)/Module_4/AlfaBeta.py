@@ -72,7 +72,8 @@ def runAB(board):
 	state = S.State(board)
 	state.spawn()
 
-	original_depth = 6
+
+	original_depth = 1
 	depth = copy.deepcopy(original_depth)
 	while state.can_make_a_move():
 		best_move = None
@@ -80,14 +81,14 @@ def runAB(board):
 		depth = original_depth
 		if state.get_highest_tile() == 512:
 			depth = original_depth + 1
-		#if state.get_highest_tile() == 1024:
-		#	depth = original_depth + 2
-		#if state.number_of_empty_tiles() < 5:
-		#	depth = original_depth + 2
+		if state.get_highest_tile() == 1024:
+			depth = original_depth + 2
+		if state.number_of_empty_tiles() < 5:
+			depth = original_depth + 2
 		if state.number_of_empty_tiles() < 4:
 			depth = original_depth + 1
-		#if state.number_of_empty_tiles() < 3:
-		#	depth = original_depth + 2
+		if state.number_of_empty_tiles() < 3:
+			depth = original_depth + 2
 
 		for move in state.all_valid_moves():
 			#print move
@@ -146,11 +147,15 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
+
 	state = runExpectimax(board)
 	print state.get_highest_tile()
 	for r in state.board:
 		print r
-	'''n = 1
+	'''
+	n = 1
+
+	n = 100
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
@@ -168,13 +173,15 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512 += 1
 		elif highest_tile == 1024: n1024 += 1
 		elif highest_tile == 2048: n2048 += 1
-		if x > 0:
-			print "64: ", 100.0*float(n64)/(x+1), "%"
-			print "128: ", 100.0*float(n128)/(x+1), "%"
-			print "256: ", 100.0*float(n256)/(x+1), "%"
-			print "512: ", 100.0*float(n512)/(x+1), "%"
-			print "1024: ", 100.0*float(n1024)/(x+1), "%"
-			print "2048: ", 100.0*float(n2048)/(x+1), "%"
+
+		print "64: ", 100.0*float(n64)/(x+1), "%"
+		print "128: ", 100.0*float(n128)/(x+1), "%"
+		print "256: ", 100.0*float(n256)/(x+1), "%"
+		print "512: ", 100.0*float(n512)/(x+1), "%"
+		print "1024: ", 100.0*float(n1024)/(x+1), "%"
+		print "2048: ", 100.0*float(n2048)/(x+1), "%"
+		print "depth 1"
+
 	#
 	print highest_tile
 	print n, " runs:"
