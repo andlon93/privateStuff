@@ -196,15 +196,126 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		free_tiles_utility = self.free_tiles_utility() * 0.6
-		highest_tile_utility = self.highest_tile_utility() * 0.2
-		largest_tile_corner_util = self.largest_tile_corner_util() *0.15
 
-		sum_utilities = free_tiles_utility + highest_tile_utility + largest_tile_corner_util
+		#free_tiles_utility = self.free_tiles_utility() * 0.6
+		#highest_tile_utility = self.highest_tile_utility() * 0.2
+		#largest_tile_corner_util = self.largest_tile_corner_util() *0.15
+
+
+		free_tiles_utility = self.free_tiles_utility() * 0.5
+		highest_tile_utility = 0#self.highest_tile_utility() * 0
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.2
+		cluster_score = 0#self.cluster_score() * 0
+		twos_fours = 0#self.number_of_2s4s() * 0
+		number_of_same = 0#self.number_of_same() * 0
+		brute_method = self.brute_method() * 0.3
+
+		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
+		sum_utilities = ( brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 
 		return sum_utilities
 	#return self.highest_tile_utility()
 	#
+	def sum_greater_upper(self):
+		board = self.board
+		upper_sum = 0
+		for tile in board[0]:
+			upper_sum += tile
+		lower_sum
+		for row in range(len(board)):
+			if row == 0:
+				continue
+			for tile in row:
+				lower_sum += tile
+		ratio = upper_sum / lower_sum
+		return ratio
+
+
+
+	def brute_method(self):
+		board = self.board
+		if board[0][0] > board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
+			return 100
+		if board[0][0] == board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
+			return 80
+		if board[0][0] > board[0][1] and board[0][1] == board[0][2] and board[0][2] > board[0][3]:
+			return 80
+		if board[0][0] > board[0][1] and board[0][1] > board[0][2] and board[0][2] == board[0][3]:
+			return 70
+		if board[0][0] > board[0][1] and board[0][1] > board[0][2]:
+			return 50
+		if board[0][0] == board[0][1] and board[0][1] > board[0][2]:
+			return 40
+		if board[0][0] > board[0][1] and board[0][1] == board[0][2]:
+			return 30
+		if board[0][0] > board[0][1]:
+			return 25
+		else:
+			return 0
+
+	'''def highest_four(self):
+		for row in self.board:
+			for tile in row:
+				'''
+
+
+
+
+
+	def number_of_same(self):
+		number = [0] * 11
+		for row in self.board:
+			for tile in row:
+				if tile == 2:
+					number[0] += 1
+				if tile == 4:
+					number[1] += 1
+				if tile == 8:
+					number[2] += 1
+				if tile == 16:
+					number[3] += 1
+				if tile == 32:
+					number[4] += 1
+				if tile == 64:
+					number[5] += 1
+				if tile == 128:
+					number[6] += 1
+				if tile == 256:
+					number[7] += 1
+				if tile == 512:
+					number[8] += 1
+				if tile == 1024:
+					number[9] += 1
+				if tile == 2048:
+					number[10] += 1
+		score = 0
+		for num in number:
+			if num > 1:
+				score += num -1
+		score = score * 10
+		if score > 100:
+			score = 100
+		return 100 - score
+
+	def number_of_2s4s(self):
+		twos = 0
+		fours = 0
+		score = 0
+		for row in self.board:
+			for tile in row:
+				if tile == 2:
+					twos += 1
+				elif tile == 4:
+					fours += 1
+		score = twos
+		score = score + fours
+		return (100 - (score*10))
+
+	def number_of_similar_tiles(self): #NOT DONE
+		for row in self.board:
+			for tile in row:
+				return False
+
 	def number_of_empty_tiles(self):
 		total_empty_tiles = 0.0
 		for row in self.board:
@@ -212,6 +323,7 @@ class State:
 				if tile == 0:
 					total_empty_tiles += 1.0
 		return total_empty_tiles
+
 	def free_tiles_utility(self):
 		total_tiles = 16.0
 		total_empty_tiles = self.number_of_empty_tiles()
@@ -230,12 +342,46 @@ class State:
 
 	def largest_tile_corner_util(self):
 		highest_tile = self.get_highest_tile()
+		util = 0
 		for r in range (len(self.board)):
 			for c in range (len(self.board[0])):
 				if self.board[r][c]==highest_tile:
-					if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
-						return 100
-		return 0
+					#if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
+					if (r == 0 and c == 0):
+						util = 100
+
+		return util
+
+	def cluster_score(self):
+		cluster_score = 0
+		neighbours = [-1,0,1]
+		board = self.board
+		for i in range (len(board)):
+			for j in range (len(board[0])):
+				if board[i][j] == 0:
+					continue
+				num_neighbors = 0
+				temp_sum = 0
+				for k in neighbours:
+					x = i+k
+					if x<0 or x >= len(board):
+						continue
+					for l in neighbours:
+						y = j + l
+						if y<0 or y >= len(board):
+							continue
+						if board[i][j]>0:
+							num_neighbors += 1
+							temp_sum += abs(board[i][j]-board[x][y])
+				cluster_score += abs(temp_sum) / num_neighbors
+		cluster_score = cluster_score / 40
+		cluster_score = 100 - cluster_score
+		if cluster_score < 0:
+			return 0
+		elif cluster_score > 100:
+			return 100
+		else:
+			return cluster_score
 
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]

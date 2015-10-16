@@ -91,57 +91,59 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        depth = 3
+        original_depth = 3
         while state.can_make_a_move():
-            #for n in range(10):
-            #print "new iteration"
-            #val = ab_prun(state, 3, -1, 101, True)
             best_move = None
             best_val = -1
-            #all_vals = []
 
-            if depth < 6 and state.get_highest_tile() == 1024: 
-                depth = 6
-                #print "depth = ", depth
-            elif depth < 5 and state.get_highest_tile() == 512: 
-                depth = 5
-                #print "depth = ", depth
-            
-
+            depth = original_depth
+            if state.get_highest_tile() == 512:
+                depth = original_depth + 1
+            if state.get_highest_tile() == 1024:
+                depth = original_depth + 2
+            if state.number_of_empty_tiles() < 5:
+                depth = original_depth + 2
             if state.number_of_empty_tiles() < 4:
-                depth = 6
-
-
-                #print "depth = ", depth
-            elif state.number_of_empty_tiles() < 5:
-                depth = 5
-                #print "depth = ", depth
-            else:
-                if depth < 6 and state.get_highest_tile() == 1024: 
-                    depth = 6
-                    #print "depth = ", depth
-                elif depth < 5 and state.get_highest_tile() == 512: 
-                    depth = 5
-                    #print "depth = ", depth
-                else:
-                    depth = 3
+                depth = original_depth + 3
+            if state.number_of_empty_tiles() < 3:
+                depth = original_depth +4
+            print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
-                val = AB.ab_prun(temp_state, depth, -1, 101, False)
+                #for r in temp_state.get_board():
+                #   print r
+                #print '\n\n\n'
+                val = AB.ab_prun(temp_state, depth, best_val, 101, False)
+                #all_vals.append(val)
                 if val > best_val:
                     best_val = val
                     best_move = move
             state.move(best_move)
+            #print "Cluster score: ", state.cluster_score()
+
+            print "free tiles :", state.free_tiles_utility()
+            print "Highest_tile :", state.highest_tile_utility()
+            print "largest in corner :", state.largest_tile_corner_util()
+            print "cluster_score :", state.cluster_score()
+            print "Number of same: ", state.number_of_same()
+            print "brute method: ", state.brute_method()
+            print "utility score: ", state.calculate_utility()
+            #print "highest numbers: ", state.highest_four()
             ##
             self.setBoard(state.get_board())
-            #time.sleep(0.3)
+            #time.sleep(0.1)
             ##
             #break
             state.spawn()
             ##
             self.setBoard(state.get_board())
+<<<<<<< HEAD
 
+=======
+            #time.sleep()
+            #Olebranch
+>>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 
     @QtCore.pyqtSlot()
     def setBoard(self, board):

@@ -1,5 +1,6 @@
 import copy
 import State as S
+import time
 def terminal(state, is_max):
 	'''sjekke om det kan "lages barn" av staten'''
 	if is_max:#check if a move can be done
@@ -52,29 +53,42 @@ def runAB(board):
 	print "GO"
 	state = S.State(board)
 	state.spawn()
-	depth = 3
+
+	original_depth = 3
+	depth = copy.deepcopy(original_depth)
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
+		depth = original_depth
+		if state.get_highest_tile() == 512:
+			depth = original_depth + 1
+		if state.get_highest_tile() == 1024:
+			depth = original_depth + 2
+		if state.number_of_empty_tiles() < 5:
+			depth = original_depth + 2
 		if state.number_of_empty_tiles() < 4:
-			depth = 7
-		if state.get_highest_tile() > 511:
-			depth = 5
+			depth = original_depth + 3
+		if state.number_of_empty_tiles() < 3:
+			depth = original_depth + 4
+
 		for move in state.all_valid_moves():
 			#print move
 
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
-			#print "GOGO"
-			val = ab_prun(temp_state, depth, -1, 10001, False)
+
+			val = ab_prun(temp_state, depth, best_val, 101, False)
+
 			if val > best_val:
 				best_val = val
 				best_move = move
 		state.move(best_move)
+		#print state.calculate_utility()
 		state.spawn()
 	return state
 #
 if __name__ == '__main__':
+	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
@@ -87,7 +101,11 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
+<<<<<<< HEAD
 	n = 200
+=======
+	n = 100
+>>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
@@ -95,6 +113,7 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0]]
 		state = runAB(board)
+		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
 		
@@ -104,6 +123,12 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512 += 1
 		elif highest_tile == 1024: n1024 += 1
 		elif highest_tile == 2048: n2048 += 1
+		print "64: ", 100.0*float(n64)/n, "%"
+		print "128: ", 100.0*float(n128)/n, "%"
+		print "256: ", 100.0*float(n256)/n, "%"
+		print "512: ", 100.0*float(n512)/n, "%"
+		print "1024: ", 100.0*float(n1024)/n, "%"
+		print "2048: ", 100.0*float(n2048)/n, "%"
 	#
 	print highest_tile
 	print n, " runs:"
@@ -113,3 +138,5 @@ if __name__ == '__main__':
 	print "512: ", 100.0*float(n512)/n, "%"
 	print "1024: ", 100.0*float(n1024)/n, "%"
 	print "2048: ", 100.0*float(n2048)/n, "%"
+	print("--- %s seconds ---" % (time.time() - start_time))
+	print "Tar med val"
