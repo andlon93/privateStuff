@@ -2,7 +2,7 @@ from __future__ import division
 import random
 from collections import deque
 import copy
-
+import math
 #
 class State:
 	#
@@ -192,7 +192,65 @@ class State:
 		return all_spawns
 	#
 	####--- Utility methods ---####
+	def THE_utility(self):
+		cluster_score = 0.0
+		number_of_empty_cells = 0.0
+		score_of_board = 0.0
+		for r in xrange(4):
+			for c in xrange(4):
+				###--- START score of the board ---###
+				cell_value = self.board[r][c]
+				#print cell_value
+				if cell_value == 0 or cell_value == 2: score_of_board += 0
+				elif cell_value == 4: score_of_board += 4
+				elif cell_value == 8: score_of_board += 16
+				elif cell_value == 16: score_of_board += 48
+				elif cell_value == 32: score_of_board += 128
+				elif cell_value == 64: score_of_board += 320
+				elif cell_value == 128: score_of_board += 768
+				elif cell_value == 256: score_of_board += 1792
+				elif cell_value == 512: score_of_board += 4096
+				elif cell_value == 1024: score_of_board += 9216
+				elif cell_value == 2048: score_of_board += 20480
+				elif cell_value == 4096: score_of_board += 45056
+				else: print "har ikke lagt inn score for saa hoye verdier"
+				###--- END score of the board ---###
+				#
+				###--- START number of empty cells ---###
+				if self.board[r][c] == 0:
+					number_of_empty_cells += 1.0
+				###--- END number of empty cells ---###
+				#
+				###--- START clustering score ---###
+				cluster = 0
+				t = 0
+				if r > 0 and self.board[r][c] != 0 and self.board[r-1][c] != 0:
+					cluster += abs( self.board[r][c] - self.board[r-1][c] )
+					t += 1
+				if r < 3 and self.board[r][c] != 0 and self.board[r+1][c] != 0:
+					cluster += abs( self.board[r][c] - self.board[r+1][c] )
+					t += 1
+				#if c > 0: print c
+				if c > 0 and self.board[r][c] != 0 and self.board[r][c-1] != 0:
+					cluster += abs( self.board[r][c] - self.board[r][c-1] )
+					t += 1
+				if c < 3 and self.board[r][c] != 0 and self.board[r][c+1] != 0:
+					cluster += abs( self.board[r][c] - self.board[r][c+1] )
+					t += 1
+				if t == 0:
+					cluster_score = 0
+				else:
+					cluster_score = cluster/t
+				###--- END clustering score ---###
+		if score_of_board > 0:
+			utility = score_of_board*0.7 + (math.log(score_of_board)*number_of_empty_cells*1.5) - cluster_score
+			#print utility
+			return max( utility, min(score_of_board, 1) )
+		else: 
+			return max(0, (number_of_empty_cells - cluster_score) )
+	#
 	def calculate_utility(self):
+		#return self.THE_utility()
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
@@ -203,12 +261,12 @@ class State:
 
 
 		free_tiles_utility = self.free_tiles_utility() * 0.5
-		highest_tile_utility = 0#self.highest_tile_utility() * 0
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0.2
-		cluster_score = 0#self.cluster_score() * 0
-		twos_fours = 0#self.number_of_2s4s() * 0
-		number_of_same = 0#self.number_of_same() * 0
-		brute_method = self.brute_method() * 0.3
+		highest_tile_utility = self.highest_tile_utility() * 0.05
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
+		cluster_score = self.cluster_score() * 0.05
+		twos_fours = self.number_of_2s4s() * 0.05
+		number_of_same = self.number_of_same() * 0.15
+		brute_method = self.brute_method() * 0.1
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
 		sum_utilities = ( brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
@@ -230,11 +288,9 @@ class State:
 		ratio = upper_sum / lower_sum
 		return ratio
 
-
-
 	def brute_method(self):
 		board = self.board
-		if board[0][0] > board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
+		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
 			return 100
 		if board[0][0] == board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
 			return 80
@@ -242,25 +298,17 @@ class State:
 			return 80
 		if board[0][0] > board[0][1] and board[0][1] > board[0][2] and board[0][2] == board[0][3]:
 			return 70
-		if board[0][0] > board[0][1] and board[0][1] > board[0][2]:
+		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2]:
 			return 50
 		if board[0][0] == board[0][1] and board[0][1] > board[0][2]:
 			return 40
 		if board[0][0] > board[0][1] and board[0][1] == board[0][2]:
 			return 30
-		if board[0][0] > board[0][1]:
+		
+		if board[0][0] >= board[0][1]:
 			return 25
 		else:
 			return 0
-
-	'''def highest_four(self):
-		for row in self.board:
-			for tile in row:
-				'''
-
-
-
-
 
 	def number_of_same(self):
 		number = [0] * 11

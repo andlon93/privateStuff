@@ -97,16 +97,17 @@ class Game(QtCore.QObject):
             best_val = -1
 
             depth = original_depth
-            if state.get_highest_tile() == 512:
-                depth = original_depth + 1
-            if state.get_highest_tile() == 1024:
+            if state.get_highest_tile() > 511:
                 depth = original_depth + 2
-            if state.number_of_empty_tiles() < 5:
-                depth = original_depth + 2
-            if state.number_of_empty_tiles() < 4:
-                depth = original_depth + 3
             if state.number_of_empty_tiles() < 3:
-                depth = original_depth +4
+                depth = original_depth + 4
+            elif state.number_of_empty_tiles() < 4:
+                depth = original_depth + 3
+            elif state.number_of_empty_tiles() < 5:
+                depth = original_depth + 2
+            elif state.get_highest_tile() < 512 and state.number_of_empty_tiles() < 9:
+                depth = original_depth + 1
+
             print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
@@ -114,7 +115,8 @@ class Game(QtCore.QObject):
                 #for r in temp_state.get_board():
                 #   print r
                 #print '\n\n\n'
-                val = AB.ab_prun(temp_state, depth, best_val, 101, False)
+                #val = AB.ab_prun(temp_state, depth, best_val, 101, False)
+                val = AB.expectimax(temp_state, depth, False)
                 #all_vals.append(val)
                 if val > best_val:
                     best_val = val
@@ -122,12 +124,12 @@ class Game(QtCore.QObject):
             state.move(best_move)
             #print "Cluster score: ", state.cluster_score()
 
-            print "free tiles :", state.free_tiles_utility()
+            '''print "free tiles :", state.free_tiles_utility()
             print "Highest_tile :", state.highest_tile_utility()
             print "largest in corner :", state.largest_tile_corner_util()
             print "cluster_score :", state.cluster_score()
             print "Number of same: ", state.number_of_same()
-            print "brute method: ", state.brute_method()
+            print "brute method: ", state.brute_method()'''
             print "utility score: ", state.calculate_utility()
             #print "highest numbers: ", state.highest_four()
             ##

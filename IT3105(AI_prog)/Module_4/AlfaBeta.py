@@ -48,13 +48,31 @@ def ab_prun(state, depth, alfa, beta, is_max):
 			if beta <= alfa:
 				break
 		return v
+########################################################
+#   0    1    2    3    4
+P=[0.0, 0.0, 0.9, 0.0, 0.1]
+def expectimax(state, depth, is_move):
+	if depth == 0 or terminal(state, is_move):
+		return state.calculate_utility()
+	if is_move:
+		alfa = -1000000
+		for move in state.all_valid_moves():
+			alfa = max( alfa, expectimax(new_state_move(state, move), depth-1, False) )
+	else:
+		alfa = 0
+		for spawn in state.all_spawns():
+			#print spawn
+			alfa += (P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True))
+	return alfa
+
+########################################################
 ####-- run alfaBeta and make moves --####
 def runAB(board):
 	print "GO"
 	state = S.State(board)
 	state.spawn()
 
-	original_depth = 3
+	original_depth = 6
 	depth = copy.deepcopy(original_depth)
 	while state.can_make_a_move():
 		best_move = None
@@ -62,14 +80,14 @@ def runAB(board):
 		depth = original_depth
 		if state.get_highest_tile() == 512:
 			depth = original_depth + 1
-		if state.get_highest_tile() == 1024:
-			depth = original_depth + 2
-		if state.number_of_empty_tiles() < 5:
-			depth = original_depth + 2
+		#if state.get_highest_tile() == 1024:
+		#	depth = original_depth + 2
+		#if state.number_of_empty_tiles() < 5:
+		#	depth = original_depth + 2
 		if state.number_of_empty_tiles() < 4:
-			depth = original_depth + 3
-		if state.number_of_empty_tiles() < 3:
-			depth = original_depth + 4
+			depth = original_depth + 1
+		#if state.number_of_empty_tiles() < 3:
+		#	depth = original_depth + 2
 
 		for move in state.all_valid_moves():
 			#print move
@@ -77,7 +95,7 @@ def runAB(board):
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
 
-			val = ab_prun(temp_state, depth, best_val, 101, False)
+			val = ab_prun(temp_state, depth, best_val, 1000000, False)
 
 			if val > best_val:
 				best_val = val
@@ -87,6 +105,33 @@ def runAB(board):
 		state.spawn()
 	return state
 #
+def runExpectimax(board):
+	state = S.State(board)
+	state.spawn()
+	depth = 3
+	while state.can_make_a_move():
+		best_move = None
+		best_val = -1
+		if state.get_highest_tile() > 511:
+			depth = 5
+		if state.number_of_empty_tiles() < 3:
+			depth = 7
+		elif state.number_of_empty_tiles() < 4:
+			depth = 6
+		elif state.number_of_empty_tiles() < 5:
+			depth = 5
+		elif state.get_highest_tile < 512 and state.number_of_empty_tiles() < 9:
+			depth = 4
+		for move in state.all_valid_moves():
+			temp_state = copy.deepcopy(state)
+			temp_state.move(move)
+			alfa = expectimax(temp_state, depth, False)
+			if best_val < alfa:
+				best_val = alfa
+				best_move = move
+		state.move(best_move)
+		state.spawn()
+	return state
 if __name__ == '__main__':
 	start_time = time.time()
 	board = [[0,0,0,0],
@@ -101,11 +146,11 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0110421f6b2df9e8d53065429a02861940a172a7
-	n = 100
+	state = runExpectimax(board)
+	print state.get_highest_tile()
+	for r in state.board:
+		print r
+	'''n = 1
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
@@ -123,12 +168,13 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512 += 1
 		elif highest_tile == 1024: n1024 += 1
 		elif highest_tile == 2048: n2048 += 1
-		print "64: ", 100.0*float(n64)/n, "%"
-		print "128: ", 100.0*float(n128)/n, "%"
-		print "256: ", 100.0*float(n256)/n, "%"
-		print "512: ", 100.0*float(n512)/n, "%"
-		print "1024: ", 100.0*float(n1024)/n, "%"
-		print "2048: ", 100.0*float(n2048)/n, "%"
+		if x > 0:
+			print "64: ", 100.0*float(n64)/(x+1), "%"
+			print "128: ", 100.0*float(n128)/(x+1), "%"
+			print "256: ", 100.0*float(n256)/(x+1), "%"
+			print "512: ", 100.0*float(n512)/(x+1), "%"
+			print "1024: ", 100.0*float(n1024)/(x+1), "%"
+			print "2048: ", 100.0*float(n2048)/(x+1), "%"
 	#
 	print highest_tile
 	print n, " runs:"
@@ -137,6 +183,6 @@ if __name__ == '__main__':
 	print "256: ", 100.0*float(n256)/n, "%"
 	print "512: ", 100.0*float(n512)/n, "%"
 	print "1024: ", 100.0*float(n1024)/n, "%"
-	print "2048: ", 100.0*float(n2048)/n, "%"
+	print "2048: ", 100.0*float(n2048)/n, "%"'''
 	print("--- %s seconds ---" % (time.time() - start_time))
-	print "Tar med val"
+	#print "Tar med val"
