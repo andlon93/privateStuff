@@ -54,7 +54,7 @@ def runAB(board):
 	state = S.State(board)
 	state.spawn()
 
-	original_depth = 3
+	original_depth = 1
 	depth = copy.deepcopy(original_depth)
 	while state.can_make_a_move():
 		best_move = None
@@ -125,6 +125,7 @@ if __name__ == '__main__':
 		print "512: ", 100.0*float(n512)/(x+1), "%"
 		print "1024: ", 100.0*float(n1024)/(x+1), "%"
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
+		print "depth 1"
 	#
 	print highest_tile
 	print n, " runs:"
