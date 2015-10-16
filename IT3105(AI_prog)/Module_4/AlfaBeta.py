@@ -101,7 +101,10 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0110421f6b2df9e8d53065429a02861940a172a7
 	n = 100
 	for x in xrange(n):
 		print x
@@ -113,7 +116,7 @@ if __name__ == '__main__':
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
-		
+
 		if highest_tile == 64: n64 += 1
 		if highest_tile == 128: n128 += 1
 		elif highest_tile == 256: n256 += 1

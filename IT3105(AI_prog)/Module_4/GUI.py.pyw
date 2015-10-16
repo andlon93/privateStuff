@@ -139,8 +139,6 @@ class Game(QtCore.QObject):
             ##
             self.setBoard(state.get_board())
 
-            #time.sleep()
-            #Olebranch
 
 
     @QtCore.pyqtSlot()
