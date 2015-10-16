@@ -128,6 +128,7 @@ class Game(QtCore.QObject):
             print "cluster_score :", state.cluster_score()
             print "Number of same: ", state.number_of_same()
             print "brute method: ", state.brute_method()
+            print "Upper vs lower: ", state.sum_greater_upper()
             print "utility score: ", state.calculate_utility()
             #print "highest numbers: ", state.highest_four()
             ##
