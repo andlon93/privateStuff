@@ -101,10 +101,6 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0110421f6b2df9e8d53065429a02861940a172a7
 	n = 100
 	for x in xrange(n):
 		print x
@@ -123,12 +119,12 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512 += 1
 		elif highest_tile == 1024: n1024 += 1
 		elif highest_tile == 2048: n2048 += 1
-		print "64: ", 100.0*float(n64)/n, "%"
-		print "128: ", 100.0*float(n128)/n, "%"
-		print "256: ", 100.0*float(n256)/n, "%"
-		print "512: ", 100.0*float(n512)/n, "%"
-		print "1024: ", 100.0*float(n1024)/n, "%"
-		print "2048: ", 100.0*float(n2048)/n, "%"
+		print "64: ", 100.0*float(n64)/(x+1), "%"
+		print "128: ", 100.0*float(n128)/(x+1), "%"
+		print "256: ", 100.0*float(n256)/(x+1), "%"
+		print "512: ", 100.0*float(n512)/(x+1), "%"
+		print "1024: ", 100.0*float(n1024)/(x+1), "%"
+		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 	#
 	print highest_tile
 	print n, " runs:"
