@@ -141,6 +141,7 @@ class Game(QtCore.QObject):
             self.setBoard(state.get_board())
 
 
+
     @QtCore.pyqtSlot()
     def setBoard(self, board):
         for r in xrange(4):
