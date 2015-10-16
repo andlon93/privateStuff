@@ -101,11 +101,8 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-<<<<<<< HEAD
-	n = 200
-=======
+
 	n = 100
->>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],

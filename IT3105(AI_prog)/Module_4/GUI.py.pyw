@@ -138,12 +138,10 @@ class Game(QtCore.QObject):
             state.spawn()
             ##
             self.setBoard(state.get_board())
-<<<<<<< HEAD
 
-=======
             #time.sleep()
             #Olebranch
->>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
+
 
     @QtCore.pyqtSlot()
     def setBoard(self, board):
