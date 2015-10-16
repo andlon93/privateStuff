@@ -95,6 +95,7 @@ class Game(QtCore.QObject):
         while state.can_make_a_move():
             best_move = None
             best_val = -1
+
             depth = original_depth
             if state.get_highest_tile() == 512:
                 depth = original_depth + 1
@@ -118,13 +119,6 @@ class Game(QtCore.QObject):
                 if val > best_val:
                     best_val = val
                     best_move = move
-                #break
-            #print all_vals
-            #print best_val, best_move
-            #if best_val == 0:
-            #   for r in state.get_board():
-            #       print r
-            #   print '\n\n'
             state.move(best_move)
             #print "Cluster score: ", state.cluster_score()
 
@@ -144,8 +138,12 @@ class Game(QtCore.QObject):
             state.spawn()
             ##
             self.setBoard(state.get_board())
+<<<<<<< HEAD
+
+=======
             #time.sleep()
             #Olebranch
+>>>>>>> 892d8376efb1ab6f71e8815ec5d94694022bfaf2
 
     @QtCore.pyqtSlot()
     def setBoard(self, board):

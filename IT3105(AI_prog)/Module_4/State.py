@@ -196,19 +196,18 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		'''for row in self.board:
-			for tile in row:
-				if tile == 2048:
-					print "2048 in sight!"
-					return 100
-		'''
+
+		#free_tiles_utility = self.free_tiles_utility() * 0.6
+		#highest_tile_utility = self.highest_tile_utility() * 0.2
+		#largest_tile_corner_util = self.largest_tile_corner_util() *0.15
+
 
 		free_tiles_utility = self.free_tiles_utility() * 0.5
-		highest_tile_utility = self.highest_tile_utility() * 0
+		highest_tile_utility = 0#self.highest_tile_utility() * 0
 		largest_tile_corner_util = self.largest_tile_corner_util() * 0.2
-		cluster_score = self.cluster_score() * 0
-		twos_fours = self.number_of_2s4s() * 0
-		number_of_same = self.number_of_same() * 0
+		cluster_score = 0#self.cluster_score() * 0
+		twos_fours = 0#self.number_of_2s4s() * 0
+		number_of_same = 0#self.number_of_same() * 0
 		brute_method = self.brute_method() * 0.3
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
@@ -339,7 +338,7 @@ class State:
 					highest_tile = tile
 		utility = highest_tile * 0.04882
 		return utility'''
-		return float(self.get_highest_tile()) * 0.04882
+		return float(self.get_highest_tile())**2 * 0.000023841
 
 	def largest_tile_corner_util(self):
 		highest_tile = self.get_highest_tile()
