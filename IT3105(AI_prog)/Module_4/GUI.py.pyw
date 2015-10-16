@@ -83,7 +83,7 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-        
+
         print "game started"
         state = S.State(board)
         state.spawn()
@@ -91,35 +91,38 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        depth = 4
+        depth = 3
         while state.can_make_a_move():
-            #for n in range(10):    
+            #for n in range(10):
             #print "new iteration"
             #val = ab_prun(state, 3, -1, 101, True)
             best_move = None
             best_val = -1
             #all_vals = []
+
             if depth < 6 and state.get_highest_tile() == 1024: 
                 depth = 6
-                print "depth = ", depth
+                #print "depth = ", depth
             elif depth < 5 and state.get_highest_tile() == 512: 
                 depth = 5
-                print "depth = ", depth
+                #print "depth = ", depth
             
 
             if state.number_of_empty_tiles() < 4:
-                depth = 8
-                print "depth = ", depth
+                depth = 6
+
+
+                #print "depth = ", depth
             elif state.number_of_empty_tiles() < 5:
-                depth = 7
-                print "depth = ", depth
+                depth = 5
+                #print "depth = ", depth
             else:
                 if depth < 6 and state.get_highest_tile() == 1024: 
                     depth = 6
-                    print "depth = ", depth
+                    #print "depth = ", depth
                 elif depth < 5 and state.get_highest_tile() == 512: 
                     depth = 5
-                    print "depth = ", depth
+                    #print "depth = ", depth
                 else:
                     depth = 3
             for move in state.all_valid_moves():
@@ -139,7 +142,7 @@ class Game(QtCore.QObject):
             ##
             self.setBoard(state.get_board())
 
-             
+
     @QtCore.pyqtSlot()
     def setBoard(self, board):
         for r in xrange(4):
@@ -161,7 +164,7 @@ if __name__ == '__main__':
              [0,0,0,0],
              [0,0,0,0],
              [0,0,0,0]]
-    
+
     game = Game()
     #
     app = QtGui.QApplication(sys.argv)
@@ -169,7 +172,7 @@ if __name__ == '__main__':
     engine = view.engine()
     #
     game.setUp()
-    
+
     engine.rootContext().setContextObject(game)
     view.setSource(QtCore.QUrl.fromLocalFile('grid.qml'))
     view.show()

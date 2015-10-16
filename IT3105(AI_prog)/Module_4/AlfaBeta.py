@@ -28,6 +28,7 @@ def new_state_spawn(parent, spawn):
 	return S.State(new_board)
 #
 def ab_prun(state, depth, alfa, beta, is_max):
+	#print "ab"
 	if depth == 0 or terminal(state, is_max):
 		return state.calculate_utility()
 	if is_max:
@@ -48,34 +49,24 @@ def ab_prun(state, depth, alfa, beta, is_max):
 		return v
 ####-- run alfaBeta and make moves --####
 def runAB(board):
+	print "GO"
 	state = S.State(board)
 	state.spawn()
-	depth = 4
+	depth = 3
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
-		if depth < 6 and state.get_highest_tile() == 1024:
-			depth = 6
-            #print "depth = ", depth
-		elif depth < 5 and state.get_highest_tile() == 512: 
-            depth = 5
-            #print "depth = ", depth
-        if state.number_of_empty_tiles() < 5:
-            depth = 8
-            #print "depth = ", depth
-        else:
-            if depth < 6 and state.get_highest_tile() == 1024:
-				depth = 6
-            	#print "depth = ", depth
-			elif depth < 5 and state.get_highest_tile() == 512: 
-            	depth = 5
-            	#print "depth = ", depth
-            else:
-                depth = 4
+		if state.number_of_empty_tiles() < 4:
+			depth = 7
+		if state.get_highest_tile() > 511:
+			depth = 5
 		for move in state.all_valid_moves():
+			#print move
+
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
-			val = ab_prun(temp_state, depth, -1, 101, False)
+			#print "GOGO"
+			val = ab_prun(temp_state, depth, -1, 10001, False)
 			if val > best_val:
 				best_val = val
 				best_move = move
@@ -96,8 +87,9 @@ if __name__ == '__main__':
 	n1024 = 0
 	n2048 = 0
 
-	n = 1
+	n = 200
 	for x in xrange(n):
+		print x
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
@@ -105,7 +97,7 @@ if __name__ == '__main__':
 		state = runAB(board)
 		highest_tile = state.get_highest_tile()
 		#
-		print x
+		
 		if highest_tile == 64: n64 += 1
 		if highest_tile == 128: n128 += 1
 		elif highest_tile == 256: n256 += 1
