@@ -91,21 +91,21 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        depth = 3
+        original_depth = 3
         while state.can_make_a_move():
             best_move = None
             best_val = -1
-            depth = 3
-            if state.get_highest_tile() == 256:
-                depth = 4
-            elif state.get_highest_tile() == 512:
-                depth = 5
+            depth = original_depth
+            if state.get_highest_tile() == 512:
+                depth = original_depth + 1
+            if state.get_highest_tile() == 1024:
+                depth = original_depth + 2
             if state.number_of_empty_tiles() < 5:
-                depth = 5
+                depth = original_depth + 2
             if state.number_of_empty_tiles() < 4:
-                depth = 6
+                depth = original_depth + 3
             if state.number_of_empty_tiles() < 3:
-                depth = 8
+                depth = original_depth +4
             print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
@@ -127,8 +127,15 @@ class Game(QtCore.QObject):
             #   print '\n\n'
             state.move(best_move)
             #print "Cluster score: ", state.cluster_score()
+
+            print "free tiles :", state.free_tiles_utility()
+            print "Highest_tile :", state.highest_tile_utility()
+            print "largest in corner :", state.largest_tile_corner_util()
+            print "cluster_score :", state.cluster_score()
+            print "Number of same: ", state.number_of_same()
+            print "brute method: ", state.brute_method()
             print "utility score: ", state.calculate_utility()
-            print "highest_tile_utility :", state.highest_tile_utility()
+            #print "highest numbers: ", state.highest_four()
             ##
             self.setBoard(state.get_board())
             #time.sleep(0.1)
