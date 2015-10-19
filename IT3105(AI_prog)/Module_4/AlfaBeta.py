@@ -74,7 +74,7 @@ def runAB(board):
 	state.spawn()
 
 
-	original_depth = 2
+	original_depth = 1
 	depth = copy.deepcopy(original_depth)
 	while state.can_make_a_move():
 		best_move = None

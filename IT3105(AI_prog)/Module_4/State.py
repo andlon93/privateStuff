@@ -254,7 +254,7 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-		'''
+
 		free_tiles_utility = self.free_tiles_utility() * 0.5
 		highest_tile_utility = self.highest_tile_utility() * 0.05
 		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
@@ -262,18 +262,19 @@ class State:
 		twos_fours = self.number_of_2s4s() * 0.05
 		number_of_same = self.number_of_same() * 0.05
 		brute_method = self.brute_method() * 0.15
-		upper_vs_lower = self.sum_greater_upper() * 0.1'''
-
-		free_tiles_utility = self.free_tiles_utility() * 0.4
-		highest_tile_utility = self.highest_tile_utility() * 0.1
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
-		cluster_score = self.cluster_score() * 0
-		twos_fours = self.number_of_2s4s() * 0
-		number_of_same = self.number_of_same() * 0
-		brute_method = self.brute_method() * 0.15
-		brute_line2 = self.brute_line2() * 0.05
+		brute_line2 = 0
 		upper_vs_lower = self.sum_greater_upper() * 0.1
-		first_over_second = self.first_over_second() * 0.15
+
+		'''free_tiles_utility = self.free_tiles_utility() * 0.7
+		highest_tile_utility = 0# self.highest_tile_utility() * 0
+		largest_tile_corner_util =0# self.largest_tile_corner_util() * 0
+		cluster_score =0# self.cluster_score() * 0
+		twos_fours =0# self.number_of_2s4s() * 0
+		number_of_same = 0#self.number_of_same() * 0
+		brute_method = self.brute_method() * 0.3
+		brute_line2 =0# self.brute_line2() * 0
+		upper_vs_lower = 0#self.sum_greater_upper() * 0
+		first_over_second = 0#self.first_over_second() * 0'''
 
 
 
