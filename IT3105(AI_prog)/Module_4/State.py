@@ -265,14 +265,14 @@ class State:
 		upper_vs_lower = self.sum_greater_upper() * 0.1'''
 
 		free_tiles_utility = self.free_tiles_utility() * 0.4
-		highest_tile_utility = self.highest_tile_utility() * 0
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0
+		highest_tile_utility = self.highest_tile_utility() * 0.1
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.1
 		cluster_score = self.cluster_score() * 0
 		twos_fours = self.number_of_2s4s() * 0
 		number_of_same = self.number_of_same() * 0
-		brute_method = self.brute_method() * 0.3
+		brute_method = self.brute_method() * 0.15
 		upper_vs_lower = self.sum_greater_upper() * 0.1
-		first_over_second = self.first_over_second() * 0.2
+		first_over_second = self.first_over_second() * 0.15
 
 
 
@@ -288,7 +288,7 @@ class State:
 		board = self.board
 		summ = 0
 		for col in range(len(board[0])):
-			if board[0][col] > board[1][col]:
+			if board[0][col] >= board[1][col]:
 				summ += 25
 		return summ
 
@@ -314,9 +314,9 @@ class State:
 		if ratio > 1:
 			return 30
 		if ratio < 0.01:
-			return 10
+			return 5
 		if ratio < 0.1:
-			return 20
+			return 10
 		else:
 			return 0
 		return ratio
@@ -327,8 +327,13 @@ class State:
 			return 100
 		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2]:
 			return 75
+		if board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
+			return 65
 		if board[0][0] >= board[0][1]:
 			return 50
+		if board[0][1] >= board[0][2]:
+			return 40
+
 		else:
 			return 0
 		'''
@@ -436,9 +441,11 @@ class State:
 		for r in range (len(self.board)):
 			for c in range (len(self.board[0])):
 				if self.board[r][c]==highest_tile:
-					#if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
 					if (r == 0 and c == 0):
 						util = 100
+					elif (r==0 and c == 3 or r == 3 and c == 0):
+						util = 50
+
 
 		return util
 

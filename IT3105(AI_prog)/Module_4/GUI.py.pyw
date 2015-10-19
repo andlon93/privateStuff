@@ -93,7 +93,7 @@ class Game(QtCore.QObject):
         #time.sleep(0.5)
         ##
 
-        original_depth = 1
+        original_depth = 2
         while state.can_make_a_move():
             best_move = None
             best_val = -1

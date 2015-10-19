@@ -63,7 +63,7 @@ def expectimax(state, depth, is_move):
 		for spawn in state.all_spawns():
 			#print P[spawn[2]]
 			#expectimax(new_state_spawn(state, spawn), depth-1, True)
-			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True) 
+			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True)
 	return alfa
 
 ########################################################
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		state = runExmax(board)#runAB(board)
+		state = runAB(board)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
-		print "depth 4:"
+
 
 	#
 	print highest_tile
