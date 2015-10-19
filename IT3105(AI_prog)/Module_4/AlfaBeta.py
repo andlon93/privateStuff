@@ -61,8 +61,9 @@ def expectimax(state, depth, is_move):
 	else:
 		alfa = 0
 		for spawn in state.all_spawns():
-			#print spawn
-			alfa += (P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True))
+			#print P[spawn[2]]
+			#expectimax(new_state_spawn(state, spawn), depth-1, True)
+			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True) 
 	return alfa
 
 ########################################################
@@ -106,33 +107,7 @@ def runAB(board):
 		state.spawn()
 	return state
 #
-def runExpectimax(board):
-	state = S.State(board)
-	state.spawn()
-	depth = 3
-	while state.can_make_a_move():
-		best_move = None
-		best_val = -1
-		if state.get_highest_tile() > 511:
-			depth = 5
-		if state.number_of_empty_tiles() < 3:
-			depth = 7
-		elif state.number_of_empty_tiles() < 4:
-			depth = 6
-		elif state.number_of_empty_tiles() < 5:
-			depth = 5
-		elif state.get_highest_tile < 512 and state.number_of_empty_tiles() < 9:
-			depth = 4
-		for move in state.all_valid_moves():
-			temp_state = copy.deepcopy(state)
-			temp_state.move(move)
-			alfa = expectimax(temp_state, depth, False)
-			if best_val < alfa:
-				best_val = alfa
-				best_move = move
-		state.move(best_move)
-		state.spawn()
-	return state
+
 if __name__ == '__main__':
 	start_time = time.time()
 	board = [[0,0,0,0],
@@ -146,23 +121,22 @@ if __name__ == '__main__':
 	n512 = 0
 	n1024 = 0
 	n2048 = 0
+	n4096 = 0
+	n8192 = 0
 
 
-	state = runExpectimax(board)
-	print state.get_highest_tile()
-	for r in state.board:
-		print r
-	'''
-	n = 1
+	#state = runExmax(board)
 
-	n = 100
+
+
+	n = 500
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		state = runAB(board)
+		state = runExmax(board)#runAB(board)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
@@ -173,6 +147,8 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512 += 1
 		elif highest_tile == 1024: n1024 += 1
 		elif highest_tile == 2048: n2048 += 1
+		elif highest_tile == 4096: n4096 += 1
+		elif highest_tile == 8192: n8192 += 1
 
 		print "64: ", 100.0*float(n64)/(x+1), "%"
 		print "128: ", 100.0*float(n128)/(x+1), "%"
@@ -180,7 +156,9 @@ if __name__ == '__main__':
 		print "512: ", 100.0*float(n512)/(x+1), "%"
 		print "1024: ", 100.0*float(n1024)/(x+1), "%"
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
-		print "depth 1"
+		print "4096: ", 100.0*float(n4096)/(x+1), "%"
+		print "8192: ", 100.0*float(n8192)/(x+1), "%"
+		print "depth 4:"
 
 	#
 	print highest_tile
@@ -190,6 +168,8 @@ if __name__ == '__main__':
 	print "256: ", 100.0*float(n256)/n, "%"
 	print "512: ", 100.0*float(n512)/n, "%"
 	print "1024: ", 100.0*float(n1024)/n, "%"
-	print "2048: ", 100.0*float(n2048)/n, "%"'''
+	print "2048: ", 100.0*float(n2048)/n, "%"
+	print "4096: ", 100.0*float(n4096)/(x+1), "%"
+	print "8192: ", 100.0*float(n8192)/(x+1), "%"
 	print("--- %s seconds ---" % (time.time() - start_time))
 	#print "Tar med val"

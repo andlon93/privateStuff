@@ -65,8 +65,8 @@ class State:
 		'''updates the board based on a move in a given direction
 		   May add submethods for moving the tiles and merging tiles
 		   0 = up
-		   1 = right
-		   2 = left
+		   1 = left
+		   2 = right
 		   3 = down
 		   direction == 0 has code explanation. almost identical for every move
 		'''
@@ -92,7 +92,7 @@ class State:
 						self.board[row-1][col] = 0
 				##-- Merge end --##
 				self.move_down(col)
-		elif direction == 1:#hvis move er right
+		elif direction == 2:#hvis move er right
 			for row in xrange(4):
 				self.move_right(row)
 				##-- Merge start --##
@@ -103,7 +103,7 @@ class State:
 						self.board[row][col-1] = 0
 				##-- Merge end --##
 				self.move_right(row)
-		elif direction == 2:#move left
+		elif direction == 1:#move left
 			for row in xrange(4):
 				self.move_left(row)
 				##-- Merge start --##
@@ -380,11 +380,11 @@ class State:
 				return False
 
 	def number_of_empty_tiles(self):
-		total_empty_tiles = 0.0
+		total_empty_tiles = 0
 		for row in self.board:
 			for tile in row:
 				if tile == 0:
-					total_empty_tiles += 1.0
+					total_empty_tiles += 1
 		return total_empty_tiles
 
 	def free_tiles_utility(self):
