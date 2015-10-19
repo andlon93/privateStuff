@@ -3,10 +3,30 @@ import time
 import State as S
 import copy
 #########################
-W = [[[0.15759, 0.121925, 0.102812, 0.099937],
+'''W = [[[0.15759, 0.121925, 0.102812, 0.099937],
 	   [0.0120, 0.0888405, 0.076711, 0.0724143],
 	   [0.050654, 0.0462579, 0.027116, 0.0161889],
-	   [0.0005498, 0.00002495, 0.00005871, 0.00005193]]]
+	   [0.0005498, 0.00002495, 0.00005871, 0.00005193]]]'''
+W = [
+    [  [1000,  700,  500,  300],
+	   [25,    50,  75,   100],
+	   [ 12,    7,   5,   5],
+	   [  0,     0,   1,   2] ]]#,
+'''	
+	[  [  7,     5,   1,   0],
+       [ 20,    10,   5,   1],
+       [100,    30,  15,   7],
+       [1000,  200,  50,  15] ],
+
+    [  [15, 50, 200, 1000],
+	   [ 7, 15,  30,  100],
+       [ 1,  5,  10,   20],
+       [ 0,  1,   2,    3] ],
+
+    [  [ 0,  1,   2,    3],
+	   [ 1,  5,  10,   20],
+	   [ 7, 15,  30,  100],
+	   [15, 50, 200, 1000] ]   ]'''
 '''W = [
     [ [0.135759, 0.121925, 0.102812, 0.099937],
 	   [0.0997992, 0.0888405, 0.076711, 0.0724143],
@@ -43,7 +63,7 @@ def utility(board):
 P=[0.0, 0.0, 0.9, 0.0, 0.1]
 def expectimax(state, depth, is_move):
 	if depth == 0 or AB.terminal(state, is_move):
-		return state.calculate_utility()
+		#return state.calculate_utility()
 		return utility(state.get_board())
 	if is_move:
 		alfa = -1000000
@@ -69,9 +89,9 @@ def runExmax(board):
 		best_move = None
 		best_val = -1
 		#
-		if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3: 
-			depth = 7
-			print depth
+		#if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3: 
+		#	depth = 6
+		#		print depth
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
@@ -131,7 +151,7 @@ if __name__ == '__main__':
 		elif highest_tile == 8192: n8192 += 1
 		elif highest_tile > 8192: nMore += 1
 
-		print "with high wieghts"
+		print "Expectimax with weight matrix"
 		print "64: ", 100.0*float(n64)/(x), "%"
 		print "128: ", 100.0*float(n128)/(x), "%"
 		print "256: ", 100.0*float(n256)/(x), "%"
