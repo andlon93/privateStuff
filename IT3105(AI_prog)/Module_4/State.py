@@ -246,7 +246,7 @@ class State:
 			utility = score_of_board*0.7 + (math.log(score_of_board)*number_of_empty_cells*1.5) - cluster_score
 			#print utility
 			return max( utility, min(score_of_board, 1) )
-		else: 
+		else:
 			return max(0, (number_of_empty_cells - cluster_score) )
 	#
 	def calculate_utility(self):
@@ -254,12 +254,7 @@ class State:
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
 		'''
-
-		#free_tiles_utility = self.free_tiles_utility() * 0.6
-		#highest_tile_utility = self.highest_tile_utility() * 0.2
-		#largest_tile_corner_util = self.largest_tile_corner_util() *0.15
-
-
+		'''
 		free_tiles_utility = self.free_tiles_utility() * 0.5
 		highest_tile_utility = self.highest_tile_utility() * 0.05
 		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
@@ -267,7 +262,20 @@ class State:
 		twos_fours = self.number_of_2s4s() * 0.05
 		number_of_same = self.number_of_same() * 0.05
 		brute_method = self.brute_method() * 0.15
+		upper_vs_lower = self.sum_greater_upper() * 0.1'''
+
+		free_tiles_utility = self.free_tiles_utility() * 0.4
+		highest_tile_utility = self.highest_tile_utility() * 0
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0
+		cluster_score = self.cluster_score() * 0
+		twos_fours = self.number_of_2s4s() * 0
+		number_of_same = self.number_of_same() * 0
+		brute_method = self.brute_method() * 0.3
 		upper_vs_lower = self.sum_greater_upper() * 0.1
+		first_over_second = self.first_over_second() * 0.2
+
+
+
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
 		sum_utilities = ( upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
@@ -275,6 +283,16 @@ class State:
 		return sum_utilities
 	#return self.highest_tile_utility()
 	#
+
+	def first_over_second(self):
+		board = self.board
+		summ = 0
+		for col in range(len(board[0])):
+			if board[0][col] > board[1][col]:
+				summ += 25
+		return summ
+
+
 	def sum_greater_upper(self):
 		board = self.board
 		upper_sum = 0
@@ -307,6 +325,15 @@ class State:
 		board = self.board
 		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
 			return 100
+		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2]:
+			return 75
+		if board[0][0] >= board[0][1]:
+			return 50
+		else:
+			return 0
+		'''
+		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
+			return 100
 		if board[0][0] == board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
 			return 80
 		if board[0][0] > board[0][1] and board[0][1] == board[0][2] and board[0][2] > board[0][3]:
@@ -319,11 +346,11 @@ class State:
 			return 40
 		if board[0][0] > board[0][1] and board[0][1] == board[0][2]:
 			return 30
-		
 		if board[0][0] >= board[0][1]:
 			return 25
 		else:
 			return 0
+		'''
 
 	def number_of_same(self):
 		number = [0] * 11

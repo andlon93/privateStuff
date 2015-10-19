@@ -12,7 +12,7 @@ W = [[[0.15759, 0.121925, 0.102812, 0.099937],
 	   [0.0997992, 0.0888405, 0.076711, 0.0724143],
 	   [0.060654, 0.0562579, 0.037116, 0.0161889],
 	   [0.0125498, 0.00992495, 0.00575871, 0.00335193] ],
-	
+
 	[ [0.0125498, 0.00992495, 0.00575871, 0.00335193],
        [0.060654, 0.0562579, 0.037116, 0.0161889],
        [0.0997992, 0.0888405, 0.076711, 0.0724143],
@@ -54,14 +54,14 @@ def expectimax(state, depth, is_move):
 		for spawn in state.all_spawns():
 			#print P[spawn[2]]
 			#expectimax(new_state_spawn(state, spawn), depth-1, True)
-			alfa +=  P[spawn[2]] * expectimax(AB.new_state_spawn(state, spawn), depth-1, True) 
+			alfa +=  P[spawn[2]] * expectimax(AB.new_state_spawn(state, spawn), depth-1, True)
 	return alfa
 ##
 def runExmax(board):
 	state = S.State(board)
 	state.spawn()
 	#
-	
+
 	moves = 0
 	highest = 0
 	while state.can_make_a_move():
@@ -69,7 +69,7 @@ def runExmax(board):
 		best_move = None
 		best_val = -1
 		#
-		if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3: 
+		if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3:
 			depth = 7
 			print depth
 		for move in state.all_valid_moves():
@@ -77,7 +77,7 @@ def runExmax(board):
 			temp_state.move(move)
 			#
 			alfa = expectimax(temp_state, depth-1, False)
-			
+
 			#
 			if best_val < alfa:
 				best_val = alfa
@@ -92,7 +92,7 @@ def runExmax(board):
 	return state
 ##
 if __name__ == '__main__':
-	
+
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],

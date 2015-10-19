@@ -92,40 +92,47 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        
-        highest = 0
-        moves = 0
+
+        original_depth = 1
         while state.can_make_a_move():
-            depth = 4
             best_move = None
             best_val = -1
-            if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3:
-                print state.number_of_empty_tiles()
-                depth = 7
+
+            depth = original_depth
+            if state.get_highest_tile() == 512:
+                depth = original_depth + 1
+            if state.get_highest_tile() == 1024:
+                depth = original_depth + 2
+            if state.number_of_empty_tiles() < 5:
+                depth = original_depth + 2
+            if state.number_of_empty_tiles() < 4:
+                depth = original_depth + 3
+            if state.number_of_empty_tiles() < 3:
+                depth = original_depth +4
+            print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
-
-                val = EX.expectimax(temp_state, depth-1, False)
-
+                #for r in temp_state.get_board():
+                #   print r
+                #print '\n\n\n'
+                val = AB.ab_prun(temp_state, depth, best_val, 101, False)
+                #all_vals.append(val)
                 if val > best_val:
                     best_val = val
                     best_move = move
             state.move(best_move)
-            moves += 1
-            if state.get_highest_tile() > highest:
-                highest = state.get_highest_tile()
-                print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 
 
-            '''print "free tiles :", state.free_tiles_utility()
+            print "free tiles :", state.free_tiles_utility()
             print "Highest_tile :", state.highest_tile_utility()
             print "largest in corner :", state.largest_tile_corner_util()
             print "cluster_score :", state.cluster_score()
             print "Number of same: ", state.number_of_same()
             print "brute method: ", state.brute_method()
-            print "Upper vs lower: ", state.sum_greater_upper()'''
-            #print "utility score: ", state.calculate_utility()
+            print "Upper vs lower: ", state.sum_greater_upper()
+            print "First over Seconds: ", state.first_over_second()
+            print "utility score: ", state.calculate_utility()
             #print "highest numbers: ", state.highest_four()
             ##
             self.setBoard(state.get_board())
