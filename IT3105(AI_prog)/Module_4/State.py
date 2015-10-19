@@ -265,6 +265,7 @@ class State:
 		brute_line2 = 0
 		upper_vs_lower = self.sum_greater_upper() * 0.1
 
+
 		'''free_tiles_utility = self.free_tiles_utility() * 0.7
 		highest_tile_utility = 0# self.highest_tile_utility() * 0
 		largest_tile_corner_util =0# self.largest_tile_corner_util() * 0

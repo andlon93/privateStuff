@@ -109,6 +109,8 @@ class Game(QtCore.QObject):
                 depth = original_depth + 3
             if state.number_of_empty_tiles() < 3:
                 depth = original_depth +4
+            if state.calculate_utility() < 30:
+                depth += 1
             print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)

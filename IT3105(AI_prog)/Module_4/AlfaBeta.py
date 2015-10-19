@@ -87,9 +87,11 @@ def runAB(board):
 		if state.number_of_empty_tiles() < 5:
 			depth = original_depth + 2
 		if state.number_of_empty_tiles() < 4:
-			depth = original_depth + 1
+			depth = original_depth + 3
 		if state.number_of_empty_tiles() < 3:
-			depth = original_depth + 2
+			depth = original_depth + 4
+		if state.calculate_utility() < 30:
+			depth += 1
 
 		for move in state.all_valid_moves():
 			#print move
@@ -103,8 +105,8 @@ def runAB(board):
 				best_val = val
 				best_move = move
 		state.move(best_move)
-		#print state.calculate_utility()
 		state.spawn()
+	print "dybde: ", original_depth, " Endret dybder"
 	return state
 #
 
