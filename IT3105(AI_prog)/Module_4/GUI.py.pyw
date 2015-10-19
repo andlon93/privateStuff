@@ -94,10 +94,10 @@ class Game(QtCore.QObject):
         ##
 
         original_depth = 2
+        depth = copy.deepcopy(original_depth)
         while state.can_make_a_move():
             best_move = None
             best_val = -1
-
             depth = original_depth
             if state.get_highest_tile() == 512:
                 depth = original_depth + 1
@@ -106,9 +106,9 @@ class Game(QtCore.QObject):
             if state.number_of_empty_tiles() < 5:
                 depth = original_depth + 2
             if state.number_of_empty_tiles() < 4:
-                depth = original_depth + 3
+                depth = original_depth + 1
             if state.number_of_empty_tiles() < 3:
-                depth = original_depth +4
+                depth = original_depth + 2
             print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
