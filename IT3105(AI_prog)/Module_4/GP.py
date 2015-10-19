@@ -11,7 +11,7 @@ def create_random_weights(weights):
 		t = random.randint(0, len(weights)-1)
 		if t not in mutate:
 			mutate.append(t)
-		if len(mutate) == 3: break
+		if len(mutate) == 2: break
 	for n in mutate: weights[n] = weights[n]*random.uniform(0.75, 1.25)
 	return weights
 #
