@@ -266,11 +266,12 @@ class State:
 
 		free_tiles_utility = self.free_tiles_utility() * 0.4
 		highest_tile_utility = self.highest_tile_utility() * 0.1
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0.1
+		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
 		cluster_score = self.cluster_score() * 0
 		twos_fours = self.number_of_2s4s() * 0
 		number_of_same = self.number_of_same() * 0
 		brute_method = self.brute_method() * 0.15
+		brute_line2 = self.brute_line2() * 0.05
 		upper_vs_lower = self.sum_greater_upper() * 0.1
 		first_over_second = self.first_over_second() * 0.15
 
@@ -278,7 +279,7 @@ class State:
 
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
-		sum_utilities = ( upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
+		sum_utilities = ( brute_line2 + upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 
 		return sum_utilities
 	#return self.highest_tile_utility()
@@ -320,6 +321,21 @@ class State:
 		else:
 			return 0
 		return ratio
+
+	def brute_line2(self):
+		board = self.board
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1] and board[1][1] >= board [1][0]:
+			return 100
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1]:
+			return 75
+		if board[1][2] >= board[1][1] and board[1][1] >= board[1][0]:
+			return 65
+		if board[1][3] >= board[1][2]:
+			return 50
+		if board[1][2] >= board[1][1]:
+			return 40
+		return 0
+
 
 	def brute_method(self):
 		board = self.board
