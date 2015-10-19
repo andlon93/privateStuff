@@ -8,9 +8,13 @@ class State:
 	#
 	board = []
 	utility = None
+	weights = []
 	#
 	def __init__(self, board):
 		self.board = board
+	#def __init__(self, board, weights):
+	#	self.weights = weights
+	#	self.board = board
 	####--- Move methods ---####
 	def move_up(self, col):
 		rute_ledig = deque()#legger inn tomme ruter i en ko
@@ -194,7 +198,7 @@ class State:
 		return all_spawns
 	#
 	####--- Utility methods ---####
-	def calculate_utility(self):
+	def calculate_utility(self, weights):
 		#return self.THE_utility()
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated
@@ -204,15 +208,14 @@ class State:
 		#highest_tile_utility = self.highest_tile_utility() * 0.2
 		#largest_tile_corner_util = self.largest_tile_corner_util() *0.15
 
-
-		free_tiles_utility = self.free_tiles_utility() * 0.5
-		highest_tile_utility = self.highest_tile_utility() * 0.05
-		largest_tile_corner_util = self.largest_tile_corner_util() * 0.05
-		cluster_score = self.cluster_score() * 0.05
-		twos_fours = self.number_of_2s4s() * 0.05
-		number_of_same = self.number_of_same() * 0.05
-		brute_method = self.brute_method() * 0.15
-		upper_vs_lower = self.sum_greater_upper() * 0.1
+		free_tiles_utility = self.free_tiles_utility() * weights[0]# * 0.5
+		highest_tile_utility = self.highest_tile_utility() * weights[1]#* 0.05
+		largest_tile_corner_util = self.largest_tile_corner_util() * weights[2] #* 0.05
+		cluster_score = self.cluster_score() *  weights[3]#* 0.05
+		twos_fours = self.number_of_2s4s() * weights[4] #* 0.05
+		number_of_same = self.number_of_same() * weights[5] #* 0.05
+		brute_method = self.brute_method() * weights[6]#* 0.15
+		upper_vs_lower = self.sum_greater_upper() * weights[7]#* 0.1
 
 		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
 		sum_utilities = ( upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )

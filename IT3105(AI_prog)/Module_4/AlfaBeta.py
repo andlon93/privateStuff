@@ -1,6 +1,7 @@
 import copy
 import State as S
 import time
+import Expectimax as EX
 def terminal(state, is_max):
 	'''sjekke om det kan "lages barn" av staten'''
 	if is_max:#check if a move can be done
@@ -28,14 +29,15 @@ def new_state_spawn(parent, spawn):
 	new_board[spawn[0]][spawn[1]] = spawn[2]
 	return S.State(new_board)
 #
-def ab_prun(state, depth, alfa, beta, is_max):
+def ab_prun(state, depth, alfa, beta, is_max, weights):
 	#print "ab"
 	if depth == 0 or terminal(state, is_max):
-		return state.calculate_utility()
+		#return EX.utility(state.get_board())
+		return state.calculate_utility(weights)
 	if is_max:
 		v = -1
 		for move in state.all_valid_moves():
-			v = max(v, ab_prun(new_state_move(state, move), depth-1, alfa, beta, False) )
+			v = max(v, ab_prun(new_state_move(state, move), depth-1, alfa, beta, False, weights) )
 			alfa = max(alfa, v)
 			if beta <= alfa:
 				break
@@ -43,7 +45,7 @@ def ab_prun(state, depth, alfa, beta, is_max):
 	else:
 		v = 101
 		for spawn in state.all_spawns():
-			v = min(v, ab_prun(new_state_spawn(state, spawn), depth-1, alfa, beta, True) )
+			v = min(v, ab_prun(new_state_spawn(state, spawn), depth-1, alfa, beta, True, weights) )
 			beta = min(beta, v)
 			if beta <= alfa:
 				break
@@ -68,14 +70,16 @@ def expectimax(state, depth, is_move):
 
 ########################################################
 ####-- run alfaBeta and make moves --####
-def runAB(board):
-	print "GO"
-	state = S.State(board)
+def runAB(state, weights):
+	#print "GO"
+	#state = S.State(board)
 	state.spawn()
 
 
-	original_depth = 1
-	depth = copy.deepcopy(original_depth)
+	original_depth = 2
+	#depth = copy.deepcopy(original_depth)
+	moves = 0
+	highest = 0
 	while state.can_make_a_move():
 		best_move = None
 		best_val = -1
@@ -87,23 +91,27 @@ def runAB(board):
 		if state.number_of_empty_tiles() < 5:
 			depth = original_depth + 2
 		if state.number_of_empty_tiles() < 4:
-			depth = original_depth + 1
+			depth = original_depth + 3
 		if state.number_of_empty_tiles() < 3:
-			depth = original_depth + 2
+			depth = original_depth + 4
+		if state.calculate_utility(weights) < 30:
+			depth += 1
 
 		for move in state.all_valid_moves():
 			#print move
 
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
-
-			val = ab_prun(temp_state, depth, best_val, 1000000, False)
+			val = ab_prun(temp_state, depth, best_val, 1000000, False, weights)
 
 			if val > best_val:
 				best_val = val
 				best_move = move
 		state.move(best_move)
-		#print state.calculate_utility()
+		moves += 1
+		#if state.get_highest_tile() > highest:
+		#	highest = state.get_highest_tile()
+		#	print "Hoyeste:", highest, " Trekk:", moves
 		state.spawn()
 	return state
 #
@@ -129,14 +137,14 @@ if __name__ == '__main__':
 
 
 
-	n = 500
+	n = 50
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		state = runExmax(board)#runAB(board)
+		state = runAB(board)#runAB(board)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
@@ -150,6 +158,7 @@ if __name__ == '__main__':
 		elif highest_tile == 4096: n4096 += 1
 		elif highest_tile == 8192: n8192 += 1
 
+		print "alfaBeta with weight matrix:"
 		print "64: ", 100.0*float(n64)/(x+1), "%"
 		print "128: ", 100.0*float(n128)/(x+1), "%"
 		print "256: ", 100.0*float(n256)/(x+1), "%"
@@ -158,10 +167,8 @@ if __name__ == '__main__':
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
-		print "depth 4:"
 
 	#
-	print highest_tile
 	print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
 	print "128: ", 100.0*float(n128)/n, "%"
