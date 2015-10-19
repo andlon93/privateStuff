@@ -130,13 +130,15 @@ class State:
 				if self.board[row][col] == 0: open_tiles.append([row, col])
 		#
 		if open_tiles:
-			chosen_tile = open_tiles[random.randint(0, len(open_tiles)-1)]#choose a random tile
+			#random_index = int(round(random.uniform(0, len(open_tiles)-1)))
+			#random_index = int(round(random_index))
+			chosen_tile = open_tiles[int(round(random.uniform(0, len(open_tiles)-1)))]#choose a random tile
 		else:
 			print "ingen steder aa spawne en tile"
 			for row in self.board:
 				print row
 			return False
-		if random.randint(0, 100) < 10:#P(4) = 0.1
+		if random.uniform(0, 100) < 10.0:#P(4) = 0.1
 			self.board[chosen_tile[0]][chosen_tile[1]] = 4
 			return True
 		else:#P(2) = 0.9
@@ -192,63 +194,6 @@ class State:
 		return all_spawns
 	#
 	####--- Utility methods ---####
-	def THE_utility(self):
-		cluster_score = 0.0
-		number_of_empty_cells = 0.0
-		score_of_board = 0.0
-		for r in xrange(4):
-			for c in xrange(4):
-				###--- START score of the board ---###
-				cell_value = self.board[r][c]
-				#print cell_value
-				if cell_value == 0 or cell_value == 2: score_of_board += 0
-				elif cell_value == 4: score_of_board += 4
-				elif cell_value == 8: score_of_board += 16
-				elif cell_value == 16: score_of_board += 48
-				elif cell_value == 32: score_of_board += 128
-				elif cell_value == 64: score_of_board += 320
-				elif cell_value == 128: score_of_board += 768
-				elif cell_value == 256: score_of_board += 1792
-				elif cell_value == 512: score_of_board += 4096
-				elif cell_value == 1024: score_of_board += 9216
-				elif cell_value == 2048: score_of_board += 20480
-				elif cell_value == 4096: score_of_board += 45056
-				else: print "har ikke lagt inn score for saa hoye verdier"
-				###--- END score of the board ---###
-				#
-				###--- START number of empty cells ---###
-				if self.board[r][c] == 0:
-					number_of_empty_cells += 1.0
-				###--- END number of empty cells ---###
-				#
-				###--- START clustering score ---###
-				cluster = 0
-				t = 0
-				if r > 0 and self.board[r][c] != 0 and self.board[r-1][c] != 0:
-					cluster += abs( self.board[r][c] - self.board[r-1][c] )
-					t += 1
-				if r < 3 and self.board[r][c] != 0 and self.board[r+1][c] != 0:
-					cluster += abs( self.board[r][c] - self.board[r+1][c] )
-					t += 1
-				#if c > 0: print c
-				if c > 0 and self.board[r][c] != 0 and self.board[r][c-1] != 0:
-					cluster += abs( self.board[r][c] - self.board[r][c-1] )
-					t += 1
-				if c < 3 and self.board[r][c] != 0 and self.board[r][c+1] != 0:
-					cluster += abs( self.board[r][c] - self.board[r][c+1] )
-					t += 1
-				if t == 0:
-					cluster_score = 0
-				else:
-					cluster_score = cluster/t
-				###--- END clustering score ---###
-		if score_of_board > 0:
-			utility = score_of_board*0.7 + (math.log(score_of_board)*number_of_empty_cells*1.5) - cluster_score
-			#print utility
-			return max( utility, min(score_of_board, 1) )
-		else: 
-			return max(0, (number_of_empty_cells - cluster_score) )
-	#
 	def calculate_utility(self):
 		#return self.THE_utility()
 		'''Based on one or more algorithms the quality/closeness to target
@@ -275,6 +220,8 @@ class State:
 		return sum_utilities
 	#return self.highest_tile_utility()
 	#
+	def corner(self):
+		pass
 	def sum_greater_upper(self):
 		board = self.board
 		upper_sum = 0
