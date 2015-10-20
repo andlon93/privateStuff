@@ -16,8 +16,8 @@ def create_random_weights(weights):
 	return weights
 #
 def main():
-	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1]
-	weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+	weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
 	number_of_runs = 25
 	weights = []
 	#
