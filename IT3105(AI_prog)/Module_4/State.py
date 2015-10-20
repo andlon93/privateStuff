@@ -269,7 +269,7 @@ class State:
 			return 40
 		if board[0][0] > board[0][1] and board[0][1] == board[0][2]:
 			return 30
-		
+
 		if board[0][0] >= board[0][1]:
 			return 25
 		else:
