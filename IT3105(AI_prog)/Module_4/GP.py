@@ -34,7 +34,7 @@ def run_calculation(weight, queue2):
 		queue2.put(0)
 
 def run_calculations(weight, queue, number_of_runs): # This method takes a set of weights, runs the game for number_of_runs, puts performance in queue
-	print "Spawning processes"
+	print "Spawning processes *",number_of_runs
 	queue2 = Queue(maxsize=0)
 	n2048_or_more = 0
 	sub_process = [None] * number_of_runs
