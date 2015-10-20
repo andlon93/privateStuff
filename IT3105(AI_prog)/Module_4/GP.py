@@ -49,7 +49,7 @@ def main():
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-	number_of_runs = 25
+	number_of_runs = ??
 	weights = []
 	performances = []
 	#
@@ -63,9 +63,9 @@ def main():
 	fifth_best = []
 
 
-	for i in range(10):
-		print "Run number: ", i
-	#while True:
+	#for qwerty in xrange(1):
+	#	print "Run number: ", qwerty
+	while True:
 
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
@@ -169,7 +169,18 @@ def main():
 		for n in xrange(1):
 			weights.append(create_random_weights(copy.deepcopy(fifth_best[1])))
 		#
-
+		###--- START Wrte data to file ---###
+		fil = open("output.txt", 'w')
+		streng1 = "Best: "+str(best[0])+" of "+str(number_of_runs)+"\n"+str(best[1])+"\n"
+		streng2 = "Nest Best: "+str(second_best[0])+" of "+str(number_of_runs)+"\n"+str(second_best[1])+"\n"
+		streng3 = "Tredje Best: "+str(third_best[0])+" of "+str(number_of_runs)+"\n"+str(third_best[1])+"\n"
+		streng4 = "Fjerde Best: "+str(fourth_best[0])+" of "+str(number_of_runs)+"\n"+str(fourth_best[1])+"\n"
+		streng5 = "Femte Best: "+str(fifth_best[0])+" of "+str(number_of_runs)+"\n"+str(fifth_best[1])+"\n"
+		full_streng = streng1+"\n\n"+streng2+"\n\n"+streng3+"\n\n"+streng4+"\n\n"+streng5
+		fil.write(full_streng)
+		fil.close()
+		###--- END Wrte data to file ---###
+		#
 		print "\n\nBest: ", best[0], "of", number_of_runs
 		print best[1], '\n'
 		print "nest Best: ",second_best[0], "of", number_of_runs
