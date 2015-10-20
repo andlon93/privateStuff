@@ -76,7 +76,7 @@ def runAB(state, weights):
 	state.spawn()
 
 
-	original_depth = 1
+	original_depth = 2
 	#depth = copy.deepcopy(original_depth)
 	moves = 0
 	highest = 0
@@ -114,7 +114,7 @@ def runAB(state, weights):
 		#	print "Hoyeste:", highest, " Trekk:", moves
 
 		state.spawn()
-	print "dybde: ", original_depth,
+	#print "dybde: ", original_depth,
 	return state
 #
 
