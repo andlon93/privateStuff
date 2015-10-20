@@ -67,7 +67,7 @@ def main():
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-	number_of_runs = ??
+	number_of_runs = 25
 	weights = []
 	performances = []
 	#
@@ -81,9 +81,9 @@ def main():
 	fifth_best = []
 
 
-	#for qwerty in xrange(1):
-	#	print "Run number: ", qwerty
-	while True:
+	for qwerty in xrange(5):
+		print "Run number: ", qwerty
+	#while True:
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
