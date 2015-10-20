@@ -199,14 +199,8 @@ class State:
 	#
 	####--- Utility methods ---####
 	def calculate_utility(self, weights):
-		#return self.THE_utility()
 		'''Based on one or more algorithms the quality/closeness to target
-		   is calculated
-		'''
-
-		#free_tiles_utility = self.free_tiles_utility() * 0.6
-		#highest_tile_utility = self.highest_tile_utility() * 0.2
-		#largest_tile_corner_util = self.largest_tile_corner_util() *0.15
+		   is calculated'''
 
 		free_tiles_utility = self.free_tiles_utility() * weights[0]# * 0.5
 		highest_tile_utility = self.highest_tile_utility() * weights[1]#* 0.05
@@ -216,15 +210,19 @@ class State:
 		number_of_same = self.number_of_same() * weights[5] #* 0.05
 		brute_method = self.brute_method() * weights[6]#* 0.15
 		upper_vs_lower = self.sum_greater_upper() * weights[7]#* 0.1
+		first_over_second = self.first_over_second() * weights[8]
 
-		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
-		sum_utilities = ( upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
-
+		sum_utilities = ( first_over_second + upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 		return sum_utilities
-	#return self.highest_tile_utility()
-	#
-	def corner(self):
-		pass
+
+	def first_over_second(self):
+		board = self.board
+		summ = 0
+		for col in range(len(board[0])):
+			if board[0][col] >= board[1][col]:
+				summ += 25
+		return summ
+
 	def sum_greater_upper(self):
 		board = self.board
 		upper_sum = 0
@@ -246,32 +244,41 @@ class State:
 		if ratio > 1:
 			return 30
 		if ratio < 0.01:
-			return 10
+			return 5
 		if ratio < 0.1:
-			return 20
+			return 10
 		else:
 			return 0
 		return ratio
+
+	def brute_line2(self):
+		board = self.board
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1] and board[1][1] >= board [1][0]:
+			return 100
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1]:
+			return 75
+		if board[1][2] >= board[1][1] and board[1][1] >= board[1][0]:
+			return 65
+		if board[1][3] >= board[1][2]:
+			return 50
+		if board[1][2] >= board[1][1]:
+			return 40
+		return 0
+
 
 	def brute_method(self):
 		board = self.board
 		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
 			return 100
-		if board[0][0] == board[0][1] and board[0][1] > board[0][2] and board[0][2] > board[0][3]:
-			return 80
-		if board[0][0] > board[0][1] and board[0][1] == board[0][2] and board[0][2] > board[0][3]:
-			return 80
-		if board[0][0] > board[0][1] and board[0][1] > board[0][2] and board[0][2] == board[0][3]:
-			return 70
 		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2]:
-			return 50
-		if board[0][0] == board[0][1] and board[0][1] > board[0][2]:
-			return 40
-		if board[0][0] > board[0][1] and board[0][1] == board[0][2]:
-			return 30
-		
+			return 75
+		if board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
+			return 65
 		if board[0][0] >= board[0][1]:
-			return 25
+			return 50
+		if board[0][1] >= board[0][2]:
+			return 40
+
 		else:
 			return 0
 
@@ -359,10 +366,10 @@ class State:
 		for r in range (len(self.board)):
 			for c in range (len(self.board[0])):
 				if self.board[r][c]==highest_tile:
-					#if (r == 0 and c == 0) or (r == 0 and c == 3) or (r == 3 and c == 3) or (r == 3 and c == 0):
 					if (r == 0 and c == 0):
 						util = 100
-
+					elif (r==0 and c == 3 or r == 3 and c == 0):
+						util = 50
 		return util
 
 	def cluster_score(self):
