@@ -65,7 +65,7 @@ def expectimax(state, depth, is_move):
 		for spawn in state.all_spawns():
 			#print P[spawn[2]]
 			#expectimax(new_state_spawn(state, spawn), depth-1, True)
-			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True) 
+			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True)
 	return alfa
 
 ########################################################
@@ -76,7 +76,7 @@ def runAB(state, weights):
 	state.spawn()
 
 
-	original_depth = 2
+	original_depth = 1
 	#depth = copy.deepcopy(original_depth)
 	moves = 0
 	highest = 0
@@ -112,11 +112,14 @@ def runAB(state, weights):
 		#if state.get_highest_tile() > highest:
 		#	highest = state.get_highest_tile()
 		#	print "Hoyeste:", highest, " Trekk:", moves
+
 		state.spawn()
+	print "dybde: ", original_depth, " Endret dybder"
 	return state
 #
 
 if __name__ == '__main__':
+	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -144,7 +147,8 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		state = runAB(board)#runAB(board)
+
+		state = runAB(board,weight)#runAB(board)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
@@ -158,7 +162,6 @@ if __name__ == '__main__':
 		elif highest_tile == 4096: n4096 += 1
 		elif highest_tile == 8192: n8192 += 1
 
-		print "alfaBeta with weight matrix:"
 		print "64: ", 100.0*float(n64)/(x+1), "%"
 		print "128: ", 100.0*float(n128)/(x+1), "%"
 		print "256: ", 100.0*float(n256)/(x+1), "%"
@@ -167,6 +170,7 @@ if __name__ == '__main__':
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
+
 
 	#
 	print n, " runs:"

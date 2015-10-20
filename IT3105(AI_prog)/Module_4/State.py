@@ -199,11 +199,8 @@ class State:
 	#
 	####--- Utility methods ---####
 	def calculate_utility(self, weights):
-		#return self.THE_utility()
 		'''Based on one or more algorithms the quality/closeness to target
-		   is calculated
-		'''
-
+		   is calculated'''
 
 		free_tiles_utility = self.free_tiles_utility() * weights[0]# * 0.5
 		highest_tile_utility = self.highest_tile_utility() * weights[1]#* 0.05
@@ -215,9 +212,7 @@ class State:
 		upper_vs_lower = self.sum_greater_upper() * weights[7]#* 0.1
 		first_over_second = self.first_over_second() * weights[8]
 
-		#sum_utilities = (free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + twos_fours)
 		sum_utilities = ( first_over_second + upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
-
 		return sum_utilities
 
 	def first_over_second(self):
@@ -255,6 +250,21 @@ class State:
 		else:
 			return 0
 		return ratio
+
+	def brute_line2(self):
+		board = self.board
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1] and board[1][1] >= board [1][0]:
+			return 100
+		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1]:
+			return 75
+		if board[1][2] >= board[1][1] and board[1][1] >= board[1][0]:
+			return 65
+		if board[1][3] >= board[1][2]:
+			return 50
+		if board[1][2] >= board[1][1]:
+			return 40
+		return 0
+
 
 	def brute_method(self):
 		board = self.board
