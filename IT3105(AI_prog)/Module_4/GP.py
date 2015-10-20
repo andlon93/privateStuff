@@ -17,25 +17,41 @@ def create_random_weights(weights):
 	for n in mutate: weights[n] = weights[n]*random.uniform(0.75, 1.25)
 	return weights
 #
+
+def run_calculation(weight, queue2):
+	board = [[0,0,0,0],
+		 	[0,0,0,0],
+		 	[0,0,0,0],
+		 	[0,0,0,0]]
+	state = State.State(board)
+	tempt_state = copy.deepcopy(state)
+	tempt_state = AB.runAB(state, weight)
+	h = tempt_state.get_highest_tile()
+	if h > 2047:
+		queue2.put(1)
+	else:
+		queue2.put(0)
+
 def run_calculations(weight, queue, number_of_runs): # This method takes a set of weights, runs the game for number_of_runs, puts performance in queue
+	queue2 = Queue(maxsize=0)
 	n2048_or_more = 0
+	sub_process = [None] * number_of_runs
 	for n in range (number_of_runs):
-		board = [[0,0,0,0],
-			 	[0,0,0,0],
-			 	[0,0,0,0],
-			 	[0,0,0,0]]
-		state = State.State(board)
-		tempt_state = copy.deepcopy(state)
-		tempt_state = AB.runAB(state, weight)
-		h = tempt_state.get_highest_tile()
-		if h > 2047: n2048_or_more += 1 # Count the times 1024 or better was achieved
+		sub_process[n] = Process(target=run_calculation, args=(weight, queue2))
+		sub_process[n].start()
+	for n in range (number_of_runs):
+		entry = queue2.get()
+		if entry == 1:
+			n2048_or_more += 1
+	for n in range (number_of_runs):
+		sub_process[n].join()
 	performance = n2048_or_more/number_of_runs # Calculate a percentage
 	temp_object = [performance,weight]
 	queue.put(temp_object) # Puts the Performance, and weights used, in the Queue. This is retrieved when all processes are done
 
 def main():
 	print "inside main()"
-	'''try:
+	try:
 		sys.getwindowsversion() # Check if OS = Windows
 	except:
 		isWindows = False
@@ -45,15 +61,15 @@ def main():
 		import win32api,win32process,win32con
         pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
-        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority'''
+        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-	number_of_runs = 25
+	number_of_runs = 2
 	weights = []
 	performances = []
 	#
-	for n in xrange(5):
+	for n in xrange(5): #TODO change back to in xrange(5)
 		weights.append(create_random_weights(copy.deepcopy(weight)))
 	#
 	best = []
@@ -62,11 +78,9 @@ def main():
 	fourth_best = []
 	fifth_best = []
 
-
 	for i in range(10):
 		print "Run number: ", i
 	#while True:
-
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
