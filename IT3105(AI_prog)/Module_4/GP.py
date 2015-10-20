@@ -28,10 +28,10 @@ def run_calculations(weight, queue, number_of_runs): # This method takes a set o
 		tempt_state = copy.deepcopy(state)
 		tempt_state = AB.runAB(state, weight)
 		h = tempt_state.get_highest_tile()
-		if h > 1023: n2048_or_more += 1 # Count the times 1024 or better was achieved
+		if h > 2047: n2048_or_more += 1 # Count the times 1024 or better was achieved
 	performance = n2048_or_more/number_of_runs # Calculate a percentage
 	temp_object = [performance,weight]
-	queue.put(temp_object)
+	queue.put(temp_object) # Puts the Performance, and weights used, in the Queue. This is retrieved when all processes are done
 
 def main():
 	try:
@@ -47,8 +47,8 @@ def main():
         win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
 
 	queue = Queue(maxsize=0)
-	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
-	weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
 	number_of_runs = 2
 	weights = []
 	performances = []
