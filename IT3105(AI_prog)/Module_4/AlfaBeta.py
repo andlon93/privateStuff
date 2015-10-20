@@ -114,7 +114,7 @@ def runAB(state, weights):
 		#	print "Hoyeste:", highest, " Trekk:", moves
 
 		state.spawn()
-	print "dybde: ", original_depth, " Endret dybder"
+	print "dybde: ", original_depth,
 	return state
 #
 
