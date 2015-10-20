@@ -102,12 +102,12 @@ class Game(QtCore.QObject):
                 depth = original_depth + 1
             if state.get_highest_tile() == 1024:
                 depth = original_depth + 2
-            if state.number_of_empty_tiles() < 5:
-                depth = original_depth + 2
+           # if state.number_of_empty_tiles() < 5:
+           #     depth = original_depth + 2
             if state.number_of_empty_tiles() < 4:
-                depth = original_depth + 3
+                depth = original_depth + 2
             if state.number_of_empty_tiles() < 3:
-                depth = original_depth + 4
+                depth = original_depth + 3
             if state.calculate_utility(weight) < 30:
                 depth += 1
             print "Depth: ", depth

@@ -17,7 +17,7 @@ def create_random_weights(weights):
 	for n in mutate: weights[n] = weights[n]*random.uniform(0.75, 1.25)
 	return weights
 #
-def run_calculations(weight, queue, number_of_runs): # This method takes a set of weights, and runs the game for number_of_runs
+def run_calculations(weight, queue, number_of_runs): # This method takes a set of weights, runs the game for number_of_runs, puts performance in queue
 	n2048_or_more = 0
 	for n in range (number_of_runs):
 		board = [[0,0,0,0],
@@ -34,7 +34,8 @@ def run_calculations(weight, queue, number_of_runs): # This method takes a set o
 	queue.put(temp_object) # Puts the Performance, and weights used, in the Queue. This is retrieved when all processes are done
 
 def main():
-	try:
+	print "inside main()"
+	'''try:
 		sys.getwindowsversion() # Check if OS = Windows
 	except:
 		isWindows = False
@@ -44,12 +45,11 @@ def main():
 		import win32api,win32process,win32con
         pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
-        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
-
+        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority'''
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-	number_of_runs = 2
+	number_of_runs = 25
 	weights = []
 	performances = []
 	#
@@ -62,24 +62,11 @@ def main():
 	fourth_best = []
 	fifth_best = []
 
-	while True:
-		'''
-		for w in weights:			
-			n1024 = 0
-			n2048_or_more = 0
-			for n in xrange(1, number_of_runs+1):
-				board = [[0,0,0,0],
-			 			[0,0,0,0],
-			 			[0,0,0,0],
-			 			[0,0,0,0]]
-				state = State.State(board)
-				tempt_state = copy.deepcopy(state)
-				tempt_state = AB.runAB(state, w)
-				h = tempt_state.get_highest_tile()
-				if h > 2047: n2048_or_more += 1
-			#
-			performance = n2048_or_more/number_of_runs
-		'''
+
+	for i in range(10):
+		print "Run number: ", i
+	#while True:
+
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
@@ -195,4 +182,5 @@ def main():
 		print fifth_best[1], '\n\n'
 #
 if __name__ == '__main__':
+	print "GP running"
 	main()
