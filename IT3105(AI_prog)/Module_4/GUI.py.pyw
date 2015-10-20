@@ -83,7 +83,7 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-        weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+        weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
         print "game started"
         state = S.State(board)
         state.spawn()
