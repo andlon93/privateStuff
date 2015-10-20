@@ -169,7 +169,7 @@ def main():
 		for n in xrange(1):
 			weights.append(create_random_weights(copy.deepcopy(fifth_best[1])))
 		#
-		print "Start-Weights:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]"
+
 		print "\n\nBest: ", best[0], "of", number_of_runs
 		print best[1], '\n'
 		print "nest Best: ",second_best[0], "of", number_of_runs
