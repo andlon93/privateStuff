@@ -80,21 +80,19 @@ def main():
 	fourth_best = []
 	fifth_best = []
 
-
-	for qwerty in xrange(5):
-		print "Run number: ", qwerty
-	#while True:
+	while True:
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
 			process[w].start()
-		for w in xrange(len(weights)):
 			performances.append(queue.get())
-		for w in xrange(len(weights)):
 			process[w].join()
 		for entry in performances:
 			performance = entry[0]
 			w = entry[1]
+
+
+
 			#
 			if len(best) == 0:
 				#print "best not set"
