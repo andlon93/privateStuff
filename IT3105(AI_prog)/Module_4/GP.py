@@ -80,17 +80,10 @@ def main():
 	fourth_best = []
 	fifth_best = []
 
-<<<<<<< HEAD
 
 	#for qwerty in xrange(1):
 	#	print "Run number: ", qwerty
 	while True:
-
-=======
-	for i in range(10):
-		print "Run number: ", i
-	#while True:
->>>>>>> a7c69e0fa561282a1b4be1298cdb600e680dde38
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
