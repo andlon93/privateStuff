@@ -42,7 +42,7 @@ def main():
 				tempt_state = copy.deepcopy(state)
 				tempt_state = AB.runAB(state, w)
 				h = tempt_state.get_highest_tile()
-				if h > 1023: n2048_or_more += 1
+				if h > 2047: n2048_or_more += 1
 			#
 			performance = n2048_or_more/number_of_runs
 			if len(best) == 0:

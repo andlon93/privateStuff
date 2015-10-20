@@ -42,7 +42,6 @@ class Game(QtCore.QObject):
 
         self.setObjectName('mainObject')
 
-        #random.seed()
 
         self._tiles = []
     ######## Create objects ##########
@@ -99,9 +98,9 @@ class Game(QtCore.QObject):
             depth = 4
             best_move = None
             best_val = -1
-            if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3:
-                print state.number_of_empty_tiles()
-                depth = 7
+            #if state.get_highest_tile() > 1023 and state.number_of_empty_tiles() < 3:
+            #    print state.number_of_empty_tiles()
+            #    depth = 7
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
