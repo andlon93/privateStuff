@@ -5,6 +5,7 @@ import State
 import AlfaBeta as AB
 import copy
 import time
+
 #
 def create_random_weights(weights):
 	mutate = []
@@ -16,11 +17,29 @@ def create_random_weights(weights):
 	for n in mutate: weights[n] = weights[n]*random.uniform(0.75, 1.25)
 	return weights
 #
+def run_calculations(weight, queue, number_of_runs):
+	n2048_or_more = 0
+	for n in range (number_of_runs):
+		board = [[0,0,0,0],
+			 	[0,0,0,0],
+			 	[0,0,0,0],
+			 	[0,0,0,0]]
+		state = State.State(board)
+		tempt_state = copy.deepcopy(state)
+		tempt_state = AB.runAB(state, weight)
+		h = tempt_state.get_highest_tile()
+		if h > 1023: n2048_or_more += 1
+	performance = n2048_or_more/number_of_runs
+	temp_object = [performance,weight]
+	queue.put(temp_object)
+
 def main():
+	queue = Queue(maxsize=0)
 	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
 	number_of_runs = 25
 	weights = []
+	performances = []
 	#
 	for n in xrange(5):
 		weights.append(create_random_weights(copy.deepcopy(weight)))
@@ -30,99 +49,93 @@ def main():
 	third_best = []
 	fourth_best = []
 	fifth_best = []
+	process = [None] * len(weights)
 	while True:
-		for w in weights:
-			n1024 = 0
-			n2048_or_more = 0
-			for n in xrange(1, number_of_runs+1):
-				board = [[0,0,0,0],
-			 			[0,0,0,0],
-			 			[0,0,0,0],
-			 			[0,0,0,0]]
-				state = State.State(board)
-				tempt_state = copy.deepcopy(state)
-				tempt_state = AB.runAB(state, w)
-				h = tempt_state.get_highest_tile()
-				if h > 1023: n2048_or_more += 1
-			#
-			performance = n2048_or_more/number_of_runs
-			if len(best) == 0:
-				#print "best not set"
+		for w in range(len(weights)):
+			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
+			process[w].start()
+		for w in range(len(weights)):
+			performances.append(queue.get())
+		for w in range (number_of_weights):
+			process[i].join()
+
+		if len(best) == 0:
+			#print "best not set"
+			best = [performance, w]
+		elif len(second_best) == 0:
+			#print "not second best set"
+			if performance > best[0]:
+				second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
 				best = [performance, w]
-			elif len(second_best) == 0:
-				#print "not second best set"
-				if performance > best[0]:
-					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
-					best = [performance, w]
-				else:
-					second_best = [performance, w]
-			elif len(third_best) == 0:
-				if performance > best[0]:
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
-					best = [performance, w]
-				elif performance > second_best[0]:
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [performance, w]
-				else:
-					third_best = [performance, w]
-			elif len(fourth_best) == 0:
-				if performance > best[0]:
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
-					best = [performance, w]
-				elif performance > second_best[0]:
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [performance, w]
-				elif performance > third_best[0]:
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [performance, w]
-				else:
-					fourth_best = [performance, w]
-			elif len(fifth_best) == 0:
-				if performance > best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
-					best = [performance, w]
-				elif performance > second_best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [performance, w]
-				elif performance > third_best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [performance, w]
-				elif performance > fourth_best:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [performance, w]
-				else:
-					fifth_best = [performance, w]
 			else:
-				if performance > best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
-					best = [performance, w]
-				elif performance > second_best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
-					second_best = [performance, w]
-				elif performance > third_best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
-					third_best = [performance, w]
-				elif performance > fourth_best[0]:
-					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
-					fourth_best = [performance, w]
-				elif performance > fifth_best[0]:
-					fifth_best = [performance, w]
+				second_best = [performance, w]
+		elif len(third_best) == 0:
+			if performance > best[0]:
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
+				best = [performance, w]
+			elif performance > second_best[0]:
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [performance, w]
+			else:
+				third_best = [performance, w]
+		elif len(fourth_best) == 0:
+			if performance > best[0]:
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
+				best = [performance, w]
+			elif performance > second_best[0]:
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [performance, w]
+			elif performance > third_best[0]:
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [performance, w]
+			else:
+				fourth_best = [performance, w]
+		elif len(fifth_best) == 0:
+			if performance > best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
+				best = [performance, w]
+			elif performance > second_best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [performance, w]
+			elif performance > third_best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [performance, w]
+			elif performance > fourth_best:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [performance, w]
+			else:
+				fifth_best = [performance, w]
+		else:
+			if performance > best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
+				best = [performance, w]
+			elif performance > second_best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
+				second_best = [performance, w]
+			elif performance > third_best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
+				third_best = [performance, w]
+			elif performance > fourth_best[0]:
+				fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
+				fourth_best = [performance, w]
+			elif performance > fifth_best[0]:
+				fifth_best = [performance, w]
 		#
 		weights = []
 		for n in xrange(3):
@@ -148,4 +161,5 @@ def main():
 		print "Femte Best: ", fifth_best[0], "of", number_of_runs
 		print fifth_best[1], '\n\n'
 #
-main()
+if __name__ == '__main__':
+	main()
