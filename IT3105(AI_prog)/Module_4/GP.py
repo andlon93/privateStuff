@@ -19,7 +19,17 @@ def create_random_weights(weights):
 #
 
 def run_calculation(weight, queue2):
-
+	try:
+		sys.getwindowsversion() # Check if OS = Windows
+	except:
+		isWindows = False
+	else:
+		isWindows = True
+	if isWindows:
+		import win32api,win32process,win32con
+        pid = win32api.GetCurrentProcessId()
+        handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
+        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
 	board = [[0,0,0,0],
 		 	[0,0,0,0],
 		 	[0,0,0,0],
@@ -53,7 +63,7 @@ def run_calculations(weight, queue, number_of_runs): # This method takes a set o
 
 def main():
 	print "inside main()"
-	'''try:
+	try:
 		sys.getwindowsversion() # Check if OS = Windows
 	except:
 		isWindows = False
@@ -63,11 +73,11 @@ def main():
 		import win32api,win32process,win32con
         pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
-        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority'''
+        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-	number_of_runs = 25
+	number_of_runs = 30
 	weights = []
 	performances = []
 	#
@@ -79,8 +89,9 @@ def main():
 	third_best = []
 	fourth_best = []
 	fifth_best = []
-
+	count = 0
 	while True:
+		print "Run number: ", count + 1
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))
@@ -90,21 +101,24 @@ def main():
 		for entry in performances:
 			performance = entry[0]
 			w = entry[1]
-
-
-
 			#
 			if len(best) == 0:
 				#print "best not set"
 				best = [performance, w]
 			elif len(second_best) == 0:
 				#print "not second best set"
+				if entry == best:
+					continue
 				if performance > best[0]:
 					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
 					best = [performance, w]
 				else:
 					second_best = [performance, w]
 			elif len(third_best) == 0:
+				if entry == best:
+					continue
+				if entry == second_best:
+					continue
 				if performance > best[0]:
 					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
 					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
@@ -115,6 +129,12 @@ def main():
 				else:
 					third_best = [performance, w]
 			elif len(fourth_best) == 0:
+				if entry == best:
+					continue
+				if entry == second_best:
+					continue
+				if entry == third_best:
+					continue
 				if performance > best[0]:
 					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
 					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
@@ -130,6 +150,14 @@ def main():
 				else:
 					fourth_best = [performance, w]
 			elif len(fifth_best) == 0:
+				if entry == best:
+					continue
+				if entry == second_best:
+					continue
+				if entry == third_best:
+					continue
+				if entry == fourth_best:
+					continue
 				if performance > best[0]:
 					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
 					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
@@ -158,26 +186,46 @@ def main():
 					second_best = [copy.deepcopy(best[0]), copy.deepcopy(best[1])]
 					best = [performance, w]
 				elif performance > second_best[0]:
+					if entry == best:
+						continue
 					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
 					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
 					third_best = [copy.deepcopy(second_best[0]), copy.deepcopy(second_best[1])]
 					second_best = [performance, w]
 				elif performance > third_best[0]:
+					if entry == best:
+						continue
+					if entry == second_best:
+						continue
 					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
 					fourth_best = [copy.deepcopy(third_best[0]), copy.deepcopy(third_best[1])]
 					third_best = [performance, w]
 				elif performance > fourth_best[0]:
+					if entry == best:
+						continue
+					if entry == second_best:
+						continue
+					if entry == third_best:
+						continue
 					fifth_best = [copy.deepcopy(fourth_best[0]), copy.deepcopy(fourth_best[1])]
 					fourth_best = [performance, w]
 				elif performance > fifth_best[0]:
+					if entry == best:
+						continue
+					if entry == second_best:
+						continue
+					if entry == third_best:
+						continue
+					if entry == fourth_best:
+						continue
 					fifth_best = [performance, w]
 		#
 		weights = []
 		for n in xrange(3):
 			weights.append(create_random_weights(copy.deepcopy(best[1])))
-		for n in xrange(3):
-			weights.append(create_random_weights(copy.deepcopy(second_best[1])))
 		for n in xrange(2):
+			weights.append(create_random_weights(copy.deepcopy(second_best[1])))
+		for n in xrange(1):
 			weights.append(create_random_weights(copy.deepcopy(third_best[1])))
 		for n in xrange(1):
 			weights.append(create_random_weights(copy.deepcopy(fourth_best[1])))
