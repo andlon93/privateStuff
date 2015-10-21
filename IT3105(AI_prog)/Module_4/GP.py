@@ -19,7 +19,7 @@ def create_random_weights(weights):
 #
 
 def run_calculation(weight, queue2):
-	try:
+	'''try:
 		sys.getwindowsversion() # Check if OS = Windows
 	except:
 		isWindows = False
@@ -29,7 +29,7 @@ def run_calculation(weight, queue2):
 		import win32api,win32process,win32con
         pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
-        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
+        win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority'''
 	board = [[0,0,0,0],
 		 	[0,0,0,0],
 		 	[0,0,0,0],
@@ -63,7 +63,7 @@ def run_calculations(weight, queue, number_of_runs): # This method takes a set o
 
 def main():
 	print "inside main()"
-	try:
+	'''try:
 		sys.getwindowsversion() # Check if OS = Windows
 	except:
 		isWindows = False
@@ -74,6 +74,8 @@ def main():
         pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
         win32process.SetPriorityClass(handle, win32process.IDLE_PRIORITY_CLASS) # Set process-priority
+    except:
+		isWindows = False'''
 	queue = Queue(maxsize=0)
 	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
