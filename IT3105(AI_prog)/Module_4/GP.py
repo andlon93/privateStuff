@@ -77,8 +77,9 @@ def main():
     except:
 		isWindows = False'''
 	queue = Queue(maxsize=0)
-	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+	weight = [0.39, 0.042, 0.045, 0.053, 0.05, 0.054, 0.124, 0.12, 0.05, 0.025]
 	number_of_runs = 30
 	weights = []
 	performances = []
