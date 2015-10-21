@@ -94,6 +94,7 @@ def main():
 	count = 0
 	while True:
 		print "Run number: ", count + 1
+		count += 1
 		process = [None] * len(weights)
 		for w in xrange(len(weights)):
 			process[w] = Process(target=run_calculations, args=(weights[w], queue, number_of_runs))

@@ -144,11 +144,11 @@ if __name__ == '__main__':
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],
-			 [0,0,0,0],
-			 [0,0,0,0],
-			 [0,0,0,0]]
-
-		state = runAB(board,weight)#runAB(board)
+			 	[0,0,0,0],
+			 	[0,0,0,0],
+			 	[0,0,0,0]]
+		state = S.State(board)
+		state = runAB(state, weight)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
