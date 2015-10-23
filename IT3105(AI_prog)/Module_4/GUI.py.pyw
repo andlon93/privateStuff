@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from multiprocessing import Process, Queue
 import State as S
 import AlfaBeta as AB
 import Expectimax as EX
@@ -9,6 +10,12 @@ from PyQt4 import QtCore, QtGui, QtDeclarative
 import copy
 #
 #########---- Class that represent the different tiles in the UI ----########
+def makeMove(move, depth, state, queue):
+    temp_state = copy.deepcopy(state)
+    temp_state.move(move)
+    val = EX.expectimax2(temp_state, depth)
+    val_move = [val,move]
+    queue.put(val_move)
 class TileData(QtCore.QObject):
 
     statusChanged = QtCore.pyqtSignal(int)
@@ -83,13 +90,13 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-<<<<<<< HEAD
+
         weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
-=======
+        '''
         weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
         weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.1]
         weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.05]
->>>>>>> 848f7b71945c54dfb7ff3654dcc7ca0a31a47265
+        '''
         print "game started"
         state = S.State(board)
         state.spawn()
@@ -97,22 +104,23 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-        
+
         #original_depth = 2
         #depth = copy.deepcopy(original_depth)
         highest = 0
         moves = 0
+
         while state.can_make_a_move():
-            depth = 1
+            depth = 2
             best_move = None
             best_val = -1
             #depth = original_depth
-            if state.number_of_empty_tiles() < 2:
-                depth = 2
+            if state.number_of_empty_tiles() < 3:
+                depth = 3
             #    print "<8"
             '''if state.get_highest_tile() == 512:
                 depth = original_depth + 1
-            if state.get_highest_tile() == 1024:
+            if state.get_highest_tile() =cm= 1024:
                 depth = original_depth + 2
             if state.number_of_empty_tiles() < 5:
                 depth = original_depth + 2
@@ -124,20 +132,27 @@ class Game(QtCore.QObject):
                 depth += 1
             if state.calculate_utility(weight) < 30:
                 depth += 1'''
-            
+
             print "Depth: ", depth
+
+            vals_moves = []
+            queue = Queue(maxsize=0)
+            process = [None] * 4
             for move in state.all_valid_moves():
-                temp_state = copy.deepcopy(state)
-                temp_state.move(move)
-                #for r in temp_state.get_board():
-                #   print r
-                #print '\n\n\n'
-                #val = AB.ab_prun(temp_state, depth, best_val, 101, False, weight)
-                val = EX.expectimax2(temp_state, depth)
-                #all_vals.append(val)
-                if val > best_val:
-                    best_val = val
-                    best_move = move
+                process[move] = Process(target=makeMove, args=(move, depth, state, queue))
+                process[move].start()
+                print "prosess startet"
+            for move in state.all_valid_moves():
+                #print queue.get()
+                vals_moves.append(queue.get())
+            for move in state.all_valid_moves():
+                process[move].join()
+
+            for val_move in vals_moves:
+                print "vAL MOVE", val_move
+                if val_move[0] > best_val:
+                    best_val = val_move[0]
+                    best_move = val_move[1]
             state.move(best_move)
             moves += 1
             if state.get_highest_tile() > highest:
@@ -165,6 +180,7 @@ class Game(QtCore.QObject):
             state.spawn()
             ##
             self.setBoard(state.get_board())
+
 
 
 
