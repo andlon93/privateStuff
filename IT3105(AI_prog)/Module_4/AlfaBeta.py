@@ -96,7 +96,8 @@ def runAB(board, weights):
 			depth = original_depth + 4
 		if state.calculate_utility(weights) < 30:
 			depth += 1
-
+		if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
+			depth += 1
 		for move in state.all_valid_moves():
 			#print move
 
@@ -119,7 +120,9 @@ def runAB(board, weights):
 #
 
 if __name__ == '__main__':
-	weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
+	#weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.025]
+	weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.025]
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -140,7 +143,7 @@ if __name__ == '__main__':
 
 
 
-	n = 50
+	n = 100
 	for x in xrange(n):
 		print x
 		board = [[0,0,0,0],

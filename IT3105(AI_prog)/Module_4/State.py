@@ -208,6 +208,7 @@ class State:
 		brute_method = self.brute_method() * weights[6]#* 0.15
 		upper_vs_lower = self.sum_greater_upper() * weights[7]#* 0.1
 		first_over_second = self.first_over_second() * weights[8]
+		first_column_filled = self.first_column_filled() * weights[9]
 
 		sum_utilities = ( first_over_second + upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 		return sum_utilities
@@ -216,9 +217,27 @@ class State:
 		board = self.board
 		summ = 0
 		for col in range(len(board[0])):
+			if board[0][col] == 0:
+				continue
 			if board[0][col] >= board[1][col]:
 				summ += 25
 		return summ
+
+	def first_column_filled(self):
+		board = self.board
+		summ = 0
+		for row in board:
+			if row[0] == 0:
+				continue
+			else:
+				summ += 8
+		for col in board[0]:
+			if col == 0:
+				continue
+			else:
+				summ += 17
+		return summ
+
 
 	def sum_greater_upper(self):
 		board = self.board

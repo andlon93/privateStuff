@@ -83,7 +83,13 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
+<<<<<<< HEAD
         weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
+=======
+        weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
+        weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.1]
+        weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.05]
+>>>>>>> 848f7b71945c54dfb7ff3654dcc7ca0a31a47265
         print "game started"
         state = S.State(board)
         state.spawn()
@@ -108,15 +114,18 @@ class Game(QtCore.QObject):
                 depth = original_depth + 1
             if state.get_highest_tile() == 1024:
                 depth = original_depth + 2
-           # if state.number_of_empty_tiles() < 5:
-           #     depth = original_depth + 2
-            if state.number_of_empty_tiles() < 4:
+            if state.number_of_empty_tiles() < 5:
                 depth = original_depth + 2
-            if state.number_of_empty_tiles() < 3:
+            if state.number_of_empty_tiles() < 4:
                 depth = original_depth + 3
-            if state.calculate_utility(weight) < 30:
+            if state.number_of_empty_tiles() < 3:
+                depth = original_depth + 4
+            if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
                 depth += 1
-            print "Depth: ", depth'''
+            if state.calculate_utility(weight) < 30:
+                depth += 1'''
+            
+            print "Depth: ", depth
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
@@ -145,6 +154,7 @@ class Game(QtCore.QObject):
             print "Brute line2: ", state.brute_line2()
             print "Upper vs lower: ", state.sum_greater_upper()
             print "First over Seconds: ", state.first_over_second()
+            print "first column filled: ", state.first_column_filled()
             print "utility score: ", state.calculate_utility(weight)
             #print "highest numbers: ", state.highest_four()'''
             ##
