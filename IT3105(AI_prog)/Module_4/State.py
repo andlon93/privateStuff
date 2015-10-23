@@ -12,9 +12,6 @@ class State:
 	#
 	def __init__(self, board):
 		self.board = board
-	#def __init__(self, board, weights):
-	#	self.weights = weights
-	#	self.board = board
 	####--- Move methods ---####
 	def move_up(self, col):
 		rute_ledig = deque()#legger inn tomme ruter i en ko
