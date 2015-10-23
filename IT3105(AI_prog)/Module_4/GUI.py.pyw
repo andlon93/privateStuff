@@ -83,7 +83,7 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-        weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
+        weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
         print "game started"
         state = S.State(board)
         state.spawn()
@@ -91,14 +91,20 @@ class Game(QtCore.QObject):
         self.setBoard(state.get_board())
         #time.sleep(0.5)
         ##
-
-        original_depth = 2
-        depth = copy.deepcopy(original_depth)
+        
+        #original_depth = 2
+        #depth = copy.deepcopy(original_depth)
+        highest = 0
+        moves = 0
         while state.can_make_a_move():
+            depth = 1
             best_move = None
             best_val = -1
-            depth = original_depth
-            if state.get_highest_tile() == 512:
+            #depth = original_depth
+            if state.number_of_empty_tiles() < 2:
+                depth = 2
+            #    print "<8"
+            '''if state.get_highest_tile() == 512:
                 depth = original_depth + 1
             if state.get_highest_tile() == 1024:
                 depth = original_depth + 2
@@ -110,22 +116,27 @@ class Game(QtCore.QObject):
                 depth = original_depth + 3
             if state.calculate_utility(weight) < 30:
                 depth += 1
-            print "Depth: ", depth
+            print "Depth: ", depth'''
             for move in state.all_valid_moves():
                 temp_state = copy.deepcopy(state)
                 temp_state.move(move)
                 #for r in temp_state.get_board():
                 #   print r
                 #print '\n\n\n'
-                val = AB.ab_prun(temp_state, depth, best_val, 101, False, weight)
+                #val = AB.ab_prun(temp_state, depth, best_val, 101, False, weight)
+                val = EX.expectimax2(temp_state, depth)
                 #all_vals.append(val)
                 if val > best_val:
                     best_val = val
                     best_move = move
             state.move(best_move)
+            moves += 1
+            if state.get_highest_tile() > highest:
+                highest = state.get_highest_tile()
+                print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 
 
-            print "free tiles :", state.free_tiles_utility()
+            '''print "free tiles :", state.free_tiles_utility()
             print "Highest_tile :", state.highest_tile_utility()
             print "largest in corner :", state.largest_tile_corner_util()
             print "cluster_score :", state.cluster_score()
@@ -135,7 +146,7 @@ class Game(QtCore.QObject):
             print "Upper vs lower: ", state.sum_greater_upper()
             print "First over Seconds: ", state.first_over_second()
             print "utility score: ", state.calculate_utility(weight)
-            #print "highest numbers: ", state.highest_four()
+            #print "highest numbers: ", state.highest_four()'''
             ##
             self.setBoard(state.get_board())
             #time.sleep(0.1)

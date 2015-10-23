@@ -70,9 +70,9 @@ def expectimax(state, depth, is_move):
 
 ########################################################
 ####-- run alfaBeta and make moves --####
-def runAB(state, weights):
+def runAB(board, weights):
 	#print "GO"
-	#state = S.State(board)
+	state = S.State(board)
 	state.spawn()
 
 
@@ -109,9 +109,9 @@ def runAB(state, weights):
 				best_move = move
 		state.move(best_move)
 		moves += 1
-		#if state.get_highest_tile() > highest:
-		#	highest = state.get_highest_tile()
-		#	print "Hoyeste:", highest, " Trekk:", moves
+		if state.get_highest_tile() > highest:
+			highest = state.get_highest_tile()
+			print "Hoyeste:", highest, " Trekk:", moves
 
 		state.spawn()
 	#print "dybde: ", original_depth,
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-
+		weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
 		state = runAB(board,weight)#runAB(board)
 		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
@@ -170,8 +170,8 @@ if __name__ == '__main__':
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
-
-
+		print("--- %s seconds ---" % (time.time() - start_time))
+	#
 	#
 	print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
