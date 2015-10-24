@@ -114,22 +114,22 @@ def runExmax(board):
 	moves = 0
 	highest = 0
 	while state.can_make_a_move():
-		depth = 1
+		depth = 3
 		best_move = None
 		best_val = -1
 		#
 		#if state.get_highest_tile() > 128:
 		#	depth = 5
-		#if state.get_highest_tile() > 511:
-		#	depth = 6
-		if state.number_of_empty_tiles() < 2:
-			depth = 2
+		#if state.get_highest_tile() >= 512:
+		#	depth += 1
+		#if state.number_of_empty_tiles() < 4:
+		#	depth += 1
 
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
 			#
-			alfa = expectimax2(temp_state, 2)
+			alfa = expectimax2(temp_state, depth)
 			if best_val < alfa:
 				best_val = alfa
 				best_move = move
@@ -138,7 +138,7 @@ def runExmax(board):
 		moves += 1
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
-			print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
+			#print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 		state.spawn()
 	return state
 ##
@@ -163,6 +163,7 @@ if __name__ == '__main__':
 	n = 100
 	for x in xrange(1, n+1):
 		print "Kjoring nummer: ", x
+		print "Dybde: 3"
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],

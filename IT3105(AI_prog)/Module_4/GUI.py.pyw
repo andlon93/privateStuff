@@ -111,12 +111,14 @@ class Game(QtCore.QObject):
         moves = 0
 
         while state.can_make_a_move():
-            depth = 2
+            depth = 1
             best_move = None
             best_val = -1
             #depth = original_depth
-            if state.number_of_empty_tiles() < 3:
-                depth = 3
+            if state.get_highest_tile() >= 512:
+                depth += 1
+            if state.number_of_empty_tiles() < 4:
+                depth += 1
             #    print "<8"
             '''if state.get_highest_tile() == 512:
                 depth = original_depth + 1
