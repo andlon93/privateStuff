@@ -141,6 +141,7 @@ def runExmax(board):
 			print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 		if state.get_highest_tile() == 2048:
 			return state
+			#print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 		state.spawn()
 	return state
 ##
@@ -165,6 +166,7 @@ if __name__ == '__main__':
 	n = 200
 	for x in xrange(1, n+1):
 		print "Kjoring nummer: ", x
+		print "Dybde: 3"
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],

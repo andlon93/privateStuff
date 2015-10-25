@@ -119,6 +119,7 @@ class Game(QtCore.QObject):
                 depth = 3
             elif state.get_highest_tile() > 511:
                 depth = 2
+
             #    print "<8"
             '''if state.get_highest_tile() == 512:
                 depth = original_depth + 1

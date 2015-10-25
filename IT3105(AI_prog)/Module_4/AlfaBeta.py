@@ -113,6 +113,8 @@ def runAB(board, weights):
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
 			print "Hoyeste:", highest, " Trekk:", moves
+		#if state.get_highest_tile() == 2048:
+		#	return state
 
 		state.spawn()
 	#print "dybde: ", original_depth,
