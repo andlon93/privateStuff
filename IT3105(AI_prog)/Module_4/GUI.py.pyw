@@ -111,12 +111,14 @@ class Game(QtCore.QObject):
         moves = 0
 
         while state.can_make_a_move():
-            depth = 2
+            depth = 1
             best_move = None
             best_val = -1
             #depth = original_depth
-            if state.number_of_empty_tiles() < 3:
+            if state.number_of_empty_tiles() < 1:
                 depth = 3
+            elif state.get_highest_tile() > 511:
+                depth = 2
             #    print "<8"
             '''if state.get_highest_tile() == 512:
                 depth = original_depth + 1
@@ -141,7 +143,7 @@ class Game(QtCore.QObject):
             for move in state.all_valid_moves():
                 process[move] = Process(target=makeMove, args=(move, depth, state, queue))
                 process[move].start()
-                print "prosess startet"
+                #print "prosess startet"
             for move in state.all_valid_moves():
                 #print queue.get()
                 vals_moves.append(queue.get())
