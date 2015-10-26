@@ -3,6 +3,7 @@ import time
 import State
 import copy
 from multiprocessing import Process, Queue
+import cProfile
 #
 '''W = [
     [  [100,  10,  1,   -1],
@@ -59,17 +60,19 @@ def utility(board):
 #   0    1    2    3    4
 P=[0.0, 0.0, 0.9, 0.0, 0.1]
 def expectimax(state, depth):
+	new_state_m =  AB.new_state_move
+	new_state_s = AB.new_state_spawn
 	tot_score = 0
 	tot_prob = 0
 	if depth == 0 or AB.terminal2(state):
 		return utility(state.get_board())
 	else:
 		for spawn in state.all_spawns():
-			newS = AB.new_state_spawn(state, spawn)
+			newS = new_state_s(state, spawn)
 			best_score = 0
 			best_move = None
 			for move in state.all_valid_moves():
-				newState = AB.new_state_move(newS, move)
+				newState = new_state_m(newS, move)
 				score = expectimax(newState, depth-1)
 				if score > best_score:
 					best_score = score
@@ -92,14 +95,14 @@ def runExmax(board):
 	moves = 0
 	highest = 0
 	while state.can_make_a_move():
-		depth = 1
+		depth = 0
 		best_move = None
 		best_val = -1
 		#
 		if state.number_of_empty_tiles() < 2:
-			depth = 3
-		elif state.get_highest_tile() > 511:
 			depth = 2
+		elif state.get_highest_tile() > 511:
+			depth = 1
 		#
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
@@ -145,6 +148,7 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
+		cProfile.run('runExmax(board)')
 		state = runExmax(board)#expectimax
 		highest_tile = state.get_highest_tile()
 		#
