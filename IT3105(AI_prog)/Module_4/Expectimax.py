@@ -88,6 +88,7 @@ def expectimax(state, depth):
 #
 def runExmax(board):
 	print "pp"
+	deep_cop = copy.deepcopy
 	state = State.State(board)
 	#print state
 	state.spawn()
@@ -105,7 +106,7 @@ def runExmax(board):
 			depth = 1
 		#
 		for move in state.all_valid_moves():
-			temp_state = copy.deepcopy(state)
+			temp_state = deep_cop(state)
 			temp_state.move(move)
 			#
 			alfa = expectimax(temp_state, depth)
