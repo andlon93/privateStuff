@@ -10,12 +10,12 @@ from PyQt4 import QtCore, QtGui, QtDeclarative
 import copy
 #
 #########---- Class that represent the different tiles in the UI ----########
+
 def makeMove(move, depth, state, queue):
-    temp_state = copy.deepcopy(state)
-    temp_state.move(move)
-    val = EX.expectimax2(temp_state, depth)
-    val_move = [val,move]
-    queue.put(val_move)
+    temp_state = copy.deepcopy(state) # Copy the current state
+    temp_state.move(move) # Simulate moving in the given direction
+    queue.put([EX.expectimax2(temp_state, depth),move]) # Calculate score of move, and put in the queue
+
 class TileData(QtCore.QObject):
 
     statusChanged = QtCore.pyqtSignal(int)
@@ -105,81 +105,37 @@ class Game(QtCore.QObject):
         #time.sleep(0.5)
         ##
 
-        #original_depth = 2
-        #depth = copy.deepcopy(original_depth)
-        highest = 0
-        moves = 0
+        process = [None] * 4
+        queue = Queue(maxsize=0)
 
         while state.can_make_a_move():
             depth = 1
             best_move = None
             best_val = -1
             #depth = original_depth
-            if state.number_of_empty_tiles() < 1:
+            if state.number_of_empty_tiles() < 2:
                 depth = 3
             elif state.get_highest_tile() > 511:
                 depth = 2
 
-            #    print "<8"
-            '''if state.get_highest_tile() == 512:
-                depth = original_depth + 1
-            if state.get_highest_tile() =cm= 1024:
-                depth = original_depth + 2
-            if state.number_of_empty_tiles() < 5:
-                depth = original_depth + 2
-            if state.number_of_empty_tiles() < 4:
-                depth = original_depth + 3
-            if state.number_of_empty_tiles() < 3:
-                depth = original_depth + 4
-            if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
-                depth += 1
-            if state.calculate_utility(weight) < 30:
-                depth += 1'''
-
-            print "Depth: ", depth
-
             vals_moves = []
-            queue = Queue(maxsize=0)
-            process = [None] * 4
-            for move in state.all_valid_moves():
+            valid_moves = state.all_valid_moves()
+            for move in valid_moves:
                 process[move] = Process(target=makeMove, args=(move, depth, state, queue))
                 process[move].start()
-                #print "prosess startet"
-            for move in state.all_valid_moves():
-                #print queue.get()
+            for move in valid_moves:
                 vals_moves.append(queue.get())
-            for move in state.all_valid_moves():
+            for move in valid_moves:
                 process[move].join()
-
             for val_move in vals_moves:
-                print "vAL MOVE", val_move
                 if val_move[0] > best_val:
                     best_val = val_move[0]
                     best_move = val_move[1]
             state.move(best_move)
-            moves += 1
-            if state.get_highest_tile() > highest:
-                highest = state.get_highest_tile()
-                print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
 
-
-            '''print "free tiles :", state.free_tiles_utility()
-            print "Highest_tile :", state.highest_tile_utility()
-            print "largest in corner :", state.largest_tile_corner_util()
-            print "cluster_score :", state.cluster_score()
-            print "Number of same: ", state.number_of_same()
-            print "brute method: ", state.brute_method()
-            print "Brute line2: ", state.brute_line2()
-            print "Upper vs lower: ", state.sum_greater_upper()
-            print "First over Seconds: ", state.first_over_second()
-            print "first column filled: ", state.first_column_filled()
-            print "utility score: ", state.calculate_utility(weight)
-            #print "highest numbers: ", state.highest_four()'''
             ##
             self.setBoard(state.get_board())
-            #time.sleep(0.1)
             ##
-            #break
             state.spawn()
             ##
             self.setBoard(state.get_board())

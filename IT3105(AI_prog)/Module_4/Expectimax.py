@@ -80,7 +80,7 @@ def expectimax(state, depth, is_move):
 def expectimax2(state, depth):
 	tot_score = 0
 	tot_prob = 0
-	if depth == 0 or AB.terminal(state, True):
+	if depth == 0 or AB.terminal2(state):
 		return utility(state.get_board())
 	else:
 		#for r in xrange(4):
@@ -93,8 +93,7 @@ def expectimax2(state, depth):
 			best_score = 0
 			best_move = None
 			for move in state.all_valid_moves():
-				newState = AB.new_state_move(newS, move)
-				score = expectimax2(newState, depth-1)
+				score = expectimax2(AB.new_state_move(newS, move), depth-1)
 				if score > best_score:
 					best_score = score
 					best_move = move
@@ -120,10 +119,10 @@ def runExmax(board):
 		best_move = None
 		best_val = -1
 		#
-		if depth < 3 and state.number_of_empty_tiles() < 2:
-			depth = 3
-		elif depth < 2 and state.get_highest_tile() > 511:
-			depth = 2
+        if state.number_of_empty_tiles() < 2:
+            depth = 3
+        elif state.get_highest_tile() > 511:
+            depth = 2
 
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
