@@ -30,9 +30,7 @@ def new_state_spawn(parent, spawn):
 	return S.State(new_board)
 #
 def ab_prun(state, depth, alfa, beta, is_max, weights):
-	#print "ab"
 	if depth == 0 or terminal(state, is_max):
-		#return EX.utility(state.get_board())
 		return state.calculate_utility(weights)
 	if is_max:
 		v = -1
@@ -50,34 +48,12 @@ def ab_prun(state, depth, alfa, beta, is_max, weights):
 			if beta <= alfa:
 				break
 		return v
-########################################################
-#   0    1    2    3    4
-P=[0.0, 0.0, 0.9, 0.0, 0.1]
-def expectimax(state, depth, is_move):
-	if depth == 0 or terminal(state, is_move):
-		return state.calculate_utility()
-	if is_move:
-		alfa = -1000000
-		for move in state.all_valid_moves():
-			alfa = max( alfa, expectimax(new_state_move(state, move), depth-1, False) )
-	else:
-		alfa = 0
-		for spawn in state.all_spawns():
-			#print P[spawn[2]]
-			#expectimax(new_state_spawn(state, spawn), depth-1, True)
-			alfa +=  P[spawn[2]] * expectimax(new_state_spawn(state, spawn), depth-1, True)
-	return alfa
-
-########################################################
+#
 ####-- run alfaBeta and make moves --####
 def runAB(board, weights):
-	#print "GO"
 	state = S.State(board)
 	state.spawn()
-
-
 	original_depth = 2
-	#depth = copy.deepcopy(original_depth)
 	moves = 0
 	highest = 0
 	while state.can_make_a_move():
@@ -99,12 +75,10 @@ def runAB(board, weights):
 		if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
 			depth += 1
 		for move in state.all_valid_moves():
-			#print move
-
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
 			val = ab_prun(temp_state, depth, best_val, 1000000, False, weights)
-
+			#
 			if val > best_val:
 				best_val = val
 				best_move = move
@@ -115,12 +89,9 @@ def runAB(board, weights):
 			print "Hoyeste:", highest, " Trekk:", moves
 		#if state.get_highest_tile() == 2048:
 		#	return state
-
 		state.spawn()
-	#print "dybde: ", original_depth,
 	return state
 #
-
 if __name__ == '__main__':
 	#weight = [0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.15, 0.1, 0.05]
 	#weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.025]
@@ -139,12 +110,7 @@ if __name__ == '__main__':
 	n2048 = 0
 	n4096 = 0
 	n8192 = 0
-
-
-	#state = runExmax(board)
-
-
-
+	#
 	n = 100
 	for x in xrange(n):
 		print x
@@ -154,10 +120,8 @@ if __name__ == '__main__':
 			 [0,0,0,0]]
 		weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
 		state = runAB(board,weight)#runAB(board)
-		#print state.highest_tile()
 		highest_tile = state.get_highest_tile()
 		#
-
 		if highest_tile == 64: n64 += 1
 		if highest_tile == 128: n128 += 1
 		elif highest_tile == 256: n256 += 1
@@ -166,7 +130,7 @@ if __name__ == '__main__':
 		elif highest_tile == 2048: n2048 += 1
 		elif highest_tile == 4096: n4096 += 1
 		elif highest_tile == 8192: n8192 += 1
-
+		#
 		print "64: ", 100.0*float(n64)/(x+1), "%"
 		print "128: ", 100.0*float(n128)/(x+1), "%"
 		print "256: ", 100.0*float(n256)/(x+1), "%"
@@ -176,7 +140,6 @@ if __name__ == '__main__':
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
 		print("--- %s seconds ---" % (time.time() - start_time))
-	#
 	#
 	print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
@@ -188,4 +151,3 @@ if __name__ == '__main__':
 	print "4096: ", 100.0*float(n4096)/(x+1), "%"
 	print "8192: ", 100.0*float(n8192)/(x+1), "%"
 	print("--- %s seconds ---" % (time.time() - start_time))
-	#print "Tar med val"

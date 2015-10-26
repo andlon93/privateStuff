@@ -80,7 +80,7 @@ class Game(QtCore.QObject):
         else:
             t.setStatus(status)
             return True
-    ###############################################################
+    #
     @QtCore.pyqtSlot()
     def setUp(self):
         print("Setting up the game.")
@@ -90,7 +90,6 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-
         weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
         '''
         weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
@@ -103,13 +102,8 @@ class Game(QtCore.QObject):
         ##
         self.setBoard(state.get_board())
         #time.sleep(0.5)
-        ##
-
-        #original_depth = 2
-        #depth = copy.deepcopy(original_depth)
         highest = 0
         moves = 0
-
         while state.can_make_a_move():
             depth = 1
             best_move = None
@@ -119,25 +113,6 @@ class Game(QtCore.QObject):
                 depth = 3
             elif state.get_highest_tile() > 511:
                 depth = 2
-
-            #    print "<8"
-            '''if state.get_highest_tile() == 512:
-                depth = original_depth + 1
-            if state.get_highest_tile() =cm= 1024:
-                depth = original_depth + 2
-            if state.number_of_empty_tiles() < 5:
-                depth = original_depth + 2
-            if state.number_of_empty_tiles() < 4:
-                depth = original_depth + 3
-            if state.number_of_empty_tiles() < 3:
-                depth = original_depth + 4
-            if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
-                depth += 1
-            if state.calculate_utility(weight) < 30:
-                depth += 1'''
-
-            print "Depth: ", depth
-
             vals_moves = []
             queue = Queue(maxsize=0)
             process = [None] * 4
@@ -150,7 +125,6 @@ class Game(QtCore.QObject):
                 vals_moves.append(queue.get())
             for move in state.all_valid_moves():
                 process[move].join()
-
             for val_move in vals_moves:
                 print "vAL MOVE", val_move
                 if val_move[0] > best_val:
@@ -161,8 +135,7 @@ class Game(QtCore.QObject):
             if state.get_highest_tile() > highest:
                 highest = state.get_highest_tile()
                 print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
-
-
+            #
             '''print "free tiles :", state.free_tiles_utility()
             print "Highest_tile :", state.highest_tile_utility()
             print "largest in corner :", state.largest_tile_corner_util()
@@ -177,16 +150,11 @@ class Game(QtCore.QObject):
             #print "highest numbers: ", state.highest_four()'''
             ##
             self.setBoard(state.get_board())
-            #time.sleep(0.1)
+            #time.sleep(0.2)
             ##
-            #break
             state.spawn()
-            ##
             self.setBoard(state.get_board())
-
-
-
-
+    #
     @QtCore.pyqtSlot()
     def setBoard(self, board):
         for r in xrange(4):
@@ -208,7 +176,7 @@ if __name__ == '__main__':
              [0,0,0,0],
              [0,0,0,0],
              [0,0,0,0]]
-
+    #
     game = Game()
     #
     app = QtGui.QApplication(sys.argv)

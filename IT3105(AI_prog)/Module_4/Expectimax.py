@@ -3,11 +3,7 @@ import time
 import State
 import copy
 from multiprocessing import Process, Queue
-#########################
-'''W = [[[0.15759, 0.121925, 0.102812, 0.099937],
-	   [0.0120, 0.0888405, 0.076711, 0.0724143],
-	   [0.050654, 0.0462579, 0.027116, 0.0161889],
-	   [0.0005498, 0.00002495, 0.00005871, 0.00005193]]]'''
+#
 '''W = [
     [  [100,  10,  1,   -1],
 	   [ 10,   1,  -1,  -10],
@@ -48,7 +44,7 @@ W = [
 	   [0.0161889, 0.037116, 0.0562579, 0.060654],
 	   [0.0724143, 0.076711, 0.0888405, 0.0997992],
 	   [0.099937, 0.102812, 0.121925, 0.135759] ]   ]
-#print W[0]
+#
 def utility(board):
 	max_score = 0
 	for W_matrix in W:
@@ -59,42 +55,22 @@ def utility(board):
 		if temp > max_score:
 			max_score = temp
 	return max_score
-#########################
+##
 #   0    1    2    3    4
 P=[0.0, 0.0, 0.9, 0.0, 0.1]
-def expectimax(state, depth, is_move):
-	if depth == 0 or AB.terminal(state, is_move):
-		return utility(state.get_board())
-	if is_move:
-		alfa = -1000000
-		for move in state.all_valid_moves():
-			alfa = max( alfa, expectimax(AB.new_state_move(state, move), depth-1, False) )
-	else:
-		alfa = 0
-		for spawn in state.all_spawns():
-			alfa +=  P[spawn[2]] * expectimax(AB.new_state_spawn(state, spawn), depth-1, True)
-	return alfa
-##
-#P=[0.9, 0.1]
-#S=[2, 4]
-def expectimax2(state, depth):
+def expectimax(state, depth):
 	tot_score = 0
 	tot_prob = 0
 	if depth == 0 or AB.terminal(state, True):
 		return utility(state.get_board())
 	else:
-		#for r in xrange(4):
-		#	for c in xrange(4):
-		#		if state.get_tile(r, c) == 0:
-		#			for n in xrange(2):
 		for spawn in state.all_spawns():
-			#newS = AB.new_state_spawn(state, [r, c, S[n]])
 			newS = AB.new_state_spawn(state, spawn)
 			best_score = 0
 			best_move = None
 			for move in state.all_valid_moves():
 				newState = AB.new_state_move(newS, move)
-				score = expectimax2(newState, depth-1)
+				score = expectimax(newState, depth-1)
 				if score > best_score:
 					best_score = score
 					best_move = move
@@ -106,7 +82,7 @@ def expectimax2(state, depth):
 	if tot_prob == 0:
 		return tot_score
 	return tot_score/tot_prob
-
+#
 def runExmax(board):
 	print "pp"
 	state = State.State(board)
@@ -124,12 +100,12 @@ def runExmax(board):
 			depth = 3
 		elif depth < 2 and state.get_highest_tile() > 511:
 			depth = 2
-
+		#
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
 			#
-			alfa = expectimax2(temp_state, depth)
+			alfa = expectimax(temp_state, depth)
 			if best_val < alfa:
 				best_val = alfa
 				best_move = move
@@ -139,14 +115,12 @@ def runExmax(board):
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
 			print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
-		if state.get_highest_tile() == 2048:
-			return state
-			#print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
+		#if state.get_highest_tile() == 2048:
+		#	return state
 		state.spawn()
 	return state
 ##
 if __name__ == '__main__':
-
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -162,22 +136,18 @@ if __name__ == '__main__':
 	n4096 = 0
 	n8192 = 0
 	nMore = 0
-
+	#
 	n = 200
 	for x in xrange(1, n+1):
 		print "Kjoring nummer: ", x
-		print "Dybde: 3"
+		print "Dybde: 1, saa 2 og noen ganger 3"
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		#state = State.State(board)
-		#print state
-		state = runExmax(board)#runAB(board)
-		#print state.highest_tile()
+		state = runExmax(board)#expectimax
 		highest_tile = state.get_highest_tile()
 		#
-
 		if highest_tile == 64: n64 += 1
 		if highest_tile == 128: n128 += 1
 		elif highest_tile == 256: n256 += 1

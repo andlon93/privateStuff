@@ -131,8 +131,6 @@ class State:
 				if self.board[row][col] == 0: open_tiles.append([row, col])
 		#
 		if open_tiles:
-			#random_index = int(round(random.uniform(0, len(open_tiles)-1)))
-			#random_index = int(round(random_index))
 			chosen_tile = open_tiles[int(round(random.uniform(0, len(open_tiles)-1)))]#choose a random tile
 		else:
 			print "ingen steder aa spawne en tile"
@@ -145,7 +143,6 @@ class State:
 		else:#P(2) = 0.9
 			self.board[chosen_tile[0]][chosen_tile[1]] = 2
 			return True
-	#
 	####--- valid and find all moves and spawns methods ---####
 	def can_make_a_move(self):
 		'''If a tile is empty or
@@ -198,7 +195,6 @@ class State:
 	def calculate_utility(self, weights):
 		'''Based on one or more algorithms the quality/closeness to target
 		   is calculated'''
-
 		free_tiles_utility = self.free_tiles_utility() * weights[0]# * 0.5
 		highest_tile_utility = self.highest_tile_utility() * weights[1]#* 0.05
 		largest_tile_corner_util = self.largest_tile_corner_util() * weights[2] #* 0.05
@@ -209,10 +205,10 @@ class State:
 		upper_vs_lower = self.sum_greater_upper() * weights[7]#* 0.1
 		first_over_second = self.first_over_second() * weights[8]
 		first_column_filled = self.first_column_filled() * weights[9]
-
+		#
 		sum_utilities = ( first_over_second + upper_vs_lower + brute_method + free_tiles_utility + highest_tile_utility + largest_tile_corner_util + cluster_score + number_of_same + twos_fours )
 		return sum_utilities
-
+	#
 	def first_over_second(self):
 		board = self.board
 		summ = 0
@@ -222,7 +218,7 @@ class State:
 			if board[0][col] >= board[1][col]:
 				summ += 25
 		return summ
-
+	#
 	def first_column_filled(self):
 		board = self.board
 		summ = 0
@@ -237,8 +233,7 @@ class State:
 			else:
 				summ += 17
 		return summ
-
-
+	#
 	def sum_greater_upper(self):
 		board = self.board
 		upper_sum = 0
@@ -266,7 +261,7 @@ class State:
 		else:
 			return 0
 		return ratio
-
+	#
 	def brute_line2(self):
 		board = self.board
 		if board[1][3] >= board[1][2] and board[1][2] >= board[1][1] and board[1][1] >= board [1][0]:
@@ -280,8 +275,7 @@ class State:
 		if board[1][2] >= board[1][1]:
 			return 40
 		return 0
-
-
+	#
 	def brute_method(self):
 		board = self.board
 		if board[0][0] >= board[0][1] and board[0][1] >= board[0][2] and board[0][2] >= board[0][3]:
@@ -294,10 +288,9 @@ class State:
 			return 50
 		if board[0][1] >= board[0][2]:
 			return 40
-
 		else:
 			return 0
-
+	#
 	def number_of_same(self):
 		number = [0] * 11
 		for row in self.board:
@@ -332,7 +325,7 @@ class State:
 		if score > 100:
 			score = 100
 		return 100 - score
-
+	#
 	def number_of_2s4s(self):
 		twos = 0
 		fours = 0
@@ -346,12 +339,12 @@ class State:
 		score = twos
 		score = score + fours
 		return (100 - (score*10))
-
+	#
 	def number_of_similar_tiles(self): #NOT DONE
 		for row in self.board:
 			for tile in row:
 				return False
-
+	#
 	def number_of_empty_tiles(self):
 		total_empty_tiles = 0
 		for row in self.board:
@@ -359,7 +352,7 @@ class State:
 				if tile == 0:
 					total_empty_tiles += 1
 		return total_empty_tiles
-
+	#
 	def free_tiles_utility(self):
 		total_tiles = 16.0
 		total_empty_tiles = self.number_of_empty_tiles()
@@ -367,15 +360,8 @@ class State:
 		return utility
 	#
 	def highest_tile_utility(self):
-		'''highest_tile = 0
-		for row in self.board:
-			for tile in row:
-				if tile > highest_tile:
-					highest_tile = tile
-		utility = highest_tile * 0.04882
-		return utility'''
 		return float(self.get_highest_tile())**2 * 0.000023841
-
+	#
 	def largest_tile_corner_util(self):
 		highest_tile = self.get_highest_tile()
 		util = 0
@@ -387,7 +373,7 @@ class State:
 					elif (r==0 and c == 3 or r == 3 and c == 0):
 						util = 50
 		return util
-
+	#
 	def cluster_score(self):
 		cluster_score = 0
 		neighbours = [-1,0,1]
@@ -418,7 +404,6 @@ class State:
 			return 100
 		else:
 			return cluster_score
-
 	##-- Getters and setter --##
 	def get_tile(self, row, column): return self.board[row][column]
 	def set_tile(self, row, column, value): self.board[row][column] = value
@@ -447,7 +432,7 @@ def do_moves(state):
 		state.spawn()
 	return state.get_highest_tile()
 #
-
+#
 if __name__ == '__main__':
 	board =[[2,4,2,4],
 			[4,2,4,8],
@@ -475,15 +460,12 @@ if __name__ == '__main__':
 			[0,0,0,0]]
 		state = State(board)
 		highest_tile = do_moves(state)
-
-
 		if highest_tile == 64: n64_ += 1
 		if highest_tile == 128: n128_ += 1
 		elif highest_tile == 256: n256_ += 1
 		elif highest_tile == 512: n512_ += 1
 		elif highest_tile == 1024: n1024_ += 1
 		elif highest_tile == 2048: n2048_ += 1
-
 	#
 	print n, " runs:"
 	print "64: ", 100.0*float(n64_)/n, "%"
@@ -492,7 +474,6 @@ if __name__ == '__main__':
 	print "512: ", 100.0*float(n512_)/n, "%"
 	print "1024: ", 100.0*float(n1024_)/n, "%"
 	print "2048: ", 100.0*float(n2048_)/n, "%"'''
-
 '''Resultat:
 64: 18.4%
 128: 50.4%
