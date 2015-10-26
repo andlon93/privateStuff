@@ -63,6 +63,7 @@ def ab_prun(state, depth, alfa, beta, is_max, weights):
 #
 ####-- run alfaBeta and make moves --####
 def runAB(board, weights):
+	deep_cop = copy.deepcopy
 	state = S.State(board)
 	state.spawn()
 	original_depth = 2
@@ -87,7 +88,7 @@ def runAB(board, weights):
 		if state.number_of_empty_tiles() < 3 and state.get_highest_tile == 1024:
 			depth += 1
 		for move in state.all_valid_moves():
-			temp_state = copy.deepcopy(state)
+			temp_state = deep_cop(state)
 			temp_state.move(move)
 			val = ab_prun(temp_state, depth, best_val, 1000000, False, weights)
 			#
