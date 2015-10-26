@@ -77,23 +77,21 @@ def expectimax(state, depth, is_move):
 ##
 #P=[0.9, 0.1]
 #S=[2, 4]
+
 def expectimax2(state, depth):
+	ab_move = AB.new_state_move
+	nstate_spawn = AB.new_state_spawn
 	tot_score = 0
 	tot_prob = 0
 	if depth == 0 or AB.terminal2(state):
 		return utility(state.get_board())
 	else:
-		#for r in xrange(4):
-		#	for c in xrange(4):
-		#		if state.get_tile(r, c) == 0:
-		#			for n in xrange(2):
 		for spawn in state.all_spawns():
-			#newS = AB.new_state_spawn(state, [r, c, S[n]])
-			newS = AB.new_state_spawn(state, spawn)
+			newS = nstate_spawn(state, spawn)
 			best_score = 0
 			best_move = None
 			for move in state.all_valid_moves():
-				score = expectimax2(AB.new_state_move(newS, move), depth-1)
+				score = expectimax2(ab_move(newS, move), depth-1)
 				if score > best_score:
 					best_score = score
 					best_move = move
@@ -119,11 +117,10 @@ def runExmax(board):
 		best_move = None
 		best_val = -1
 		#
-        if state.number_of_empty_tiles() < 2:
-            depth = 3
-        elif state.get_highest_tile() > 511:
-            depth = 2
-
+		if state.number_of_empty_tiles() < 2:
+			depth = 3
+		elif state.get_highest_tile() > 511:
+			depth = 2
 		for move in state.all_valid_moves():
 			temp_state = copy.deepcopy(state)
 			temp_state.move(move)
@@ -132,7 +129,7 @@ def runExmax(board):
 			if best_val < alfa:
 				best_val = alfa
 				best_move = move
-		#
+				#
 		state.move(best_move)
 		moves += 1
 		if state.get_highest_tile() > highest:
