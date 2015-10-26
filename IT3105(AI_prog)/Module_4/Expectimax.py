@@ -61,7 +61,7 @@ P=[0.0, 0.0, 0.9, 0.0, 0.1]
 def expectimax(state, depth):
 	tot_score = 0
 	tot_prob = 0
-	if depth == 0 or AB.terminal(state, True):
+	if depth == 0 or AB.terminal2(state):
 		return utility(state.get_board())
 	else:
 		for spawn in state.all_spawns():
@@ -96,9 +96,9 @@ def runExmax(board):
 		best_move = None
 		best_val = -1
 		#
-		if depth < 3 and state.number_of_empty_tiles() < 2:
+		if state.number_of_empty_tiles() < 2:
 			depth = 3
-		elif depth < 2 and state.get_highest_tile() > 511:
+		elif state.get_highest_tile() > 511:
 			depth = 2
 		#
 		for move in state.all_valid_moves():
@@ -109,7 +109,7 @@ def runExmax(board):
 			if best_val < alfa:
 				best_val = alfa
 				best_move = move
-		#
+				#
 		state.move(best_move)
 		moves += 1
 		if state.get_highest_tile() > highest:

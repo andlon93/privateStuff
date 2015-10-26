@@ -16,6 +16,18 @@ def terminal(state, is_max):
 					return False
 		return True
 #
+def terminal2(state):
+	'''sjekke om det kan "lages barn" av staten, only for expectimax - faster'''
+	if state.can_make_a_move():
+		return False
+	else:#check if a spawn can be done
+		for r in xrange(4):
+			for c in xrange(4):
+				#if there is an empty tile then a spawn can be done
+				if state.get_tile(r, c) == 0:
+					return False
+		return True
+
 def new_state_move(parent, move):
 	'''make new state based on a spawn'''
 	new_board = copy.deepcopy(parent.get_board())#copy parents board
