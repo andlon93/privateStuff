@@ -14,7 +14,7 @@ import copy
 def makeMove(move, depth, state, queue):
     temp_state = copy.deepcopy(state) # Copy the current state
     temp_state.move(move) # Simulate moving in the given direction
-    queue.put([EX.expectimax2(temp_state, depth),move]) # Calculate score of move, and put in the queue
+    queue.put([EX.expectimax(temp_state, depth),move]) # Calculate score of move, and put in the queue
 
 class TileData(QtCore.QObject):
 
