@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import division
 from multiprocessing import Process, Queue
 import State as S
 import AlfaBeta as AB
@@ -10,7 +11,6 @@ from PyQt4 import QtCore, QtGui, QtDeclarative
 import copy
 #
 #########---- Class that represent the different tiles in the UI ----########
-
 def makeMove(move, depth, state, queue):
     temp_state = copy.deepcopy(state) # Copy the current state
     temp_state.move(move) # Simulate moving in the given direction
@@ -90,24 +90,25 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def startGame(self):
-        weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
+        time_0 = time.time()
+        #weight = [0.5, 0.04331720843381177, 0.05, 0.0525487188507247, 0.05, 0.05437746849658362, 0.186889932111141, 0.11081454380077221, 0.05]
         '''
         weight = [0.5, 0.05, 0.05, 0.045, 0.05, 0.05, 0.15, 0.11, 0.05]
         weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.1]
         weight = [0.5, 0.043, 0.05, 0.053, 0.05, 0.054, 0.19, 0.11, 0.05, 0.05]
         '''
-        print "game started"
+        #print "game started"
         state = S.State(board)
         state.spawn()
         ##
         self.setBoard(state.get_board())
-        #time.sleep(0.5)
         highest = 0
         moves = 0
         ##
         process = [None] * 4
         queue = Queue(maxsize=0)
         while state.can_make_a_move():
+            start_time = time.time()
             depth = 1
             best_move = None
             best_val = -1
@@ -122,6 +123,11 @@ class Game(QtCore.QObject):
             for move in valid_moves:
                 process[move] = Process(target=makeMove, args=(move, depth, state, queue))
                 process[move].start()
+            if time.time() - start_time < 0.095:
+                time.sleep(0.095-(time.time() - start_time))
+            #print "move to spawn", ("--- %s seconds ---" % (time.time() - start_time))
+            self.setBoard(state.get_board())
+            start_time = time.time()
             for move in valid_moves:
                 vals_moves.append(queue.get())
             for move in valid_moves:
@@ -135,25 +141,15 @@ class Game(QtCore.QObject):
             moves += 1
             if state.get_highest_tile() > highest:
                 highest = state.get_highest_tile()
-                print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
+                print "hoyeste oppnaadd:", highest, " trekk:", moves," seconds:",time.time() - time_0,  " Time per move:", (time.time() -time_0)/moves
             #
-            '''print "free tiles :", state.free_tiles_utility()
-            print "Highest_tile :", state.highest_tile_utility()
-            print "largest in corner :", state.largest_tile_corner_util()
-            print "cluster_score :", state.cluster_score()
-            print "Number of same: ", state.number_of_same()
-            print "brute method: ", state.brute_method()
-            print "Brute line2: ", state.brute_line2()
-            print "Upper vs lower: ", state.sum_greater_upper()
-            print "First over Seconds: ", state.first_over_second()
-            print "first column filled: ", state.first_column_filled()
-            print "utility score: ", state.calculate_utility(weight)
-            print "highest numbers: ", state.highest_four()'''
-            ##
+            if time.time() - start_time < 0.095:
+                time.sleep(0.095-(time.time() - start_time))
+            #print "spawn to move", ("--- %s seconds ---" % (time.time() - start_time))
             self.setBoard(state.get_board())
             ##
             state.spawn()
-            self.setBoard(state.get_board())
+        self.setBoard(state.get_board())
     #
     @QtCore.pyqtSlot()
     def setBoard(self, board):

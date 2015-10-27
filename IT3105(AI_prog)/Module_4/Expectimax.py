@@ -44,7 +44,7 @@ def expectimax(state, depth):
 	new_state_s = AB.new_state_spawn
 	tot_score = 0
 	tot_prob = 0
-	if depth == 0 or AB.terminal2(state):
+	if depth == 0:# or AB.terminal2(state):
 		return utility(state.get_board())
 	else:
 		for spawn in state.all_spawns():
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 			 [0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0]]
-		cProfile.run('runExmax(board)')
+		#cProfile.run('runExmax(board)')
 		state = runExmax(board)#expectimax
 		highest_tile = state.get_highest_tile()
 		#
