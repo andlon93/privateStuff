@@ -180,7 +180,7 @@ if __name__ == '__main__':
     engine = view.engine()
     #
     game.setUp()
-
+    #
     engine.rootContext().setContextObject(game)
     view.setSource(QtCore.QUrl.fromLocalFile('grid.qml'))
     view.show()
