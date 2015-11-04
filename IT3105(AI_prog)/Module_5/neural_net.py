@@ -19,9 +19,10 @@ def sgd(cost, params, lr=0.05):
         updates.append([p, p - g * lr])
     return updates
 #
-def model(X, w_h, w_o):
-    h = T.nnet.sigmoid(T.dot(X, w_h))
-    pyx = T.nnet.softmax(T.dot(h, w_o))
+def model(X, w_h1, w_h2, w_o):
+    h1 = T.nnet.sigmoid(T.dot(X, w_h1))
+    h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
+    pyx = T.nnet.softmax(T.dot(h2, w_o))
     return pyx
 #
 #trX, teX, trY, teY = mnist(onehot=True)
@@ -31,14 +32,17 @@ teX, teY = MNIST.readfile('testing')
 X = T.fmatrix()
 Y = T.fmatrix()
 #
-w_h = init_weights((784, 625))
-w_o = init_weights((625, 10))
+layer_1 = 625
+layer_2 = 300
+w_h1 = init_weights((784, layer_1))
+w_h2 = init_weights((layer_1, layer_2))
+w_o = init_weights((layer_2, 10))
 #
-py_x = model(X, w_h, w_o)
+py_x = model(X, w_h1, w_h2, w_o)
 y_x = T.argmax(py_x, axis=1)
 #
 cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
-params = [w_h, w_o]
+params = [w_h1, w_h2, w_o]
 updates = sgd(cost, params)
 #
 train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
