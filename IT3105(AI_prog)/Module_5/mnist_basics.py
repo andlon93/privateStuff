@@ -9,7 +9,7 @@ from array import array as pyarray
 import matplotlib.pyplot as pyplot
 import numpy
 import pickle
-
+import numpy as np
 # The reduce function was removed in Python 3.0, so just use this handmade version.
 def kd_reduce(func,seq):
     res = seq[0]
@@ -19,7 +19,7 @@ def kd_reduce(func,seq):
 
 # Set this to the complete path to your mnist files.
 ## __mnist_path__ = "path/to/all/your/mnist/files"
-__mnist_path__ = "/Users/keithd/core/python/data/mnist/basics/"
+__mnist_path__ = "datasets/"#"/Users/keithd/core/python/data/mnist/basics/"
 
 # The load_mnist function is the main interface between the MNIST files and your machine-learning code.  It fetches
 # subsets of the entire training or test sets, as determined by the 'digits'
@@ -83,6 +83,7 @@ def show_digit_image(image,cm='gray'):
     pyplot.ion()
     pyplot.figure()
     pyplot.imshow(image, cmap=pyplot.get_cmap(cm))
+    #input("")
 
 # *** Image Conversion ****
 # Conversions from arrays to (flat) lists, and the opposite conversion, called 'reconstruction'.
@@ -143,15 +144,28 @@ def load_cases(filename,dir=__mnist_path__,nested=True):
 
 # This is specialized to only load one of the two flat-case files:
 # all_flat_mnist_training_cases or all_flat_mnist_testing_files
-def load_all_flat_cases(type='training',dir=__mnist_path__):
+def load_all_flat_cases(type,dir=__mnist_path__):
     pair = load_flat_cases('all_flat_mnist_'+type+'_cases',dir=dir)
     return pair[0],pair[1]
 
-def quicktest(n = 99):
-    cases = load_all_flat_cases()
-    features,labels = cases
-    print(labels)
-    image = reconstruct_image(features[n])
-    show_digit_image(image)
-    show_avg_digit(5)
+def something(labels):
+    #if type(x) == list:
+    #    x = np.array(x)
+    labels = labels.flatten()
+    temp = np.zeros((len(labels),10))
+    temp[np.arange(len(labels)),labels] = 1
+    return temp
+def readfile(type):
+    features, labels = load_all_flat_cases(type)#read in images and labels from file 
+    #print(features[0][160])
+    features = np.divide(features,255)#divide all image values with 255
+    ###--- Make vector for all labels ---###
+    labels = np.array(labels)
+    labels = labels.flatten()
+    label_vectors = np.zeros((len(labels),10))#init all vectors to zero
+    label_vectors[np.arange(len(labels)),labels] = 1#the right answer is 1
+    return features, label_vectors
 
+if __name__ == '__main__':
+    images, labels=readfile('training')
+    images, labels=readfile('testing')
