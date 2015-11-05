@@ -49,8 +49,8 @@ updates = sgd(cost, params)
 train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
 predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
 
-def training():
-	for i in range(10):
+def training(number_of_runs):
+	for i in range(number_of_runs):
 	    for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
 	        cost = train(trX[start:end], trY[start:end])
 	    print (np.mean(np.argmax(teY, axis=1) == predict(teX)))
@@ -69,4 +69,4 @@ def blind_test(feature_sets):
 		answers.append(run_test(set))
 	return answers # Answers is 1 dimentional, where index 0 = answer for the first list in feature set
 
-training()
+training(10)
