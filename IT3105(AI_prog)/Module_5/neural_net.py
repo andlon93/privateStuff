@@ -26,6 +26,7 @@ def model(X, w_h1, w_h2, w_o):
     return pyx
 #
 #trX, teX, trY, teY = mnist(onehot=True)
+
 trX, trY = MNIST.readfile('training')
 teX, teY = MNIST.readfile('testing')
 #
@@ -47,8 +48,25 @@ updates = sgd(cost, params)
 #
 train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
 predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
+
+def training():
+	for i in range(10):
+	    for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
+	        cost = train(trX[start:end], trY[start:end])
+	    print (np.mean(np.argmax(teY, axis=1) == predict(teX)))
 #
-for i in range(100):
-    for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
-        cost = train(trX[start:end], trY[start:end])
-    print (np.mean(np.argmax(teY, axis=1) == predict(teX)))
+
+def run_test(input_set):
+	set = []
+	for number in input_set:
+		set.append(input_set/255)
+	print(predict(set))
+
+def blind_test(feature_sets):
+	#feature_sets = List of "images" -> 784 numbers between 0 and 255
+	answers = []
+	for set in feature_sets:
+		answers.append(run_test(set))
+	return answers # Answers is 1 dimentional, where index 0 = answer for the first list in feature set
+
+training()
