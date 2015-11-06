@@ -165,7 +165,11 @@ def readfile(type):
     label_vectors = np.zeros((len(labels),10))#init all vectors to zero
     label_vectors[np.arange(len(labels)),labels] = 1#the right answer is 1
     return features, label_vectors
-
+def read_demo_file(filename):
+    cases = load_flat_cases(filename)
+    #print(cases[0][1],'\n\n\n')
+    test_cases = np.divide(cases[0],255)
+    #print (test_cases[1])
+    return test_cases, cases[1]
 if __name__ == '__main__':
-    images, labels=readfile('training')
-    images, labels=readfile('testing')
+    a,b=read_demo_file('demo_prep')

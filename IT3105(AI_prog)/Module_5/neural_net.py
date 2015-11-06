@@ -226,15 +226,15 @@ class ANN:
     def testing(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     def training(self):
-    	for i in range(1000):
+    	for i in range(1):
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
             print (self.testing())
     def blind_test(self, filename):
-    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
-        #for i in range(1000):
-        #    for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
-        #        cost = self.train(self.trX[start:end], self.trY[start:end])
-        #    print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
-nn=ANN(0.1, [(784,1000),(1000,10)])
+        blind_cases, blind_answers = MNIST.read_demo_file(filename)
+        #for case in blind_cases[0]:
+        #    print (case)
+
+nn=ANN(0.1, [(784,1),(1,10)])
 nn.training()
+nn.blind_test('demo_prep')
