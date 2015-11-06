@@ -15,6 +15,9 @@ class ANN:
         self.teX, self.teY = MNIST.readfile('testing')
         self.make_nn(layers)
     #
+    def floatX(self,X):
+    	return np.asarray(X, dtype=theano.config.floatX)
+
     def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10):
         if self.num_layers==10: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10]
         elif self.num_layers==9: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9]
@@ -29,68 +32,105 @@ class ANN:
     #
     def init_weights(self,layers):
         if self.num_layers==10:
-            return (theano.shared(np.random.uniform(-.1,.1,size=layers[0])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[1])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[2])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[3])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[4])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[5])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[6])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[7])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[8])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[9])))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[5]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[6]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[7]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[8]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[9]) * 0.01)))
         elif self.num_layers==9:
-            return (theano.shared(np.random.uniform(-.1,.1,size=layers[0])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[1])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[2])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[3])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[4])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[5])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[6])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[7])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[8])),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[5]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[6]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[7]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[8]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==8:
-            return (theano.shared(np.random.uniform(-.1,.1,size=layers[0])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[1])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[2])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[3])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[4])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[5])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[6])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[7])),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[5]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[6]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[7]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==7:
-            return (theano.shared(np.random.uniform(-.1,.1,size=layers[0])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[1])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[2])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[3])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[4])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[5])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[6])),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[5]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[6]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==6:
-            return (theano.shared(np.random.uniform(-.1,.1,size=layers[0])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[1])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[2])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[3])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[4])),
-                theano.shared(np.random.uniform(-.1,.1,size=layers[5])),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))),
-                theano.shared(np.random.uniform(-.1,.1,size=(1,1))))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[5]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==5:
-            return theano.shared(np.random.uniform(-.1,.1,size=layers[0])),theano.shared(np.random.uniform(-.1,.1,size=layers[1])),theano.shared(np.random.uniform(-.1,.1,size=layers[2])),theano.shared(np.random.uniform(-.1,.1,size=layers[3])),theano.shared(np.random.uniform(-.1,.1,size=layers[4])),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1)))
+        	return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[4]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==4:
-            return theano.shared(np.random.uniform(-.1,.1,size=layers[0])),theano.shared(np.random.uniform(-.1,.1,size=layers[1])),theano.shared(np.random.uniform(-.1,.1,size=layers[2])),theano.shared(np.random.uniform(-.1,.1,size=layers[3])),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1)))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==3:
-            return theano.shared(np.random.uniform(-.1,.1,size=layers[0])),theano.shared(np.random.uniform(-.1,.1,size=layers[1])),theano.shared(np.random.uniform(-.1,.1,size=layers[2])),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1)))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==2:
-            return theano.shared(np.random.uniform(-.1,.1,size=layers[0])),theano.shared(np.random.uniform(-.1,.1,size=layers[1])),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1)))
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
+                theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
+
         return theano.shared(np.random.uniform(-.1,.1,size=layers[0])),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1))),theano.shared(np.random.uniform(-.1,.1,size=(1,1)))
     #
     def sgd(self,cost, params):
@@ -160,7 +200,7 @@ class ANN:
         elif self.num_layers==3:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
-            pyx = T.nnet.softmax(T.dot(h1, w_h3))
+            pyx = T.nnet.softmax(T.dot(h2, w_h3))
         elif self.num_layers==2:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             pyx = T.nnet.softmax(T.dot(h1, w_h2))
@@ -184,8 +224,19 @@ class ANN:
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
         #
-        for i in range(2):
+    def testing(self):
+    	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
+    def training(self):
+    	for i in range(1000):
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
-            print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
-nn=ANN(0.1, [(784,10)])
+            print (self.testing())
+    def blind_test(self, filename):
+    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
+    	pass
+        #for i in range(1000):
+        #    for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
+        #        cost = self.train(self.trX[start:end], self.trY[start:end])
+        #    print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
+nn=ANN(0.4, [(784,1000),(1000,10)])
+nn.training()
