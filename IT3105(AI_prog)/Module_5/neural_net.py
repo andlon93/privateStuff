@@ -9,7 +9,7 @@ import mnist_basics as MNIST
 class ANN:
     def __init__(self, lr, layers):
         self.num_layers = len(layers)
-        print (self.num_layers)
+        print ("Antall lag: ",self.num_layers)
         self.lr = lr
         self.trX, self.trY = MNIST.readfile('training')
         self.teX, self.teY = MNIST.readfile('testing')
@@ -164,8 +164,7 @@ class ANN:
         elif self.num_layers==2:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             pyx = T.nnet.softmax(T.dot(h1, w_h2))
-        else:
-            pyx = T.nnet.softmax(T.dot(X, w_h1))
+        else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
     #
     #
@@ -180,7 +179,6 @@ class ANN:
         #
         cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
         params = self.makeparamlist(w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
-        print (len(params))
         updates = self.sgd(cost, params)
         #
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
@@ -190,4 +188,4 @@ class ANN:
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
             print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
-nn=ANN(0.1, [(784,20),(20,30),(30,40),(40,20),(20,15),(15,11),(11,11),(11,10),(10,10),(10,10)])
+nn=ANN(0.1, [(784,600),(600,10)])
