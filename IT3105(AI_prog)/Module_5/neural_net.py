@@ -230,6 +230,8 @@ class ANN:
     	for i in range(1000):
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
+            self.lr += self.lr * 0.01
+            print("learning rate: ", self.lr)
             print (self.testing())
     def blind_test(self, filename):
     	blind_cases, blind_answers = MNIST.read_demo_file(filename)
@@ -238,5 +240,5 @@ class ANN:
         #    for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
         #        cost = self.train(self.trX[start:end], self.trY[start:end])
         #    print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
-nn=ANN(0.1, [(784,1000),(1000,10)])
+nn=ANN(0.1, [(784,3000),(3000,10)])
 nn.training()
