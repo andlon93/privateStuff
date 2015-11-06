@@ -188,4 +188,4 @@ class ANN:
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
             print (np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX)))
-nn=ANN(0.1, [(784,600),(600,10)])
+nn=ANN(0.1, [(784,10)])
