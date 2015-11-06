@@ -207,7 +207,6 @@ class ANN:
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
     #
-    #
     def make_nn(self, layers):
         X = T.fmatrix()
         Y = T.fmatrix()
@@ -233,7 +232,6 @@ class ANN:
             print (self.testing())
     def blind_test(self, filename):
     	blind_cases, blind_answers = MNIST.read_demo_file(filename)
-    	pass
         #for i in range(1000):
         #    for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
         #        cost = self.train(self.trX[start:end], self.trY[start:end])
