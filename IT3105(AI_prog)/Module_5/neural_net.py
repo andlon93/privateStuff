@@ -226,19 +226,19 @@ class ANN:
         #
     def testing(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
-    def training(self):
-    	skip = 1
-    	for i in range(5000):
+    def training(self,numer_of_runs):
+    	skip = 128
+    	for i in range(numer_of_runs):
     		start_time2 = time.time()
     		for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
     			cost = self.train(self.trX[start:end], self.trY[start:end])
-    		print("--- Solved in %s seconds ---" % (time.time() - start_time2))
+    		#print("--- Solved in %s seconds ---" % (time.time() - start_time2))
     		print (self.testing())
     def blind_test(self, filename):
         blind_cases, blind_answers = MNIST.read_demo_file(filename)
         #for case in blind_cases[0]:
         #    print (case)
 
-nn=ANN(0.001, [(784,625),(625,10)])
-nn.training()
+nn=ANN(0.05, [(784,1000),(1000,10)])
+nn.training(100)
 nn.blind_test('demo_prep')
