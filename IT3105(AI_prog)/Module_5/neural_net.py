@@ -224,21 +224,43 @@ class ANN:
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
         #
-    def testing(self):
+    def test_testset(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
+
+    def test_traiset(self):
+    	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
+
+
     def training(self,numer_of_runs):
     	skip = 128
     	for i in range(numer_of_runs):
-    		start_time2 = time.time()
     		for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
     			cost = self.train(self.trX[start:end], self.trY[start:end])
-    		#print("--- Solved in %s seconds ---" % (time.time() - start_time2))
-    		print (self.testing())
-    def blind_test(self, filename):
-        blind_cases, blind_answers = MNIST.read_demo_file(filename)
-        #for case in blind_cases[0]:
-        #    print (case)
+    		print ("Training phase #",i," score on test-set: ", self.test_testset())
 
-nn=ANN(0.05, [(784,1000),(1000,10)])
-nn.training(100)
-nn.blind_test('demo_prep')
+    def blind_test(self, filename):
+    	nn_answers = []
+    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
+    	svar = self.predict(blind_cases)
+    	return(svar)
+
+training_acc = 0
+testing_acc = 0
+total_time = 0
+number_of_nets = 20
+for i in range(number_of_nets):
+	training_time = time.time()
+	print ("Network #",i)
+	nn=ANN(0.05, [(784,1000),(1000,10)])
+	nn.training(500)
+	print ("One hidden layer-> 1000 nodes")
+	training_acc += nn.test_traiset()
+	testing_acc += nn.test_testset()
+	print("Test set accuracy: ", nn.test_testset())
+	print("Train set accuracy: ", nn.test_traiset())
+	total_time += (time.time() - training_time)
+print(" ")
+print("average accuracies: ")
+print("Training set: ", (training_acc/number_of_nets))
+print("Testing set: ", (testing_acc/number_of_nets))
+print("Average compute time: ", (total_time/number_of_nets))
