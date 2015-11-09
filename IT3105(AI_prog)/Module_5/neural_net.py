@@ -5,6 +5,7 @@ import numpy as np
 #from foxhound.utils.vis import grayscale_grid_vis, unit_scale
 from scipy.misc import imsave
 import mnist_basics as MNIST
+import time
 #
 class ANN:
     def __init__(self, lr, layers):
@@ -226,17 +227,18 @@ class ANN:
     def testing(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     def training(self):
-    	for i in range(1000):
-            for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
-                cost = self.train(self.trX[start:end], self.trY[start:end])
-            self.lr += self.lr * 0.01
-            print("learning rate: ", self.lr)
-            print (self.testing())
+    	skip = 1
+    	for i in range(5000):
+    		start_time2 = time.time()
+    		for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
+    			cost = self.train(self.trX[start:end], self.trY[start:end])
+    		print("--- Solved in %s seconds ---" % (time.time() - start_time2))
+    		print (self.testing())
     def blind_test(self, filename):
         blind_cases, blind_answers = MNIST.read_demo_file(filename)
         #for case in blind_cases[0]:
         #    print (case)
 
-nn=ANN(0.1, [(784,1000),(1000,10)])
+nn=ANN(0.001, [(784,625),(625,10)])
 nn.training()
 nn.blind_test('demo_prep')
