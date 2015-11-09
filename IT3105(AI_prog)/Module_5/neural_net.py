@@ -1,8 +1,6 @@
 import theano
 from theano import tensor as T
 import numpy as np
-#from load import mnist
-#from foxhound.utils.vis import grayscale_grid_vis, unit_scale
 from scipy.misc import imsave
 import mnist_basics as MNIST
 #
@@ -13,11 +11,11 @@ class ANN:
         self.lr = lr
         self.trX, self.trY = MNIST.readfile('training')
         self.teX, self.teY = MNIST.readfile('testing')
+        #print (self.teX[0])
         self.make_nn(layers)
     #
-    def floatX(self,X):
-    	return np.asarray(X, dtype=theano.config.floatX)
-
+    def floatX(self,X): return np.asarray(X, dtype=theano.config.floatX)
+    #
     def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10):
         if self.num_layers==10: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10]
         elif self.num_layers==9: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9]
@@ -140,7 +138,7 @@ class ANN:
             updates.append([p, p - g * self.lr])
         return updates
     #
-    def model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+    def sigmoid_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
         if self.num_layers==10:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
@@ -206,6 +204,72 @@ class ANN:
             pyx = T.nnet.softmax(T.dot(h1, w_h2))
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
+    def tanh_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+        if self.num_layers==10:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            h5 = T.tanh(T.dot(h4, w_h5))
+            h6 = T.tanh(T.dot(h5, w_h6))
+            h7 = T.tanh(T.dot(h6, w_h7))
+            h8 = T.tanh(T.dot(h7, w_h8))
+            h9 = T.tanh(T.dot(h8, w_h9))
+            pyx = T.nnet.softmax(T.dot(h9, w_h10))
+        elif self.num_layers==9:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            h5 = T.tanh(T.dot(h4, w_h5))
+            h6 = T.tanh(T.dot(h5, w_h6))
+            h7 = T.tanh(T.dot(h6, w_h7))
+            h8 = T.tanh(T.dot(h7, w_h8))
+            pyx = T.nnet.softmax(T.dot(h8, w_h9))
+        elif self.num_layers==8:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            h5 = T.tanh(T.dot(h4, w_h5))
+            h6 = T.tanh(T.dot(h5, w_h6))
+            h7 = T.tanh(T.dot(h6, w_h7))
+            pyx = T.nnet.softmax(T.dot(h7, w_h8))
+        elif self.num_layers==7:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            h5 = T.tanh(T.dot(h4, w_h5))
+            h6 = T.tanh(T.dot(h5, w_h6))
+            pyx = T.nnet.softmax(T.dot(h6, w_h7))
+        elif self.num_layers==6:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            h5 = T.tanh(T.dot(h4, w_h5))
+            pyx = T.nnet.softmax(T.dot(h5, w_h6))
+        elif self.num_layers==5:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            h4 = T.tanh(T.dot(h3, w_h4))
+            pyx = T.nnet.softmax(T.dot(h4, w_h5))
+        elif self.num_layers==4:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            h3 = T.tanh(T.dot(h2, w_h3))
+            pyx = T.nnet.softmax(T.dot(h3, w_h4))
+        elif self.num_layers==3:
+            h1 = T.tanh(T.dot(X, w_h1))
+            h2 = T.tanh(T.dot(h1, w_h2))
+            pyx = T.nnet.softmax(T.dot(h2, w_h3))
+        elif self.num_layers==2:
+            h1 = T.tanh(T.dot(X, w_h1))
+            pyx = T.nnet.softmax(T.dot(h1, w_h2))
+        else: pyx = T.nnet.softmax(T.dot(X, w_h1))
+        return pyx
     #
     def make_nn(self, layers):
         X = T.fmatrix()
@@ -213,7 +277,8 @@ class ANN:
         #
         w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10 = self.init_weights(layers)
         #
-        py_x = self.model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        #py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
         y_x = T.argmax(py_x, axis=1)
         #
         cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
@@ -223,18 +288,26 @@ class ANN:
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
         #
+    #
     def testing(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     def training(self):
-    	for i in range(1):
+        hitrate=0.0
+        while (hitrate<0.96):
             for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
-            print (self.testing())
+            hitrate = self.testing()
+            print (hitrate)
+        #print ("training done")
     def blind_test(self, filename):
         blind_cases, blind_answers = MNIST.read_demo_file(filename)
-        #for case in blind_cases[0]:
-        #    print (case)
-
-nn=ANN(0.1, [(784,1),(1,10)])
+        a = self.predict(blind_cases)
+        fasit = []
+        for svar in a:
+            fasit.append(svar)
+        print(blind_answers)
+        print(fasit)
+#
+nn=ANN(0.1, [(784,625),(625,10)])
 nn.training()
 nn.blind_test('demo_prep')
