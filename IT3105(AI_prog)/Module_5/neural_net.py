@@ -3,6 +3,7 @@ from theano import tensor as T
 import numpy as np
 from scipy.misc import imsave
 import mnist_basics as MNIST
+import time
 #
 class ANN:
     def __init__(self, lr, layers):
@@ -277,8 +278,8 @@ class ANN:
         #
         w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10 = self.init_weights(layers)
         #
-        py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
-        #py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        #py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
         y_x = T.argmax(py_x, axis=1)
         #
         cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
@@ -288,26 +289,44 @@ class ANN:
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
         #
-    #
-    def testing(self):
-    	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
-    def training(self):
-        hitrate=0.0
-        while (hitrate<0.96):
-            for start, end in zip(range(0, len(self.trX), 128), range(128, len(self.trX), 128)):
-                cost = self.train(self.trX[start:end], self.trY[start:end])
-            hitrate = self.testing()
-            print (hitrate)
-        #print ("training done")
-    def blind_test(self, filename):
-        blind_cases, blind_answers = MNIST.read_demo_file(filename)
-        a = self.predict(blind_cases)
-        fasit = []
-        for svar in a:
-            fasit.append(svar)
-        print(blind_answers)
-        print(fasit)
 #
-nn=ANN(0.1, [(784,625),(625,10)])
-nn.training()
-nn.blind_test('demo_prep')
+    def test_testset(self):
+    	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
+    #
+    def test_trainset(self):
+    	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
+    #
+    def training(self,numer_of_runs):
+        skip = 128
+        for i in range(numer_of_runs):
+            for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
+                cost = self.train(self.trX[start:end], self.trY[start:end])
+            print("Training phase #",i," score on test-set: ", self.test_testset())
+    #
+    def blind_test(self, filename):
+    	nn_answers = []
+    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
+    	svar = self.predict(blind_cases)
+    	return(svar)
+#
+training_acc = 0
+testing_acc = 0
+total_time = 0
+number_of_nets = 20
+#
+for i in range(number_of_nets):
+	training_time = time.time()
+	print ("Network #",i)
+	nn=ANN(0.05, [(784,100),(100,10)])
+	nn.training(500)
+	print ("One hidden layer-> 100 nodes")
+	training_acc += nn.test_trainset()
+	testing_acc += nn.test_testset()
+	print("Test set accuracy: ", nn.test_testset())
+	print("Train set accuracy: ", nn.test_trainset())
+	total_time += (time.time() - training_time)
+print(" ")
+print("average accuracies: ")
+print("Training set: ", (training_acc/number_of_nets))
+print("Testing set: ", (testing_acc/number_of_nets))
+print("Average compute time: ", (total_time/number_of_nets))
