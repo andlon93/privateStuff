@@ -11,7 +11,7 @@ class ANN:
         print ("Antall lag: ",self.num_layers)
         self.lr = lr
         self.trX, self.trY = load.readfile('2048training.txt')
-        print (self.trY)
+        #print (self.trY)
         self.teX, self.teY = load.readfile('2048test.txt')
         self.make_nn(layers)
     #
@@ -288,7 +288,7 @@ class ANN:
         #
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
-        self.predict_one_move = theano.function(inputs=[X], outputs=[py_x,y_x], allow_input_downcast=True)
+        self.predict_a_move = theano.function(inputs=[X], outputs=py_x, allow_input_downcast=True)
         #
     #
     def test_testset(self):
@@ -298,10 +298,12 @@ class ANN:
     	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 1
+        skip = 32
         for i in range(numer_of_runs):
+            start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
+            print("--- One iteration through training set in %s seconds ---" % (time.time() - start_time2))
             score=self.test_testset()
             print("Training phase #",i," score on test-set: ", score)
             score=self.test_trainset()

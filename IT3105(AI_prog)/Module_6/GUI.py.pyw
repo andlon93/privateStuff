@@ -7,6 +7,9 @@ import random
 import time
 from PyQt4 import QtCore, QtGui, QtDeclarative
 import copy
+import neural_net as ann
+import numpy as np
+import operator
 #
 #########---- Class that represent the different tiles in the UI ----########
 def makeMove(move, depth, state, queue):
@@ -86,11 +89,12 @@ class Game(QtCore.QObject):
             self._tiles.append( TileData( 0 ) )
     #
     #@QtCore.pyqtSlot(list)
-    def find_best_valid_move(self, moves):
+    def find_best_valid_move(self,state, moves):
         d={0:moves[0],1:moves[1],2:moves[2],3:moves[3]}
         sortert=sorted(d.items(), key=operator.itemgetter(1))
         for i in range(3,-1,-1):
-            move=sortert[i][1]
+            move=sortert[i][0]
+            #print(move)
             if state.is_valid_move(move): return move 
     #
     @QtCore.pyqtSlot()
@@ -101,6 +105,9 @@ class Game(QtCore.QObject):
         init an ANN
         train the ANN
         '''
+        nn=ann.ANN(0.01,[(16, 100),(100,4)])
+        nn.training(20)
+        #
         state = S.State(board)
         state.spawn()
         ##
@@ -114,6 +121,20 @@ class Game(QtCore.QObject):
             move = find_best_valid_move(moves)
 
             '''
+            ###########################################################
+            matrix=[]
+            for i in range(2):
+                vector = []
+                for row in state.get_board():
+                    for tile in row:
+                        vector.append(tile)
+                matrix.append(vector)
+            ###########################################################
+            b=nn.predict_a_move(np.array(matrix))
+            print("prob dist: ",b[0])
+            move = self.find_best_valid_move(state,b[0])
+            print ("Move: ", move,"\n")
+            
             #
             state.move(move)#make the move
             self.setBoard(state.get_board())#update board with the move
