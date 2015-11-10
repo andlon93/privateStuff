@@ -11,20 +11,10 @@ W = [
 	   [ 4.5,  4.1,  2.7, 1.2],
 	   [0.09, 0.07, 0.04, 0.02] ],
 
-	[  [0.09, 0.07, 0.04, 0.02],
-       [ 4.5,  4.1,  2.7, 1.2],
-       [ 7.4,  6.4,  5.7, 5.3],
-       [  10,    9,  7.6, 7.4] ],
-
-    [  [ 7.4,  7.6,    9,   10],
-	   [ 5.3,  5.7,  6.4,  7.4],
-       [ 1.2,  2.7,  4.1,  4.5],
-       [0.02, 0.04, 0.07, 0.09] ],
-
-    [  [0.02, 0.04, 0.07, 0.09],
-	   [ 1.2,  2.7,  4.1,  4.5],
-	   [ 5.3,  5.7,  6.4,  7.4],
-	   [ 7.4,  7.6,    9,   10] ]   ]
+	[  [  10,  7.4,  4.5, 0.09],
+	   [   9,  6.4,  4.1, 0.07],
+	   [ 7.6,  5.7,  2.7, 0.04],
+	   [ 7.4,  5.3,  1.2, 0.02] ],   ]
 #
 def utility(board):
 	max_score = 0
@@ -93,6 +83,19 @@ def runExmax(board):
 				best_val = alfa
 				best_move = move
 				#
+		if write_to_file:
+			with open("2048training.txt", "a") as myfile:
+				b = state.get_board()
+				s = ""
+				for line in b:
+					for num in line:
+						s+=str(num)
+						s+=","
+				s += str(best_move)
+				s += "\n"
+				myfile.write(s)
+
+
 		state.move(best_move)
 		moves += 1
 		if state.get_highest_tile() > highest:
@@ -104,6 +107,7 @@ def runExmax(board):
 	return state
 ##
 if __name__ == '__main__':
+	write_to_file = True
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
