@@ -65,14 +65,6 @@ def runExmax(board):
 	moves = 0
 	highest = 0
 	while state.can_make_a_move():
-		with open("2048training.txt", "a") as myfile:
-			b = state.get_board()
-			s = ""
-			for line in b:
-				for num in line:
-					s+=str(num)
-					s+=","
-			myfile.write(s)
 		depth = 0
 		best_move = None
 		best_val = -1
@@ -91,10 +83,19 @@ def runExmax(board):
 				best_val = alfa
 				best_move = move
 				#
-		with open("2048training.txt", "a") as myfile:
-			s = str(best_move)
-			s += "\n"
-			myfile.write(s)
+		if write_to_file:
+			with open("2048training.txt", "a") as myfile:
+				b = state.get_board()
+				s = ""
+				for line in b:
+					for num in line:
+						s+=str(num)
+						s+=","
+				s += str(best_move)
+				s += "\n"
+				myfile.write(s)
+
+
 		state.move(best_move)
 		moves += 1
 		if state.get_highest_tile() > highest:
@@ -106,6 +107,7 @@ def runExmax(board):
 	return state
 ##
 if __name__ == '__main__':
+	write_to_file = True
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],

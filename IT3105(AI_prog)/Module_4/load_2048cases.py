@@ -8,6 +8,6 @@ def readfile(filename):
 		moves.append(map(int, arr[16:]))
 	return(states,moves)
 
-b,m = readfile("2048training.txt")
-print("B",b)
-print("M",m)
+if __name__ == '__main__':
+	b,m = readfile("2048training.txt")
+	print (m)
