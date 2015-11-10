@@ -10,4 +10,4 @@ def readfile(filename):
 
 if __name__ == '__main__':
 	b,m = readfile("2048training.txt")
-	print (b)
+	print (b[0])
