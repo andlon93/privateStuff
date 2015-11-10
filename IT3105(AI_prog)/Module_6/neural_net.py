@@ -292,26 +292,21 @@ class ANN:
         #
     #
     def test_testset(self):
-        print("her og")
         return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     #
     def test_trainset(self):
     	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 128
+        skip = 1
         for i in range(numer_of_runs):
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
-                print("inni her")
                 cost = self.train(self.trX[start:end], self.trY[start:end])
             score=self.test_testset()
             print("Training phase #",i," score on test-set: ", score)
+            score=self.test_trainset()
+            print("Training phase #",i," score on training-set: ", score)
     #
-    def blind_test(self, filename):
-    	nn_answers = []
-    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
-    	svar = self.predict(blind_cases)
-    	return(svar)
 #
 def main():  
     training_acc = 0
@@ -337,5 +332,5 @@ def main():
     print("Average compute time: ", (total_time/number_of_nets))
 if __name__ == '__main__':
     print("starting up")
-    nn=ANN(0.1,[(16, 4)])
-    #nn.training(10)
+    nn=ANN(0.01,[(16, 100),(100,4)])
+    nn.training(500)
