@@ -12,7 +12,6 @@ class ANN:
         self.lr = lr
         self.trX, self.trY = MNIST.readfile('training')
         self.teX, self.teY = MNIST.readfile('testing')
-        #print (self.teX[0])
         self.make_nn(layers)
     #
     def floatX(self,X): return np.asarray(X, dtype=theano.config.floatX)
@@ -288,6 +287,7 @@ class ANN:
         #
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
+        self.predict_one_move = theano.function(inputs=[X], outputs=[py_x,y_x], allow_input_downcast=True)
         #
     #
     def test_testset(self):
@@ -301,13 +301,17 @@ class ANN:
         for i in range(numer_of_runs):
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
-            print("Training phase #",i," score on test-set: ", self.test_testset())
+            score=self.test_testset()
+            #if score>0.9 and self.lr==0.05:
+            #    self.lr = self.lr*3
+            #    print("new learning rate: ", self.lr)
+            if i%10==0: print("Training phase #",i," score on test-set: ", score)
     #
-    '''def blind_test(self, filename):
+    def blind_test(self, filename):
     	nn_answers = []
     	blind_cases, blind_answers = MNIST.read_demo_file(filename)
     	svar = self.predict(blind_cases)
-    	return(svar)'''
+    	return(svar)
 #
 def main():  
     training_acc = 0
@@ -318,7 +322,7 @@ def main():
     for i in range(number_of_nets):
     	training_time = time.time()
     	print ("Network #",i)
-    	nn=ANN(0.05, [(784,100),(100,10)])
+    	nn=ANN(0.05, [(17,100),(100,4)])
     	nn.training(500)
     	print ("One hidden layer-> 100 nodes")
     	training_acc += nn.test_trainset()
@@ -333,3 +337,4 @@ def main():
     print("Average compute time: ", (total_time/number_of_nets))
 if __name__ == '__main__':
     print("starting up")
+    main()
