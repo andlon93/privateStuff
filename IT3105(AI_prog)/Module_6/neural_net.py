@@ -2,8 +2,12 @@ import theano
 from theano import tensor as T
 import numpy as np
 import load_2048cases as load
+from scipy import stats
 from scipy.misc import imsave
 import time
+import State as S
+import operator
+import random
 #
 class ANN:
     def __init__(self, lr, layers):
@@ -298,7 +302,7 @@ class ANN:
     	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 32
+        skip = 64
         for i in range(numer_of_runs):
             start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
@@ -306,33 +310,130 @@ class ANN:
             print("--- One iteration through training set in %s seconds ---" % (time.time() - start_time2))
             score=self.test_testset()
             print("Training phase #",i," score on test-set: ", score)
+            if score>41 and self.lr < 0.049:
+                self.lr=self.lr*3
+            elif score>0.44 and self.lr < 0.149:
+                self.lr=self.lr*2
             score=self.test_trainset()
             print("Training phase #",i," score on training-set: ", score)
     #
 #
-def main():  
-    training_acc = 0
-    testing_acc = 0
-    total_time = 0
-    number_of_nets = 20
-    #
-    for i in range(number_of_nets):
-    	training_time = time.time()
-    	print ("Network #",i)
-    	nn=ANN(0.05, [(17,100),(100,4)])
-    	nn.training(500)
-    	print ("One hidden layer-> 100 nodes")
-    	training_acc += nn.test_trainset()
-    	testing_acc += nn.test_testset()
-    	print("Test set accuracy: ", nn.test_testset())
-    	print("Train set accuracy: ", nn.test_trainset())
-    	total_time += (time.time() - training_time)
-    print(" ")
-    print("average accuracies: ")
-    print("Training set: ", (training_acc/number_of_nets))
-    print("Testing set: ", (testing_acc/number_of_nets))
-    print("Average compute time: ", (total_time/number_of_nets))
+def find_best_valid_move(state, moves):
+    d={0:moves[0],1:moves[1],2:moves[2],3:moves[3]}
+    sortert=sorted(d.items(), key=operator.itemgetter(1))
+    for i in range(3,-1,-1):
+        move=sortert[i][0]
+        #print(move)
+        if state.is_valid_move(move): return move
+#
+def play_random():
+    state = S.State([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+    state.spawn()
+    while state.can_make_a_move():
+        moves = [0, 1, 2, 3]
+        for move in moves:
+            valid_moves=[]
+            if state.is_valid_move(move):
+                valid_moves.append(move)
+        move=moves[random.randint(0,len(moves)-1)]
+        #print("move found ", move)
+        state.move(move)
+        state.spawn()
+        #time.sleep(0.2)
+    return state.get_highest_tile()
+#
+def play(random):
+    if random:
+        return play_random()
+    state = S.State([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+    state.spawn()
+    ##
+    #highest = 0
+    #moves = 0
+    ##
+    while state.can_make_a_move():
+        '''
+        moves = ANN.something()
+        move = find_best_valid_move(moves)
+        '''
+        ###########################################################
+        matrix=[]
+        for i in range(2):
+            vector = []
+            for row in state.get_board():
+                for tile in row:
+                    vector.append(tile)
+            h=max(vector)
+            vector=np.array(vector)
+            vector=np.divide(vector,h)
+            matrix.append(np.array(vector))
+        ###########################################################
+        b=nn.predict_a_move(np.array(matrix))
+        #print("prob dist: ",b[0])
+        move = find_best_valid_move(state,b[0])
+        #print ("Move: ", move,"\n")
+        #
+        state.move(move)#make the move   
+        #
+        state.spawn()#spawn a new tile
+    #    
+    highest_tile = state.get_highest_tile()
+    #print("Can not make more moves...\n", "Highest tile achieved: ", highest_tile)
+    return highest_tile
+#
+def main(n, random):
+    n64_ = 0
+    n128_ = 0
+    n256_ = 0
+    n512_ = 0
+    n1024_ = 0
+    n2048_ = 0
+    results=[]
+    for iii in range(1,n+1):
+        #state = S.State(board)
+        highest_tile = play(random)
+        results.append(highest_tile)
+        if highest_tile == 64: n64_ += 1
+        if highest_tile == 128: n128_ += 1
+        elif highest_tile == 256: n256_ += 1
+        elif highest_tile == 512: n512_ += 1
+        elif highest_tile == 1024: n1024_ += 1
+        elif highest_tile > 2047: n2048_ += 1
+        #
+        if iii%10 == 0:
+            print (iii, " runs:")
+            print ("64: ", 100.0*float(n64_)/iii, "%")
+            print ("128: ", 100.0*float(n128_)/iii, "%")
+            print ("256: ", 100.0*float(n256_)/iii, "%")
+            print ("512: ", 100.0*float(n512_)/iii, "%")
+            print ("1024: ", 100.0*float(n1024_)/iii, "%")
+            print (">2047: ", 100.0*float(n2048_)/iii, "%\n")
+    print (n, " runs:")
+    print ("64: ", 100.0*float(n64_)/n, "%")
+    print ("128: ", 100.0*float(n128_)/n, "%")
+    print ("256: ", 100.0*float(n256_)/n, "%")
+    print ("512: ", 100.0*float(n512_)/n, "%")
+    print ("1024: ", 100.0*float(n1024_)/n, "%")
+    print (">2047: ", 100.0*float(n2048_)/n, "%\n")
+    return results
+
 if __name__ == '__main__':
     print("starting up")
-    nn=ANN(0.01,[(16, 100),(100,4)])
-    nn.training(500)
+    runs = 50
+    epochs=500
+    learningRate=0.05
+    #
+    nn=ANN(learningRate,[(16,500),(500,4)])
+    nn.training(epochs)
+    #
+    nn_results=main(runs,False)
+    random=main(runs,True)
+    print("random: ",len(random), "verdier")
+    print(random)
+    print("\nnevralt nett: ", len(nn_results), "verdier")
+    print(nn_results,"\n")
+    t_test = stats.ttest_ind(nn_results,random,equal_var=False)[1]
+    poeng=-np.log10(t_test)
+    print("t_test: ",t_test)
+    print("Antall poeng: ",poeng)
+    
