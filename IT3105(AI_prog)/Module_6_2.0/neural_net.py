@@ -420,7 +420,7 @@ if __name__ == '__main__':
     n6=0
     n7=0
     #
-    for qqq in range(1,201):
+    for qqq in range(1,141):
         #
         training_time=time.time()
         nn_11=ANN(0.05,[(16,500),(500,4)])
@@ -434,7 +434,7 @@ if __name__ == '__main__':
         nn_4=ANN(0.05,[(16,500),(500,4)])
         print("Trener nn_4:")
         nn_4.training(6,epochs,nn_4.train_data_11,nn_4.train_answers_11,nn_4.test_data_11,nn_4.test_answers_11)
-        print("It took",time.time-training_time," to train the networks")
+        print("It took",time.time()-training_time," to train the networks")
         #
         print("\nNeural Net: ")
         nn_results=main(50,False)
