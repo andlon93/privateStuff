@@ -25,8 +25,8 @@ def readfile(filename):
 	state_8_free_tiles=[]
 	moves_8_free_tiles=[]
 	#
-	state_6_free_tiles=[]
-	moves_6_free_tiles=[]
+	#state_6_free_tiles=[]
+	#moves_6_free_tiles=[]
 	#
 	state_4_free_tiles=[]
 	moves_4_free_tiles=[]
@@ -34,8 +34,8 @@ def readfile(filename):
 	state_3_free_tiles=[]
 	moves_3_free_tiles=[]
 	#
-	state_2_free_tiles=[]
-	moves_2_free_tiles=[]
+	#state_2_free_tiles=[]
+	#moves_2_free_tiles=[]
 	#
 	for line in f.readlines():
 		arr = line.split(',')
@@ -59,49 +59,50 @@ def readfile(filename):
 			state_8_free_tiles.append(temp_state)
 			moves_8_free_tiles.append(temp_moves)
 			continue
-		if empty_tiles>5 and empty_tiles<8:
+		'''if empty_tiles>5 and empty_tiles<8:
 			state_6_free_tiles.append(temp_state)
 			moves_6_free_tiles.append(temp_moves)
-			continue
-		if empty_tiles>3 and empty_tiles<6:
+			continue'''
+		if empty_tiles>3 and empty_tiles<8:
 			state_4_free_tiles.append(temp_state)
 			moves_4_free_tiles.append(temp_moves)
 			continue
-		if empty_tiles==3:
+		'''if empty_tiles==3:
 			state_3_free_tiles.append(temp_state)
 			moves_3_free_tiles.append(temp_moves)
-			continue
-		if empty_tiles<3:
-			state_2_free_tiles.append(temp_state)
-			moves_2_free_tiles.append(temp_moves)
+			continue'''
+		if empty_tiles<4:
+			state_3_free_tiles.append(temp_state)
+			moves_3_free_tiles.append(temp_moves)
 			continue
 	#
 	label_vectors12=make_vector(moves_12_free_tiles)
 	label_vectors10=make_vector(moves_10_free_tiles)
 	label_vectors8=make_vector(moves_8_free_tiles)
-	label_vectors6=make_vector(moves_6_free_tiles)
+	#label_vectors6=make_vector(moves_6_free_tiles)
 	label_vectors4=make_vector(moves_4_free_tiles)
 	label_vectors3=make_vector(moves_3_free_tiles)
-	label_vectors2=make_vector(moves_2_free_tiles)
+	#label_vectors2=make_vector(moves_2_free_tiles)
 	return(np.array(state_12_free_tiles),label_vectors12, 
 		  np.array(state_10_free_tiles),label_vectors10, 
 		  np.array(state_8_free_tiles),label_vectors8,
-		  np.array(state_6_free_tiles),label_vectors6,
+		  #np.array(state_6_free_tiles),label_vectors6,
 		  np.array(state_4_free_tiles),label_vectors4,
-		  np.array(state_3_free_tiles),label_vectors3,
-		  np.array(state_2_free_tiles),label_vectors2)
+		  np.array(state_3_free_tiles),label_vectors3)
+		  #np.array(state_2_free_tiles),label_vectors2)
 #
 if __name__ == '__main__':
 	print("GO")
-	b12,m12,b10,m10,b8,m8,b6,m6,b4,m4,b3,m3,b2,m2 = readfile("2048training_big.txt")
+	b12,m12,b10,m10,b8,m8,b4,m4,b3,m3= readfile("2048training_big.txt")
+	#b12,m12,b10,m10,b8,m8,b6,m6,b4,m4,b3,m3,b2,m2 = readfile("2048training_big.txt")
 	print ("12:",len(b12))
 	#print (b11[0])
 	print("10:",len(b10))
 	#print(b7[len(b7)-2])
 	print("8:",len(b8))
-	print("6:",len(b6))
+	#print("6:",len(b6))
 	print("4:",len(b4))
 	print("3:",len(b3))
-	print("2:",len(b2))
+	#print("2:",len(b2))
 	#print(b4[len(b4)-3])
 	#print(m7[37])
