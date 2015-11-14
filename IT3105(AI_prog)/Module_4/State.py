@@ -134,7 +134,6 @@ class State:
 		if open_tiles:
 			chosen_tile = open_tiles[int(round(random.uniform(0, len(open_tiles)-1)))]#choose a random tile
 		else:
-			#print ("ingen steder aa spawne en tile")
 			return False
 		if random.uniform(0, 100) < 10.0:#P(4) = 0.1
 			self.board[chosen_tile[0]][chosen_tile[1]] = 4
@@ -435,7 +434,17 @@ def do_moves(state):
 #
 #
 if __name__ == '__main__':
+
 	n64_ = 0
+
+	board =[[2,4,2,4],
+			[4,2,4,8],
+			[16,8,16,2],
+			[2,4,8,0]]
+	s = State(board)
+	l = s.all_valid_moves()
+	print (len(l))
+	'''n64_ = 0
 	n128_ = 0
 	n256_ = 0
 	n512_ = 0
@@ -443,6 +452,13 @@ if __name__ == '__main__':
 	n2048_ = 0
 	n = 20000
 	for iii in range(1,n+1):
+	board =[[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0],
+			[0,0,0,0]]
+	n = 500
+	for iii in range(n):
+		if iii%100 == 0: print "Kjoring nummer ", iii
 		board =[[0,0,0,0],
 			[0,0,0,0],
 			[0,0,0,0],
@@ -471,7 +487,7 @@ if __name__ == '__main__':
 	print ("512: ", 100.0*float(n512_)/n, "%")
 	print ("1024: ", 100.0*float(n1024_)/n, "%")
 	print ("2048: ", 100.0*float(n2048_)/n, "%\n")
-'''Resultat:
+Resultat:
 64: 18.4%
 128: 50.4%
 256: 28.3%

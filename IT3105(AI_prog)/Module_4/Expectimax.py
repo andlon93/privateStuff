@@ -51,8 +51,8 @@ def utility(board):
 	max_score = 0
 	for W_matrix in W:
 		temp = 0
-		for r in xrange(4):
-			for c in xrange(4):
+		for r in range(4):
+			for c in range(4):
 				temp += W_matrix[r][c]*board[r][c]
 		if temp > max_score:
 			max_score = temp
@@ -87,7 +87,7 @@ def expectimax(state, depth):
 	return tot_score/tot_prob
 #
 def runExmax(board):
-	print "pp"
+	print ("pp")
 	deep_copy = copy.deepcopy
 	state = State.State(board)
 	#print state
@@ -131,7 +131,7 @@ def runExmax(board):
 		moves += 1
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
-			print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
+			print ("hoyeste oppnaadd:", highest, " ", moves, "trekk")
 		#if state.get_highest_tile() == 2048:
 		#	return state
 		state.spawn()
@@ -156,9 +156,8 @@ if __name__ == '__main__':
 	nMore = 0
 	#
 	n = 200
-	for x in xrange(1, n+1):
-		print "Kjoring nummer: ", x
-		print "Dybde: 1, saa 2 og noen ganger 3"
+	for x in range(1, n+1):
+		print ("Kjoring nummer: ", x)
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
@@ -177,6 +176,7 @@ if __name__ == '__main__':
 		elif highest_tile == 8192: n8192 += 1
 		elif highest_tile > 8192: nMore += 1
 		#
+		'''
 		print "Expectimax with weight matrix"
 		print "64: ", 100.0*float(n64)/(x), "%"
 		print "128: ", 100.0*float(n128)/(x), "%"
@@ -189,7 +189,9 @@ if __name__ == '__main__':
 		print "More than 8192: ", 100.0*float(nMore)/x, "%"
 		print("--- %s seconds ---" % (time.time() - start_time))
 		print "\n"
+		'''
 	#
+	'''
 	print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
 	print "128: ", 100.0*float(n128)/n, "%"
@@ -200,3 +202,4 @@ if __name__ == '__main__':
 	print "4096: ", 100.0*float(n4096)/(n), "%"
 	print "8192: ", 100.0*float(n8192)/(n), "%"
 	print("--- %s seconds ---" % (time.time() - start_time))
+	'''

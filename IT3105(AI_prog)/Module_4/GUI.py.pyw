@@ -85,7 +85,7 @@ class Game(QtCore.QObject):
     def setUp(self):
         print("Setting up the game.")
 
-        for ii in xrange(16):
+        for ii in range(16):
             self._tiles.append( TileData( 0 ) )
     #
     @QtCore.pyqtSlot()
@@ -141,7 +141,7 @@ class Game(QtCore.QObject):
             moves += 1
             if state.get_highest_tile() > highest:
                 highest = state.get_highest_tile()
-                print "hoyeste oppnaadd:", highest, " trekk:", moves," seconds:",time.time() - time_0,  " Time per move:", (time.time() -time_0)/moves
+                print ("hoyeste oppnaadd:", highest, " trekk:", moves," seconds:",time.time() - time_0,  " Time per move:", (time.time() -time_0)/moves)
             #
             if time.time() - start_time < 0.095:
                 time.sleep(0.095-(time.time() - start_time))
@@ -153,8 +153,8 @@ class Game(QtCore.QObject):
     #
     @QtCore.pyqtSlot()
     def setBoard(self, board):
-        for r in xrange(4):
-            for c in xrange(4):
+        for r in range(4):
+            for c in range(4):
                 self.setStatusOfTile(r, c, board[r][c])
     # Private member functions
     def _onBoard(self, row, col):
