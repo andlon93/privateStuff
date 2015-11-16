@@ -298,7 +298,7 @@ class ANN:
     	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 32
+        skip = 4
         for i in range(numer_of_runs):
             start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
@@ -310,7 +310,7 @@ class ANN:
             print("Training phase #",i," score on training-set: ", score)
     #
 #
-def main():  
+def main():
     training_acc = 0
     testing_acc = 0
     total_time = 0

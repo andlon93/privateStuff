@@ -5,6 +5,7 @@ import copy
 from multiprocessing import Process, Queue
 import cProfile
 #
+'''
 W = [
     [  [  10,    9,  7.6, 7.4],
 	   [ 7.4,  6.4,  5.7, 5.3],
@@ -44,7 +45,12 @@ W = [
     [  [0.02, 1.2, 5.3, 7.4],
 	   [ 0.04,  2.7,  5.7,  7.6],
 	   [ 0.07,  4.1,  6.4,  9],
-	   [ 0.09,  4.5,    7.4,   10] ]   ]
+	   [ 0.09,  4.5,    7.4,   10] ]   ]'''
+W = [
+    [  [  10,    9,  7.6, 7.4],
+	   [ 7.4,  6.4,  5.7, 5.3],
+	   [ 4.5,  4.1,  2.7, 1.2],
+	   [0.09, 0.07, 0.04, 0.02] ],]
 
 #
 def utility(board):
@@ -87,7 +93,6 @@ def expectimax(state, depth):
 	return tot_score/tot_prob
 #
 def runExmax(board):
-	print "pp"
 	deep_copy = copy.deepcopy
 	state = State.State(board)
 	#print state
@@ -131,7 +136,7 @@ def runExmax(board):
 		moves += 1
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
-			print "hoyeste oppnaadd:", highest, " ", moves, "trekk"
+			print ("hoyeste oppnaadd:", highest, " ", moves, "trekk")
 		#if state.get_highest_tile() == 2048:
 		#	return state
 		state.spawn()
@@ -157,8 +162,7 @@ if __name__ == '__main__':
 	#
 	n = 200
 	for x in xrange(1, n+1):
-		print "Kjoring nummer: ", x
-		print "Dybde: 1, saa 2 og noen ganger 3"
+		print ("Kjoring nummer: ", x)
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
@@ -177,6 +181,7 @@ if __name__ == '__main__':
 		elif highest_tile == 8192: n8192 += 1
 		elif highest_tile > 8192: nMore += 1
 		#
+		'''
 		print "Expectimax with weight matrix"
 		print "64: ", 100.0*float(n64)/(x), "%"
 		print "128: ", 100.0*float(n128)/(x), "%"
@@ -188,9 +193,9 @@ if __name__ == '__main__':
 		print "8192: ", 100.0*float(n8192)/(x), "%"
 		print "More than 8192: ", 100.0*float(nMore)/x, "%"
 		print("--- %s seconds ---" % (time.time() - start_time))
-		print "\n"
+		print "\n"'''
 	#
-	print n, " runs:"
+	'''print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
 	print "128: ", 100.0*float(n128)/n, "%"
 	print "256: ", 100.0*float(n256)/n, "%"
@@ -199,4 +204,4 @@ if __name__ == '__main__':
 	print "2048: ", 100.0*float(n2048)/n, "%"
 	print "4096: ", 100.0*float(n4096)/(n), "%"
 	print "8192: ", 100.0*float(n8192)/(n), "%"
-	print("--- %s seconds ---" % (time.time() - start_time))
+	print("--- %s seconds ---" % (time.time() - start_time))'''

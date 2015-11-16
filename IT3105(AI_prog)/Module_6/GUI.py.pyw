@@ -95,7 +95,7 @@ class Game(QtCore.QObject):
         for i in range(3,-1,-1):
             move=sortert[i][0]
             #print(move)
-            if state.is_valid_move(move): return move 
+            if state.is_valid_move(move): return move
     #
     @QtCore.pyqtSlot()
     def startGame(self):
@@ -105,9 +105,9 @@ class Game(QtCore.QObject):
         init an ANN
         train the ANN
         '''
-        nn=ann.ANN(0.01,[(16, 100),(100,4)])
-        nn.training(20)
-        #
+        nn=ann.ANN(0.05,[(16, 100),(100,4)])
+        nn.training(2)
+        #me
         state = S.State(board)
         state.spawn()
         ##
@@ -134,13 +134,13 @@ class Game(QtCore.QObject):
             print("prob dist: ",b[0])
             move = self.find_best_valid_move(state,b[0])
             print ("Move: ", move,"\n")
-            
+
             #
             state.move(move)#make the move
             self.setBoard(state.get_board())#update board with the move
             #
             state.spawn()#spawn a new tile
-            time.sleep(0.3)
+            time.sleep(0.15)
             self.setBoard(state.get_board())#update board with the spawn
         self.setBoard(state.get_board())
         print("Can not make more moves...\n", "Highest tile achieved: ", state.get_highest_tile())
