@@ -57,8 +57,8 @@ def utility(board):
 	max_score = 0
 	for W_matrix in W:
 		temp = 0
-		for r in xrange(4):
-			for c in xrange(4):
+		for r in range(4):
+			for c in range(4):
 				temp += W_matrix[r][c]*board[r][c]
 		if temp > max_score:
 			max_score = temp
@@ -143,7 +143,7 @@ def runExmax(board):
 	return state
 ##
 if __name__ == '__main__':
-	write_to_file = True
+	write_to_file = False
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 	nMore = 0
 	#
 	n = 200
-	for x in xrange(1, n+1):
+	for x in range(1, n+1):
 		print ("Kjoring nummer: ", x)
 		board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -193,15 +193,5 @@ if __name__ == '__main__':
 		print "8192: ", 100.0*float(n8192)/(x), "%"
 		print "More than 8192: ", 100.0*float(nMore)/x, "%"
 		print("--- %s seconds ---" % (time.time() - start_time))
-		print "\n"'''
-	#
-	'''print n, " runs:"
-	print "64: ", 100.0*float(n64)/n, "%"
-	print "128: ", 100.0*float(n128)/n, "%"
-	print "256: ", 100.0*float(n256)/n, "%"
-	print "512: ", 100.0*float(n512)/n, "%"
-	print "1024: ", 100.0*float(n1024)/n, "%"
-	print "2048: ", 100.0*float(n2048)/n, "%"
-	print "4096: ", 100.0*float(n4096)/(n), "%"
-	print "8192: ", 100.0*float(n8192)/(n), "%"
-	print("--- %s seconds ---" % (time.time() - start_time))'''
+		print "\n"
+		'''

@@ -1,0 +1,9 @@
+Antall runs:15
+Sans for 0 poeng: 0.0%
+Sans for 1 poeng: 0.0%
+Sans for 2 poeng: 0.0%
+Sans for 3 poeng: 0.0%
+Sans for 4 poeng: 0.0%
+Sans for 5 poeng: 0.0%
+Sans for 6 poeng: 0.0%
+Sans for 7 poeng: 100.0%

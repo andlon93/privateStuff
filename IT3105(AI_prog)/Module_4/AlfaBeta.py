@@ -99,7 +99,7 @@ def runAB(board, weights):
 		moves += 1
 		if state.get_highest_tile() > highest:
 			highest = state.get_highest_tile()
-			print "Hoyeste:", highest, " Trekk:", moves
+			print ("Hoyeste:", highest, " Trekk:", moves)
 		#if state.get_highest_tile() == 2048:
 		#	return state
 		state.spawn()
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 	#
 	n = 100
 	for x in xrange(n):
-		print x
+		print (x)
 		board = [[0,0,0,0],
 			 [0,0,0,0],
 			 [0,0,0,0],
@@ -144,6 +144,7 @@ if __name__ == '__main__':
 		elif highest_tile == 4096: n4096 += 1
 		elif highest_tile == 8192: n8192 += 1
 		#
+		'''
 		print "64: ", 100.0*float(n64)/(x+1), "%"
 		print "128: ", 100.0*float(n128)/(x+1), "%"
 		print "256: ", 100.0*float(n256)/(x+1), "%"
@@ -152,8 +153,9 @@ if __name__ == '__main__':
 		print "2048: ", 100.0*float(n2048)/(x+1), "%"
 		print "4096: ", 100.0*float(n4096)/(x+1), "%"
 		print "8192: ", 100.0*float(n8192)/(x+1), "%"
-		print("--- %s seconds ---" % (time.time() - start_time))
+		print("--- %s seconds ---" % (time.time() - start_time))'''
 	#
+	'''
 	print n, " runs:"
 	print "64: ", 100.0*float(n64)/n, "%"
 	print "128: ", 100.0*float(n128)/n, "%"
@@ -163,4 +165,4 @@ if __name__ == '__main__':
 	print "2048: ", 100.0*float(n2048)/n, "%"
 	print "4096: ", 100.0*float(n4096)/(x+1), "%"
 	print "8192: ", 100.0*float(n8192)/(x+1), "%"
-	print("--- %s seconds ---" % (time.time() - start_time))
+	print("--- %s seconds ---" % (time.time() - start_time))'''

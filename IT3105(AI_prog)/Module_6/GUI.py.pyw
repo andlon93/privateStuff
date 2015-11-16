@@ -11,6 +11,28 @@ import neural_net as ann
 import numpy as np
 import operator
 #
+W = [
+    [  [  10,    9,  7.6, 7.4],
+       [ 7.4,  6.4,  5.7, 5.3],
+       [ 4.5,  4.1,  2.7, 1.2],
+       [0.09, 0.07, 0.04, 0.02] ],
+
+    [  [  10,  7.4,  4.5, 0.09],
+       [   9,  6.4,  4.1, 0.07],
+       [ 7.6,  5.7,  2.7, 0.04],
+       [ 7.4,  5.3,  1.2, 0.02] ],   ]
+#
+def utility(board):
+    #board=[nboard[0:4],nboard[4:8],nboard[8:12],nboard[12:16]]
+    max_score = 0
+    for W_matrix in W:
+        temp = 0
+        for r in range(4):
+            for c in range(4):
+                temp += W_matrix[r][c]*board[r][c]
+        if temp > max_score:
+            max_score = temp
+    return max_score
 #########---- Class that represent the different tiles in the UI ----########
 def makeMove(move, depth, state, queue):
     temp_state = copy.deepcopy(state) # Copy the current state
@@ -105,9 +127,15 @@ class Game(QtCore.QObject):
         init an ANN
         train the ANN
         '''
+<<<<<<< HEAD
         nn=ann.ANN(0.05,[(16, 100),(100,4)])
         nn.training(2)
         #me
+=======
+        nn=ann.ANN(0.01,[(17, 100),(100,4)])
+        nn.training(2)
+        #
+>>>>>>> 715fa3e3683e7c9422a7ad7b25a54f88d6b596f9
         state = S.State(board)
         state.spawn()
         ##
@@ -128,7 +156,9 @@ class Game(QtCore.QObject):
                 for row in state.get_board():
                     for tile in row:
                         vector.append(tile)
-                matrix.append(vector)
+                vector.append(utility(state.get_board()))
+                print("regnet utility")
+                matrix.append(np.array(vector))
             ###########################################################
             b=nn.predict_a_move(np.array(matrix))
             print("prob dist: ",b[0])
