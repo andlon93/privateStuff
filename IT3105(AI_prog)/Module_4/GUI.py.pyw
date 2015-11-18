@@ -117,7 +117,7 @@ class Game(QtCore.QObject):
                 if rand == 40:
                     rand = 0
             else:
-                rand += 1
+                #rand += 1
                 start_time = time.time()
                 depth = 1
                 best_move = None
