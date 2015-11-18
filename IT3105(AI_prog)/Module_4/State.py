@@ -3,6 +3,7 @@ import random
 from collections import deque
 import copy
 import math
+import time
 #
 class State:
 	#
@@ -133,9 +134,6 @@ class State:
 		if open_tiles:
 			chosen_tile = open_tiles[int(round(random.uniform(0, len(open_tiles)-1)))]#choose a random tile
 		else:
-			print ("ingen steder aa spawne en tile")
-			for row in self.board:
-				print (row)
 			return False
 		if random.uniform(0, 100) < 10.0:#P(4) = 0.1
 			self.board[chosen_tile[0]][chosen_tile[1]] = 4
@@ -421,19 +419,24 @@ class State:
 #
 #
 def do_moves(state):
-	moves = [0, 1, 3, 2]
 	while state.can_make_a_move():
-		for direction in moves:
-			if state.is_valid_move(direction):
-				state.move(direction)
-				break
-		state.calculate_utility()
-
+		moves = [0, 1, 2, 3]
+		for move in moves:
+			valid_moves=[]
+			if state.is_valid_move(move):
+				valid_moves.append(move)
+		move=moves[random.randint(0,len(moves)-1)]
+		#print("move found ", move)
+		state.move(move)
 		state.spawn()
+		#time.sleep(0.2)
 	return state.get_highest_tile()
 #
 #
 if __name__ == '__main__':
+
+	n64_ = 0
+
 	board =[[2,4,2,4],
 			[4,2,4,8],
 			[16,8,16,2],
@@ -447,6 +450,8 @@ if __name__ == '__main__':
 	n512_ = 0
 	n1024_ = 0
 	n2048_ = 0
+	n = 20000
+	for iii in range(1,n+1):
 	board =[[0,0,0,0],
 			[0,0,0,0],
 			[0,0,0,0],
@@ -466,15 +471,23 @@ if __name__ == '__main__':
 		elif highest_tile == 512: n512_ += 1
 		elif highest_tile == 1024: n1024_ += 1
 		elif highest_tile == 2048: n2048_ += 1
-	#
-	print n, " runs:"
-	print "64: ", 100.0*float(n64_)/n, "%"
-	print "128: ", 100.0*float(n128_)/n, "%"
-	print "256: ", 100.0*float(n256_)/n, "%"
-	print "512: ", 100.0*float(n512_)/n, "%"
-	print "1024: ", 100.0*float(n1024_)/n, "%"
-	print "2048: ", 100.0*float(n2048_)/n, "%"'''
-'''Resultat:
+		#
+		if iii%100 == 0:
+			print (iii, " runs:")
+			print ("64: ", 100.0*float(n64_)/iii, "%")
+			print ("128: ", 100.0*float(n128_)/iii, "%")
+			print ("256: ", 100.0*float(n256_)/iii, "%")
+			print ("512: ", 100.0*float(n512_)/iii, "%")
+			print ("1024: ", 100.0*float(n1024_)/iii, "%")
+			print ("2048: ", 100.0*float(n2048_)/iii, "%\n")
+	print (n, " runs:")
+	print ("64: ", 100.0*float(n64_)/n, "%")
+	print ("128: ", 100.0*float(n128_)/n, "%")
+	print ("256: ", 100.0*float(n256_)/n, "%")
+	print ("512: ", 100.0*float(n512_)/n, "%")
+	print ("1024: ", 100.0*float(n1024_)/n, "%")
+	print ("2048: ", 100.0*float(n2048_)/n, "%\n")
+Resultat:
 64: 18.4%
 128: 50.4%
 256: 28.3%

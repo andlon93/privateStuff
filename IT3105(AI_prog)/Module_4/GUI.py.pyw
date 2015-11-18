@@ -110,11 +110,11 @@ class Game(QtCore.QObject):
         rand = 0
         while state.can_make_a_move():
             best_move = 0
-            if rand >= 50:
+            if rand >= 30:
                 best_move = random.randint(0,4)
                 rand += 1
                 print("RANDOMS")
-                if rand == 60:
+                if rand == 40:
                     rand = 0
             else:
                 rand += 1
