@@ -15,9 +15,11 @@ class ANN:
         self.num_layers = len(layers)
         #print ("Antall lag: ",self.num_layers+1)
         self.lr = lr
-        self.train_data_11,self.train_answers_11, self.train_data_7,self.train_answers_7, self.train_data_4,self.train_answers_4=load.readfile('2048training.txt')
+        self.train_data_12,self.train_answers_12, self.train_data_10,self.train_answers_10, self.train_data_8,self.train_answers_8, self.train_data_4,self.train_answers_4, self.train_data_3,self.train_answers_3=load.readfile('2048training.txt')
+        #self.train_data_12,self.train_answers_12, self.train_data_10,self.train_answers_10, self.train_data_8,self.train_answers_8, self.train_data_6,self.train_answers_6, self.train_data_4,self.train_answers_4, self.train_data_3,self.train_answers_3, self.train_data_2,self.train_answers_2=load.readfile('2048training.txt')
         #print (self.train_data_11)
-        self.test_data_11,self.test_answers_11, self.test_data_7,self.test_answers_7, self.test_data_4,self.test_answers_4=load.readfile('2048test.txt')
+        self.test_data_12,self.test_answers_12, self.test_data_10,self.test_answers_10, self.test_data_8,self.test_answers_8, self.test_data_4,self.test_answers_4, self.test_data_3,self.test_answers_3=load.readfile('2048test.txt')
+        #self.test_data_12,self.test_answers_12, self.test_data_10,self.test_answers_10, self.test_data_8,self.test_answers_8, self.test_data_6,self.test_answers_6, self.test_data_4,self.test_answers_4, self.test_data_3,self.test_answers_3, self.test_data_2,self.test_answers_2=load.readfile('2048test.txt')
         self.make_nn(layers)
     #
     def floatX(self,X): return np.asarray(X, dtype=theano.config.floatX)
@@ -308,13 +310,6 @@ class ANN:
             start_time2=time.time()
             for start, end in zip(range(0, len(train_data), skip), range(skip, len(train_data), skip)):
                 cost = self.train(train_data[start:end], train_answers[start:end])
-            score=self.test_testset(test_data,test_answers)
-            #print("Iterasjon: ",i)
-            #print("Score paa test_set: ", score)
-            if score>0.55 and self.lr < 0.049:
-                self.lr=self.lr*3
-            elif score>0.6 and self.lr < 0.149:
-                self.lr=self.lr*2
         print("Score paa test set: ", self.test_testset(test_data,test_answers))
         print("Score paa training set: ",self.test_trainset(train_data,train_answers),"\n")
     #
@@ -362,16 +357,19 @@ def play(random):
             matrix.append(np.array(vector))
         ###########################################################
         #b=nn.predict_a_move(np.array(matrix))
-        if free_tiles>10: b=nn_11.predict_a_move(np.array(matrix))
-        elif free_tiles>6: b=nn_7.predict_a_move(np.array(matrix))
-        else: b=nn_4.predict_a_move(np.array(matrix))
+        #elif free_tiles>5: b=nn_6.predict_a_move(np.array(matrix))
+        #elif free_tiles>2: b=nn_3.predict_a_move(np.array(matrix))
+        if free_tiles>11: b=nn_12.predict_a_move(np.array(matrix))
+        elif free_tiles>9: b=nn_10.predict_a_move(np.array(matrix))
+        elif free_tiles>7: b=nn_8.predict_a_move(np.array(matrix))
+        elif free_tiles>3: b=nn_4.predict_a_move(np.array(matrix))
+        else: b=nn_3.predict_a_move(np.array(matrix))
         move = find_best_valid_move(state,b[0])
         #
         state.move(move)#make the move   
         state.spawn()#spawn a new tile
     #    
     highest_tile = state.get_highest_tile()
-    #print("Can not make more moves...\n", "Highest tile achieved: ", highest_tile)
     return highest_tile
 #
 def main(n, random):
@@ -408,7 +406,7 @@ if __name__ == '__main__':
     print("starting up")
     #
     tot_score = 0
-    epochs=100
+    epochs=2
     learningRate=0.05
     #
     n0=0
@@ -422,27 +420,59 @@ if __name__ == '__main__':
     #
     for qqq in range(1,141):
         #
+        total=time.time()
         training_time=time.time()
-        nn_11=ANN(0.05,[(16,500),(500,4)])
-        print("\nTrener nn_11:")
-        nn_11.training(1,epochs,nn_11.train_data_11,nn_11.train_answers_11,nn_11.test_data_11,nn_11.test_answers_11)
+        nn_12=ANN(0.05,[(16,1000),(1000,4)])
+        print("\nTrener nn_12:")
+        nn_12.training(1, 100, nn_12.train_data_12, nn_12.train_answers_12, nn_12.test_data_12, nn_12.test_answers_12)
+        print("It took",time.time()-training_time," to train nn_12")
         #
-        nn_7=ANN(0.05,[(16,500),(500,4)])
-        print("Trener nn_7:")
-        nn_7.training(3,epochs,nn_7.train_data_11,nn_7.train_answers_11,nn_7.test_data_11,nn_7.test_answers_11)
+        training_time=time.time()
+        nn_10=ANN(0.05,[(16,800),(800,4)])
+        print("Trener nn_10:")
+        nn_10.training(1,epochs,nn_10.train_data_10,nn_10.train_answers_10,nn_10.test_data_10,nn_10.test_answers_10)
+        print("It took",time.time()-training_time," to train nn_10")
         #
-        nn_4=ANN(0.05,[(16,500),(500,4)])
+        training_time=time.time()
+        nn_8=ANN(0.05,[(16,600),(600,4)])
+        print("Trener nn_8:")
+        nn_8.training(10,epochs,nn_8.train_data_8,nn_8.train_answers_8,nn_8.test_data_8,nn_8.test_answers_8)
+        print("It took",time.time()-training_time," to train nn_8")
+        #
+        '''training_time=time.time()
+        nn_6=ANN(0.05,[(16,500),(500,4)])
+        print("Trener nn_6:")
+        nn_6.training(2,epochs*2,nn_6.train_data_6,nn_6.train_answers_6,nn_6.test_data_6,nn_6.test_answers_6)
+        print("It took",time.time()-training_time," to train nn_6")'''
+        #
+        training_time=time.time()
+        nn_4=ANN(0.05,[(16,400),(400,4)])
         print("Trener nn_4:")
-        nn_4.training(6,epochs,nn_4.train_data_11,nn_4.train_answers_11,nn_4.test_data_11,nn_4.test_answers_11)
-        print("It took",time.time()-training_time," to train the networks")
+        nn_4.training(100,epochs,nn_4.train_data_4,nn_4.train_answers_4,nn_4.test_data_4,nn_4.test_answers_4)
+        print("It took",time.time()-training_time," to train nn_4")
         #
-        print("\nNeural Net: ")
+        training_time=time.time()
+        nn_3=ANN(0.05,[(16,200),(200,4)])
+        print("Trener nn_3:")
+        nn_3.training(80,epochs,nn_3.train_data_3,nn_3.train_answers_3,nn_3.test_data_3,nn_3.test_answers_3)
+        print("It took",time.time()-training_time," to train nn_3")
+        #
+        '''training_time=time.time()
+        nn_2=ANN(0.05,[(16,500),(500,4)])
+        print("Trener nn_2:")
+        nn_2.training(1,epochs*2,nn_2.train_data_2,nn_2.train_answers_2,nn_2.test_data_2,nn_2.test_answers_2)
+        print("It took",time.time()-training_time," to train nn_2")'''
+        print("Total training time: ", time.time()-total)
+        #
+        #print("\nNeural Net: ")
         nn_results=main(50,False)
         #
-        print("\nRandom player: ")
+        #print("\nRandom player: ")
         random=main(50,True)
         #
         p_value = stats.ttest_ind(nn_results,random,equal_var=False)[1]
+        print(stats.ttest_ind(nn_results,random,equal_var=False))
+        print(stats.ttest_ind(nn_results,random))
         poeng = max(0, min(7, math.ceil(-math.log(p_value,10))))
         #
         print("\nAntall runs: ",qqq)
