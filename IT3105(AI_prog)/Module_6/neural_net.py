@@ -14,7 +14,7 @@ class ANN:
         self.num_layers = len(layers)
         print ("Antall lag: ",self.num_layers)
         self.lr = lr
-        self.trX, self.trY = load.readfile('2048training.txt')
+        self.trX, self.trY = load.readfile('2048training_big.txt')
         #print (self.trY)
         self.teX, self.teY = load.readfile('2048test.txt')
         self.make_nn(layers)
@@ -302,7 +302,7 @@ class ANN:
     	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 64
+        skip = 256
         for i in range(numer_of_runs):
             start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
@@ -373,10 +373,10 @@ def play(random):
         move = find_best_valid_move(state,b[0])
         #print ("Move: ", move,"\n")
         #
-        state.move(move)#make the move   
+        state.move(move)#make the move
         #
         state.spawn()#spawn a new tile
-    #    
+    #
     highest_tile = state.get_highest_tile()
     #print("Can not make more moves...\n", "Highest tile achieved: ", highest_tile)
     return highest_tile
@@ -420,7 +420,7 @@ def main(n, random):
 if __name__ == '__main__':
     print("starting up")
     runs = 50
-    epochs=500
+    epochs=5
     learningRate=0.05
     #
     nn=ANN(learningRate,[(16,500),(500,4)])
@@ -436,4 +436,3 @@ if __name__ == '__main__':
     poeng=-np.log10(t_test)
     print("t_test: ",t_test)
     print("Antall poeng: ",poeng)
-    

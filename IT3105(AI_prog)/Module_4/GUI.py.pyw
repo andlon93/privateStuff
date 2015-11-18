@@ -107,44 +107,54 @@ class Game(QtCore.QObject):
         ##
         process = [None] * 4
         queue = Queue(maxsize=0)
+        rand = 0
         while state.can_make_a_move():
-            start_time = time.time()
-            depth = 1
-            best_move = None
-            best_val = -1
-            #
-            if state.number_of_empty_tiles() < 2:
-                depth = 3
-            elif state.get_highest_tile() > 511:
-                depth = 2
-            #
-            vals_moves = []
-            valid_moves = state.all_valid_moves()
-            for move in valid_moves:
-                process[move] = Process(target=makeMove, args=(move, depth, state, queue))
-                process[move].start()
-            if time.time() - start_time < 0.095:
-                time.sleep(0.095-(time.time() - start_time))
-            #print "move to spawn", ("--- %s seconds ---" % (time.time() - start_time))
-            self.setBoard(state.get_board())
-            start_time = time.time()
-            for move in valid_moves:
-                vals_moves.append(queue.get())
-            for move in valid_moves:
-                process[move].join()
-            for val_move in vals_moves:
-                if val_move[0] > best_val:
-                    best_val = val_move[0]
-                    best_move = val_move[1]
-            #
+            best_move = 0
+            if rand >= 50:
+                best_move = random.randint(0,4)
+                rand += 1
+                print("RANDOMS")
+                if rand == 60:
+                    rand = 0
+            else:
+                rand += 1
+                start_time = time.time()
+                depth = 1
+                best_move = None
+                best_val = -1
+                #
+                if state.number_of_empty_tiles() < 2:
+                    depth +=1
+                if state.get_highest_tile() > 511:
+                    depth += 1
+                #
+                vals_moves = []
+                valid_moves = state.all_valid_moves()
+                for move in valid_moves:
+                    process[move] = Process(target=makeMove, args=(move, depth, state, queue))
+                    process[move].start()
+                if time.time() - start_time < 0.095:
+                    time.sleep(0.095-(time.time() - start_time))
+                #print "move to spawn", ("--- %s seconds ---" % (time.time() - start_time))
+                self.setBoard(state.get_board())
+                start_time = time.time()
+                for move in valid_moves:
+                    vals_moves.append(queue.get())
+                for move in valid_moves:
+                    process[move].join()
+                for val_move in vals_moves:
+                    if val_move[0] > best_val:
+                        best_val = val_move[0]
+                        best_move = val_move[1]
+                #
             state.move(best_move)
             moves += 1
             if state.get_highest_tile() > highest:
                 highest = state.get_highest_tile()
                 print ("hoyeste oppnaadd:", highest, " trekk:", moves," seconds:",time.time() - time_0,  " Time per move:", (time.time() -time_0)/moves)
             #
-            if time.time() - start_time < 0.095:
-                time.sleep(0.095-(time.time() - start_time))
+            # if time.time() - start_time < 0.095:
+            #     time.sleep(0.095-(time.time() - start_time))
             #print "spawn to move", ("--- %s seconds ---" % (time.time() - start_time))
             self.setBoard(state.get_board())
             ##
