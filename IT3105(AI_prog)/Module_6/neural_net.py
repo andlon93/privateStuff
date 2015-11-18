@@ -8,11 +8,12 @@ import time
 import State as S
 import operator
 import random
+import math
 #
 class ANN:
     def __init__(self, lr, layers):
         self.num_layers = len(layers)
-        print ("Antall lag: ",self.num_layers)
+        print ("Antall lag: ",self.num_layers+1)
         self.lr = lr
         self.trX, self.trY = load.readfile('2048training.txt')
         #print (self.trY)
@@ -307,15 +308,12 @@ class ANN:
             start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
-            print("--- One iteration through training set in %s seconds ---" % (time.time() - start_time2))
             score=self.test_testset()
-            print("Training phase #",i," score on test-set: ", score)
             if score>41 and self.lr < 0.049:
                 self.lr=self.lr*3
             elif score>0.44 and self.lr < 0.149:
                 self.lr=self.lr*2
             score=self.test_trainset()
-            print("Training phase #",i," score on training-set: ", score)
     #
 #
 def find_best_valid_move(state, moves):
@@ -323,7 +321,6 @@ def find_best_valid_move(state, moves):
     sortert=sorted(d.items(), key=operator.itemgetter(1))
     for i in range(3,-1,-1):
         move=sortert[i][0]
-        #print(move)
         if state.is_valid_move(move): return move
 #
 def play_random():
@@ -331,31 +328,22 @@ def play_random():
     state.spawn()
     while state.can_make_a_move():
         moves = [0, 1, 2, 3]
+        valid_moves=[]
         for move in moves:
-            valid_moves=[]
             if state.is_valid_move(move):
                 valid_moves.append(move)
-        move=moves[random.randint(0,len(moves)-1)]
-        #print("move found ", move)
+        #
+        move=valid_moves[int(round(np.random.uniform(0,len(valid_moves)-1)))]
         state.move(move)
         state.spawn()
-        #time.sleep(0.2)
     return state.get_highest_tile()
 #
 def play(random):
-    if random:
-        return play_random()
+    if random: return play_random()
     state = S.State([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
     state.spawn()
-    ##
-    #highest = 0
-    #moves = 0
-    ##
+    #
     while state.can_make_a_move():
-        '''
-        moves = ANN.something()
-        move = find_best_valid_move(moves)
-        '''
         ###########################################################
         matrix=[]
         for i in range(2):
@@ -369,12 +357,9 @@ def play(random):
             matrix.append(np.array(vector))
         ###########################################################
         b=nn.predict_a_move(np.array(matrix))
-        #print("prob dist: ",b[0])
         move = find_best_valid_move(state,b[0])
-        #print ("Move: ", move,"\n")
         #
         state.move(move)#make the move   
-        #
         state.spawn()#spawn a new tile
     #    
     highest_tile = state.get_highest_tile()
@@ -390,7 +375,6 @@ def main(n, random):
     n2048_ = 0
     results=[]
     for iii in range(1,n+1):
-        #state = S.State(board)
         highest_tile = play(random)
         results.append(highest_tile)
         if highest_tile == 64: n64_ += 1
@@ -400,14 +384,6 @@ def main(n, random):
         elif highest_tile == 1024: n1024_ += 1
         elif highest_tile > 2047: n2048_ += 1
         #
-        if iii%10 == 0:
-            print (iii, " runs:")
-            print ("64: ", 100.0*float(n64_)/iii, "%")
-            print ("128: ", 100.0*float(n128_)/iii, "%")
-            print ("256: ", 100.0*float(n256_)/iii, "%")
-            print ("512: ", 100.0*float(n512_)/iii, "%")
-            print ("1024: ", 100.0*float(n1024_)/iii, "%")
-            print (">2047: ", 100.0*float(n2048_)/iii, "%\n")
     print (n, " runs:")
     print ("64: ", 100.0*float(n64_)/n, "%")
     print ("128: ", 100.0*float(n128_)/n, "%")
@@ -416,24 +392,70 @@ def main(n, random):
     print ("1024: ", 100.0*float(n1024_)/n, "%")
     print (">2047: ", 100.0*float(n2048_)/n, "%\n")
     return results
-
+#
 if __name__ == '__main__':
     print("starting up")
-    runs = 50
-    epochs=500
+    tot_score = 0
+    epochs=100
     learningRate=0.05
     #
-    nn=ANN(learningRate,[(16,500),(500,4)])
-    nn.training(epochs)
+    n0=0
+    n1=0
+    n2=0
+    n3=0
+    n4=0
+    n5=0
+    n6=0
+    n7=0
     #
-    nn_results=main(runs,False)
-    random=main(runs,True)
-    print("random: ",len(random), "verdier")
-    print(random)
-    print("\nnevralt nett: ", len(nn_results), "verdier")
-    print(nn_results,"\n")
-    t_test = stats.ttest_ind(nn_results,random,equal_var=False)[1]
-    poeng=-np.log10(t_test)
-    print("t_test: ",t_test)
-    print("Antall poeng: ",poeng)
-    
+    for qqq in range(1,201):
+        #
+        nn=ANN(learningRate,[(16,500),(500,4)])
+        nn.training(epochs)
+        #
+        print("\nNeural Net: ")
+        nn_results=main(50,False)
+        print("nevralt nett: ", len(nn_results), "verdier")
+        print("\nRandom player: ")
+        random=main(50,True)
+        print("Random player: ",len(random), "verdier\n")
+        #
+        t_test = stats.ttest_ind(nn_results,random,equal_var=False)[1]
+        poeng = max(0, min(7, math.ceil(-math.log(t_test,10))))
+        #
+        print("\nAntall runs: ",qqq)
+        print("p-value:",t_test," Points:",poeng,"\n\n")
+        #
+        tot_score += poeng
+        if poeng==0: n0+=1
+        elif poeng==1: n1+=1
+        elif poeng==2: n2+=1
+        elif poeng==3: n3+=1
+        elif poeng==4: n4+=1
+        elif poeng==5: n5+=1
+        elif poeng==6: n6+=1
+        elif poeng==7: n7+=1
+        #
+        '''print("Sans for 0: ", 100*n0/qqq, "%")
+        print("Sans for 1: ", 100*n1/qqq, "%")
+        print("Sans for 2: ", 100*n2/qqq, "%")
+        print("Sans for 3: ", 100*n3/qqq, "%")
+        print("Sans for 4: ", 100*n4/qqq, "%")
+        print("Sans for 5: ", 100*n5/qqq, "%")
+        print("Sans for 6: ", 100*n6/qqq, "%")
+        print("Sans for 7: ", 100*n7/qqq, "%")
+        print("\naverage points: ", tot_score/qqq,"\n")'''
+        #
+        p_n0="Sans for 0 poeng: "+str(100*n0/qqq)+"%\n"
+        p_n1="Sans for 1 poeng: "+str(100*n1/qqq)+"%\n"
+        p_n2="Sans for 2 poeng: "+str(100*n2/qqq)+"%\n"
+        p_n3="Sans for 3 poeng: "+str(100*n3/qqq)+"%\n"
+        p_n4="Sans for 4 poeng: "+str(100*n4/qqq)+"%\n"
+        p_n5="Sans for 5 poeng: "+str(100*n5/qqq)+"%\n"
+        p_n6="Sans for 6 poeng: "+str(100*n6/qqq)+"%\n"
+        p_n7="Sans for 7 poeng: "+str(100*n7/qqq)+"%"
+        fil=open("results.txt","w")
+        result="Antall runs:"+str(qqq)+"\n"+p_n0+p_n1+p_n2+p_n3+p_n4+p_n5+p_n6+p_n7
+        print(result)
+        fil.write(result)
+        fil.close()
