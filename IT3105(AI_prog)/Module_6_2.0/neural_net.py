@@ -310,13 +310,6 @@ class ANN:
             start_time2=time.time()
             for start, end in zip(range(0, len(train_data), skip), range(skip, len(train_data), skip)):
                 cost = self.train(train_data[start:end], train_answers[start:end])
-            '''score=self.test_testset(test_data,test_answers)
-            #print("Iterasjon: ",i)
-            #print("Score paa test_set: ", score)
-            if score>0.55 and self.lr < 0.049:
-                self.lr=self.lr*3
-            elif score>0.6 and self.lr < 0.149:
-                self.lr=self.lr*2'''
         print("Score paa test set: ", self.test_testset(test_data,test_answers))
         print("Score paa training set: ",self.test_trainset(train_data,train_answers),"\n")
     #
@@ -413,7 +406,7 @@ if __name__ == '__main__':
     print("starting up")
     #
     tot_score = 0
-    epochs=200
+    epochs=2
     learningRate=0.05
     #
     n0=0
@@ -471,13 +464,15 @@ if __name__ == '__main__':
         print("It took",time.time()-training_time," to train nn_2")'''
         print("Total training time: ", time.time()-total)
         #
-        print("\nNeural Net: ")
+        #print("\nNeural Net: ")
         nn_results=main(50,False)
         #
-        print("\nRandom player: ")
+        #print("\nRandom player: ")
         random=main(50,True)
         #
         p_value = stats.ttest_ind(nn_results,random,equal_var=False)[1]
+        print(stats.ttest_ind(nn_results,random,equal_var=False))
+        print(stats.ttest_ind(nn_results,random))
         poeng = max(0, min(7, math.ceil(-math.log(p_value,10))))
         #
         print("\nAntall runs: ",qqq)
