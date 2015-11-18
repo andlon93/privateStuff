@@ -167,9 +167,12 @@ def readfile(type):
     return features, label_vectors
 def read_demo_file(filename):
     cases = load_flat_cases(filename)
-    #print(cases[0][1],'\n\n\n')
-    test_cases = np.divide(cases[0],255)
+    #
+    test_cases = cases[0]
     #print (test_cases[1])
-    return test_cases, cases[1]
+    print(cases[1])
+    return test_cases
+    #print(len(cases[0]),"\n", cases[0])
+    #return cases
 if __name__ == '__main__':
-    a,b=read_demo_file('demo_prep')
+    b=read_demo_file('demo_prep')

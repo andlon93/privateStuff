@@ -8,9 +8,10 @@ import time
 class ANN:
     def __init__(self, lr, layers):
         self.num_layers = len(layers)
-        print ("Antall lag: ",self.num_layers)
+        print ("Antall lag: ",self.num_layers+1)
         self.lr = lr
         self.trX, self.trY = MNIST.readfile('training')
+        #print (self.trY[0])
         self.teX, self.teY = MNIST.readfile('testing')
         #print (self.teX[0])
         self.make_nn(layers)
@@ -298,35 +299,54 @@ class ANN:
     #
     def training(self,numer_of_runs):
         skip = 128
-        for i in range(numer_of_runs):
+        #for i in range(numer_of_runs):
+        x=True
+        i=1
+        while x:
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
                 cost = self.train(self.trX[start:end], self.trY[start:end])
-            print("Training phase #",i," score on test-set: ", self.test_testset())
+            score=self.test_testset()
+            print("Training phase #",i," score on test-set: ", score)
+            i+=1
+            if score >0.975:
+                x=False
     #
-    def blind_test(self, filename):
-    	nn_answers = []
-    	blind_cases, blind_answers = MNIST.read_demo_file(filename)
-    	svar = self.predict(blind_cases)
-    	return(svar)
+    def blind_test(self, cases):
+        nn_answers = []
+        cases = np.array(cases)
+        cases = np.divide(cases,255)
+        svar = self.predict(cases)
+        for n in svar:
+            nn_answers.append(n)
+        print(nn_answers)
 #
-training_acc = 0
-testing_acc = 0
-total_time = 0
-number_of_nets = 20
+def main():
+    training_acc = 0
+    testing_acc = 0
+    total_time = 0
+    number_of_nets = 20
+    #
+    for i in range(number_of_nets):
+    	training_time = time.time()
+    	print ("Network #",i)
+    	nn=ANN(0.05, [(784,10)])
+    	nn.training(500)
+    	print ("One hidden layer-> 100 nodes")
+    	training_acc += nn.test_trainset()
+    	testing_acc += nn.test_testset()
+    	print("Test set accuracy: ", nn.test_testset())
+    	print("Train set accuracy: ", nn.test_trainset())
+    	total_time += (time.time() - training_time)
+    print(" ")
+    print("average accuracies: ")
+    print("Training set: ", (training_acc/number_of_nets))
+    print("Testing set: ", (testing_acc/number_of_nets))
+    print("Average compute time: ", (total_time/number_of_nets))
 #
-for i in range(number_of_nets):
-	training_time = time.time()
-	print ("Network #",i)
-	nn=ANN(0.05, [(784,100),(100,10)])
-	nn.training(500)
-	print ("One hidden layer-> 100 nodes")
-	training_acc += nn.test_trainset()
-	testing_acc += nn.test_testset()
-	print("Test set accuracy: ", nn.test_testset())
-	print("Train set accuracy: ", nn.test_trainset())
-	total_time += (time.time() - training_time)
-print(" ")
-print("average accuracies: ")
-print("Training set: ", (training_acc/number_of_nets))
-print("Testing set: ", (testing_acc/number_of_nets))
-print("Average compute time: ", (total_time/number_of_nets))
+nn=ANN(0.1,[(784,100),(100,10)])
+start=time.time()
+nn.training(500)
+print("det tok: ",time.time()-start," aa trene nettet.")
+blind_cases = MNIST.read_demo_file("demo_prep")
+nn.blind_test(blind_cases)
+#main()
