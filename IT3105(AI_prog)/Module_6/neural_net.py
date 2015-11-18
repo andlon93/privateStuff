@@ -15,7 +15,7 @@ class ANN:
         self.num_layers = len(layers)
         print ("Antall lag: ",self.num_layers+1)
         self.lr = lr
-        self.trX, self.trY = load.readfile('2048training.txt')
+        self.trX, self.trY = load.readfile('2048training_big.txt')
         #print (self.trY)
         self.teX, self.teY = load.readfile('2048test.txt')
         self.make_nn(layers)
@@ -303,7 +303,7 @@ class ANN:
         return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
-        skip = 64
+        skip = 256
         for i in range(numer_of_runs):
             start_time2=time.time()
             for start, end in zip(range(0, len(self.trX), skip), range(skip, len(self.trX), skip)):
@@ -359,7 +359,8 @@ def play(random):
         b=nn.predict_a_move(np.array(matrix))
         move = find_best_valid_move(state,b[0])
         #
-        state.move(move)#make the move   
+        state.move(move)#make the move
+        #
         state.spawn()#spawn a new tile
     #
     highest_tile = state.get_highest_tile()
