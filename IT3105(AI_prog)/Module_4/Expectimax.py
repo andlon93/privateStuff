@@ -5,6 +5,7 @@ import copy
 from multiprocessing import Process, Queue
 import cProfile
 #
+'''
 W = [
     [  [  10,    9,  7.6, 7.4],
 	   [ 7.4,  6.4,  5.7, 5.3],
@@ -44,7 +45,12 @@ W = [
     [  [0.02, 1.2, 5.3, 7.4],
 	   [ 0.04,  2.7,  5.7,  7.6],
 	   [ 0.07,  4.1,  6.4,  9],
-	   [ 0.09,  4.5,    7.4,   10] ]   ]
+	   [ 0.09,  4.5,    7.4,   10] ]   ]'''
+W = [
+    [  [  10,    9,  7.6, 7.4],
+	   [ 7.4,  6.4,  5.7, 5.3],
+	   [ 4.5,  4.1,  2.7, 1.2],
+	   [0.09, 0.07, 0.04, 0.02] ],]
 
 #
 def utility(board):
@@ -87,7 +93,6 @@ def expectimax(state, depth):
 	return tot_score/tot_prob
 #
 def runExmax(board):
-	print ("pp")
 	deep_copy = copy.deepcopy
 	state = State.State(board)
 	#print state
@@ -138,7 +143,7 @@ def runExmax(board):
 	return state
 ##
 if __name__ == '__main__':
-	write_to_file = True
+	write_to_file = False
 	start_time = time.time()
 	board = [[0,0,0,0],
 			 [0,0,0,0],
@@ -190,16 +195,3 @@ if __name__ == '__main__':
 		print("--- %s seconds ---" % (time.time() - start_time))
 		print "\n"
 		'''
-	#
-	'''
-	print n, " runs:"
-	print "64: ", 100.0*float(n64)/n, "%"
-	print "128: ", 100.0*float(n128)/n, "%"
-	print "256: ", 100.0*float(n256)/n, "%"
-	print "512: ", 100.0*float(n512)/n, "%"
-	print "1024: ", 100.0*float(n1024)/n, "%"
-	print "2048: ", 100.0*float(n2048)/n, "%"
-	print "4096: ", 100.0*float(n4096)/(n), "%"
-	print "8192: ", 100.0*float(n8192)/(n), "%"
-	print("--- %s seconds ---" % (time.time() - start_time))
-	'''

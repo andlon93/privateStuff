@@ -114,8 +114,6 @@ class Game(QtCore.QObject):
             best_val = -1
             #
             if state.number_of_empty_tiles() < 2:
-                depth = 3
-            elif state.get_highest_tile() > 511:
                 depth = 2
             #
             vals_moves = []

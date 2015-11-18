@@ -91,7 +91,7 @@ class ANN:
                 theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==5:
-        	return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
@@ -300,7 +300,7 @@ class ANN:
         return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     #
     def test_trainset(self):
-    	return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
+        return np.mean(np.argmax(self.trY, axis=1) == self.predict(self.trX))
     #
     def training(self,numer_of_runs):
         skip = 64
@@ -361,7 +361,7 @@ def play(random):
         #
         state.move(move)#make the move   
         state.spawn()#spawn a new tile
-    #    
+    #
     highest_tile = state.get_highest_tile()
     #print("Can not make more moves...\n", "Highest tile achieved: ", highest_tile)
     return highest_tile
