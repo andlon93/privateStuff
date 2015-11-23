@@ -117,7 +117,7 @@ class Game(QtCore.QObject):
         for i in range(3,-1,-1):
             move=sortert[i][0]
             #print(move)
-            if state.is_valid_move(move): return move 
+            if state.is_valid_move(move): return move
     #
     @QtCore.pyqtSlot()
     def startGame(self):
@@ -127,8 +127,34 @@ class Game(QtCore.QObject):
         init an ANN
         train the ANN
         '''
-        nn=ann.ANN(0.01,[(17, 100),(100,4)])
-        nn.training(2)
+        epochs=2
+        learningRate=0.05
+
+        total=time.time()
+        training_time=time.time()
+        nn_12=ann.ANN(0.05,[(16,1000),(1000,4)])
+        print("\nTrener nn_12:")
+        nn_12.training(1, 100, nn_12.train_data_12, nn_12.train_answers_12, nn_12.test_data_12, nn_12.test_answers_12)
+        #
+        training_time=time.time()
+        nn_10=ann.ANN(0.05,[(16,800),(800,4)])
+        print("Trener nn_10:")
+        nn_10.training(1,epochs,nn_10.train_data_10,nn_10.train_answers_10,nn_10.test_data_10,nn_10.test_answers_10)
+        #
+        training_time=time.time()
+        nn_8=ann.ANN(0.05,[(16,600),(600,4)])
+        print("Trener nn_8:")
+        nn_8.training(10,epochs,nn_8.train_data_8,nn_8.train_answers_8,nn_8.test_data_8,nn_8.test_answers_8)
+        #
+        training_time=time.time()
+        nn_4=ann.ANN(0.05,[(16,400),(400,4)])
+        print("Trener nn_4:")
+        nn_4.training(100,epochs,nn_4.train_data_4,nn_4.train_answers_4,nn_4.test_data_4,nn_4.test_answers_4)
+        #
+        training_time=time.time()
+        nn_3=ann.ANN(0.05,[(16,200),(200,4)])
+        print("Trener nn_3:")
+        nn_3.training(80,epochs,nn_3.train_data_3,nn_3.train_answers_3,nn_3.test_data_3,nn_3.test_answers_3)
         #
         state = S.State(board)
         state.spawn()
@@ -145,20 +171,28 @@ class Game(QtCore.QObject):
             '''
             ###########################################################
             matrix=[]
+            free_tiles=0
             for i in range(2):
                 vector = []
                 for row in state.get_board():
                     for tile in row:
                         vector.append(tile)
-                vector.append(utility(state.get_board()))
-                print("regnet utility")
+                        if tile==0: free_tiles+=1
+                h=max(vector)
+                vector=np.array(vector)
+                vector=np.divide(vector,h)
                 matrix.append(np.array(vector))
             ###########################################################
-            b=nn.predict_a_move(np.array(matrix))
+            free_tiles = state.number_of_empty_tiles()
+            if free_tiles>11: b=nn_12.predict_a_move(np.array(matrix))
+            elif free_tiles>9: b=nn_10.predict_a_move(np.array(matrix))
+            elif free_tiles>7: b=nn_8.predict_a_move(np.array(matrix))
+            elif free_tiles>3: b=nn_4.predict_a_move(np.array(matrix))
+            else: b=nn_3.predict_a_move(np.array(matrix))
             print("prob dist: ",b[0])
             move = self.find_best_valid_move(state,b[0])
             print ("Move: ", move,"\n")
-            
+
             #
             state.move(move)#make the move
             self.setBoard(state.get_board())#update board with the move
