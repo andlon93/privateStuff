@@ -13,18 +13,14 @@ import math
 class ANN:
     def __init__(self, lr, layers):
         self.num_layers = len(layers)
-        #print ("Antall lag: ",self.num_layers+1)
         self.lr = lr
         self.train_data_12,self.train_answers_12, self.train_data_10,self.train_answers_10, self.train_data_8,self.train_answers_8, self.train_data_4,self.train_answers_4, self.train_data_3,self.train_answers_3=load.readfile('2048training.txt')
-        #self.train_data_12,self.train_answers_12, self.train_data_10,self.train_answers_10, self.train_data_8,self.train_answers_8, self.train_data_6,self.train_answers_6, self.train_data_4,self.train_answers_4, self.train_data_3,self.train_answers_3, self.train_data_2,self.train_answers_2=load.readfile('2048training.txt')
-        #print (self.train_data_11)
         self.test_data_12,self.test_answers_12, self.test_data_10,self.test_answers_10, self.test_data_8,self.test_answers_8, self.test_data_4,self.test_answers_4, self.test_data_3,self.test_answers_3=load.readfile('2048test.txt')
-        #self.test_data_12,self.test_answers_12, self.test_data_10,self.test_answers_10, self.test_data_8,self.test_answers_8, self.test_data_6,self.test_answers_6, self.test_data_4,self.test_answers_4, self.test_data_3,self.test_answers_3, self.test_data_2,self.test_answers_2=load.readfile('2048test.txt')
         self.make_nn(layers)
     #
     def floatX(self,X): return np.asarray(X, dtype=theano.config.floatX)
     #
-    def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10):
+    def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10,b1,b2):
         if self.num_layers==10: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10]
         elif self.num_layers==9: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9]
         elif self.num_layers==8: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8]
@@ -33,7 +29,7 @@ class ANN:
         elif self.num_layers==5: return [w_h1, w_h2, w_h3, w_h4, w_h5]
         elif self.num_layers==4: return [w_h1, w_h2, w_h3, w_h4]
         elif self.num_layers==3: return [w_h1, w_h2, w_h3]
-        elif self.num_layers==2: return [w_h1, w_h2]
+        elif self.num_layers==2: return [w_h1, b1, w_h2, b2]
         else: return [w_h1]
     #
     def init_weights(self,layers):
@@ -93,7 +89,7 @@ class ANN:
                 theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*(1,1)) * 0.01)))
         elif self.num_layers==5:
-        	return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
+            return (theano.shared(self.floatX(np.random.randn(*layers[0]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[1]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[2]) * 0.01)),
                 theano.shared(self.floatX(np.random.randn(*layers[3]) * 0.01)),
@@ -146,7 +142,7 @@ class ANN:
             updates.append([p, p - g * self.lr])
         return updates
     #
-    def sigmoid_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+    def sigmoid_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10,b1,b2):
         if self.num_layers==10:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
@@ -208,11 +204,11 @@ class ANN:
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
             pyx = T.nnet.softmax(T.dot(h2, w_h3))
         elif self.num_layers==2:
-            h1 = T.nnet.sigmoid(T.dot(X, w_h1))
-            pyx = T.nnet.softmax(T.dot(h1, w_h2))
+            h1 = T.nnet.sigmoid(T.dot(X, w_h1)+b1)
+            pyx = T.nnet.softmax(T.dot(h1, w_h2)+b2)
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
-    def tanh_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+    def tanh_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10,b1,b2):
         if self.num_layers==10:
             h1 = T.tanh(T.dot(X, w_h1))
             h2 = T.tanh(T.dot(h1, w_h2))
@@ -274,8 +270,8 @@ class ANN:
             h2 = T.tanh(T.dot(h1, w_h2))
             pyx = T.nnet.softmax(T.dot(h2, w_h3))
         elif self.num_layers==2:
-            h1 = T.tanh(T.dot(X, w_h1))
-            pyx = T.nnet.softmax(T.dot(h1, w_h2))
+            h1 = T.tanh(T.dot(X, w_h1)+b1)
+            pyx = T.nnet.softmax(T.dot(h1, w_h2)+b2)
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
     #
@@ -284,13 +280,15 @@ class ANN:
         Y = T.fmatrix()
         #
         w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10 = self.init_weights(layers)
+        #if self.num_layers==2:
+        b1=theano.shared(np.random.uniform(-.1,.1,size=(layers[0][1])))
+        b2=theano.shared(np.random.uniform(-.1,.1,size=(layers[1][1])))
         #
-        #py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
-        py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        py_x = self.sigmoid_model(X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10,b1,b2)
         y_x = T.argmax(py_x, axis=1)
         #
         cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
-        params = self.makeparamlist(w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        params = self.makeparamlist(w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10,b1,b2)
         updates = self.sgd(cost, params)
         #
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
@@ -302,7 +300,7 @@ class ANN:
         return np.mean(np.argmax(test_answers, axis=1) == self.predict(test_data))
     #
     def test_trainset(self,train_data,train_answers):
-    	return np.mean(np.argmax(train_answers, axis=1) == self.predict(train_data))
+        return np.mean(np.argmax(train_answers, axis=1) == self.predict(train_data))
     #
     def training(self,skip,numer_of_runs,train_data,train_answers,test_data,test_answers):
         #skip = 1
@@ -312,7 +310,6 @@ class ANN:
                 cost = self.train(train_data[start:end], train_answers[start:end])
         print("Score paa test set: ", self.test_testset(test_data,test_answers))
         print("Score paa training set: ",self.test_trainset(train_data,train_answers),"\n")
-    #
 #
 def find_best_valid_move(state, moves):
     d={0:moves[0],1:moves[1],2:moves[2],3:moves[3]}
@@ -372,7 +369,7 @@ def play(random):
     highest_tile = state.get_highest_tile()
     return highest_tile
 #
-def main(n, random):
+def run(n, random):
     n32_ = 0
     n64_ = 0
     n128_ = 0
@@ -402,103 +399,58 @@ def main(n, random):
     print (">2047: ", 100.0*float(n2048_)/n, "%\n")
     return results
 #
-if __name__ == '__main__':
-    print("starting up")
+def main():
+    #print("starting up")
     #
-    tot_score = 0
-    epochs=2
+    nn_results=run(50,False)
+    random_results=run(50,True)
+    #
+    p_value = stats.ttest_ind(nn_results,random_results,equal_var=False)[1]
+    print(stats.ttest_ind(nn_results,random_results,equal_var=False))
+    print(stats.ttest_ind(nn_results,random_results))
+    poeng = max(0, min(7, math.ceil(-math.log(p_value,10))))
+    #
+    #   print("\nAntall runs: ",qqq)
+    print("p-value:",p_value," Points:",poeng,"\n\n")
+    #
+    return nn_results, random_results
+if __name__ == '__main__':
+    epochs=1
     learningRate=0.05
     #
-    n0=0
-    n1=0
-    n2=0
-    n3=0
-    n4=0
-    n5=0
-    n6=0
-    n7=0
+    total=time.time()
+    training_time=time.time()
+    nn_12=ANN(0.05,[(16,1000),(1000,4)])
+    print("\nTrener nn_12:")
+    nn_12.training(1, epochs, nn_12.train_data_12, nn_12.train_answers_12, nn_12.test_data_12, nn_12.test_answers_12)
+    print("It took",time.time()-training_time," to train nn_12")
     #
-    for qqq in range(1,141):
-        #
-        total=time.time()
-        training_time=time.time()
-        nn_12=ANN(0.05,[(16,1000),(1000,4)])
-        print("\nTrener nn_12:")
-        nn_12.training(1, 100, nn_12.train_data_12, nn_12.train_answers_12, nn_12.test_data_12, nn_12.test_answers_12)
-        print("It took",time.time()-training_time," to train nn_12")
-        #
-        training_time=time.time()
-        nn_10=ANN(0.05,[(16,800),(800,4)])
-        print("Trener nn_10:")
-        nn_10.training(1,epochs,nn_10.train_data_10,nn_10.train_answers_10,nn_10.test_data_10,nn_10.test_answers_10)
-        print("It took",time.time()-training_time," to train nn_10")
-        #
-        training_time=time.time()
-        nn_8=ANN(0.05,[(16,600),(600,4)])
-        print("Trener nn_8:")
-        nn_8.training(10,epochs,nn_8.train_data_8,nn_8.train_answers_8,nn_8.test_data_8,nn_8.test_answers_8)
-        print("It took",time.time()-training_time," to train nn_8")
-        #
-        '''training_time=time.time()
-        nn_6=ANN(0.05,[(16,500),(500,4)])
-        print("Trener nn_6:")
-        nn_6.training(2,epochs*2,nn_6.train_data_6,nn_6.train_answers_6,nn_6.test_data_6,nn_6.test_answers_6)
-        print("It took",time.time()-training_time," to train nn_6")'''
-        #
-        training_time=time.time()
-        nn_4=ANN(0.05,[(16,400),(400,4)])
-        print("Trener nn_4:")
-        nn_4.training(100,epochs,nn_4.train_data_4,nn_4.train_answers_4,nn_4.test_data_4,nn_4.test_answers_4)
-        print("It took",time.time()-training_time," to train nn_4")
-        #
-        training_time=time.time()
-        nn_3=ANN(0.05,[(16,200),(200,4)])
-        print("Trener nn_3:")
-        nn_3.training(80,epochs,nn_3.train_data_3,nn_3.train_answers_3,nn_3.test_data_3,nn_3.test_answers_3)
-        print("It took",time.time()-training_time," to train nn_3")
-        #
-        '''training_time=time.time()
-        nn_2=ANN(0.05,[(16,500),(500,4)])
-        print("Trener nn_2:")
-        nn_2.training(1,epochs*2,nn_2.train_data_2,nn_2.train_answers_2,nn_2.test_data_2,nn_2.test_answers_2)
-        print("It took",time.time()-training_time," to train nn_2")'''
-        print("Total training time: ", time.time()-total)
-        #
-        #print("\nNeural Net: ")
-        nn_results=main(50,False)
-        #
-        #print("\nRandom player: ")
-        random=main(50,True)
-        #
-        p_value = stats.ttest_ind(nn_results,random,equal_var=False)[1]
-        print(stats.ttest_ind(nn_results,random,equal_var=False))
-        print(stats.ttest_ind(nn_results,random))
-        poeng = max(0, min(7, math.ceil(-math.log(p_value,10))))
-        #
-        print("\nAntall runs: ",qqq)
-        print("p-value:",p_value," Points:",poeng,"\n\n")
-        #
-        tot_score += poeng
-        if poeng==0: n0+=1
-        elif poeng==1: n1+=1
-        elif poeng==2: n2+=1
-        elif poeng==3: n3+=1
-        elif poeng==4: n4+=1
-        elif poeng==5: n5+=1
-        elif poeng==6: n6+=1
-        elif poeng==7: n7+=1
-        #
-        #
-        p_n0="Sans for 0 poeng: "+str(100*n0/qqq)+"%\n"
-        p_n1="Sans for 1 poeng: "+str(100*n1/qqq)+"%\n"
-        p_n2="Sans for 2 poeng: "+str(100*n2/qqq)+"%\n"
-        p_n3="Sans for 3 poeng: "+str(100*n3/qqq)+"%\n"
-        p_n4="Sans for 4 poeng: "+str(100*n4/qqq)+"%\n"
-        p_n5="Sans for 5 poeng: "+str(100*n5/qqq)+"%\n"
-        p_n6="Sans for 6 poeng: "+str(100*n6/qqq)+"%\n"
-        p_n7="Sans for 7 poeng: "+str(100*n7/qqq)+"%"
-        fil=open("results_multiple_ANNs.txt","w")
-        result="Antall runs:"+str(qqq)+"\n"+p_n0+p_n1+p_n2+p_n3+p_n4+p_n5+p_n6+p_n7
-        print(result)
-        fil.write(result)
-        fil.close()
+    training_time=time.time()
+    nn_10=ANN(0.05,[(16,800),(800,4)])
+    print("Trener nn_10:")
+    nn_10.training(1,epochs,nn_10.train_data_10,nn_10.train_answers_10,nn_10.test_data_10,nn_10.test_answers_10)
+    print("It took",time.time()-training_time," to train nn_10")
+    #
+    training_time=time.time()
+    nn_8=ANN(0.05,[(16,600),(600,4)])
+    print("Trener nn_8:")
+    nn_8.training(10,epochs,nn_8.train_data_8,nn_8.train_answers_8,nn_8.test_data_8,nn_8.test_answers_8)
+    print("It took",time.time()-training_time," to train nn_8")
+    #
+    training_time=time.time()
+    nn_4=ANN(0.05,[(16,400),(400,4)])
+    print("Trener nn_4:")
+    nn_4.training(200,epochs,nn_4.train_data_4,nn_4.train_answers_4,nn_4.test_data_4,nn_4.test_answers_4)
+    print("It took",time.time()-training_time," to train nn_4")
+    #
+    training_time=time.time()
+    nn_3=ANN(0.05,[(16,200),(200,4)])
+    print("Trener nn_3:")
+    nn_3.training(80,epochs,nn_3.train_data_3,nn_3.train_answers_3,nn_3.test_data_3,nn_3.test_answers_3)
+    print("It took",time.time()-training_time," to train nn_3")
+    #
+    print("Total training time: ", time.time()-total)
+    #
+    nn_results, random_results = main()
+    print(nn_results,"\n")
+    print(random_results)
