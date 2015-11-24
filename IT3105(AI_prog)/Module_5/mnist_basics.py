@@ -9,7 +9,7 @@ from array import array as pyarray
 import matplotlib.pyplot as pyplot
 import numpy
 import pickle
-import numpy as np
+import requests
 # The reduce function was removed in Python 3.0, so just use this handmade version.
 def kd_reduce(func,seq):
     res = seq[0]
@@ -71,6 +71,7 @@ def load_mnist(dataset="training", digits=numpy.arange(10), path= __mnist_path__
         labels[i] = lbl[ind[i]]
 
     return images, labels
+
 # *****   Viewing images *******
 #  These two functions assume that the image is in the standard MNIST format: a 2-d numpy array.
 
@@ -83,7 +84,6 @@ def show_digit_image(image,cm='gray'):
     pyplot.ion()
     pyplot.figure()
     pyplot.imshow(image, cmap=pyplot.get_cmap(cm))
-    #input("")
 
 # *** Image Conversion ****
 # Conversions from arrays to (flat) lists, and the opposite conversion, called 'reconstruction'.
@@ -144,35 +144,68 @@ def load_cases(filename,dir=__mnist_path__,nested=True):
 
 # This is specialized to only load one of the two flat-case files:
 # all_flat_mnist_training_cases or all_flat_mnist_testing_files
-def load_all_flat_cases(type,dir=__mnist_path__):
+def load_all_flat_cases(type='training',dir=__mnist_path__):
     pair = load_flat_cases('all_flat_mnist_'+type+'_cases',dir=dir)
     return pair[0],pair[1]
 
-def something(labels):
-    #if type(x) == list:
-    #    x = np.array(x)
-    labels = labels.flatten()
-    temp = np.zeros((len(labels),10))
-    temp[np.arange(len(labels)),labels] = 1
-    return temp
+def quicktest(n = 99):
+    cases = load_all_flat_cases()
+    features,labels = cases
+    print(labels)
+    image = reconstruct_image(features[n])
+    show_digit_image(image)
+    show_avg_digit(5)
+
+# ****** Demo Necessities ******
+
+# Do the following to verify that your system is ready for the demo:
+# 1) Train your artificial neural net (ann) on the MNIST data.
+# 2) Call minor_demo(ann) to carry out the test phase on your network.  This will provide several printouts of your
+# success rate and the number of demo points for that test.
+# All MNIST data files, including demo100_text.txt must reside in the same directory for this to work properly.
+
+
+
+# For reading flat cases from a TEXT file (as provided by Valerij). This is needed for the demo!
+def load_flat_text_cases(filename, dir=__mnist_path__):
+    f = open(dir + filename, "r")
+    lines = [line.split(" ") for line in f.read().split("\n")]
+    f.close()
+    x_l = list(map(int, lines[0]))
+    x_t = [list(map(int, line)) for line in lines[1:]]
+    return x_t, x_l
+
+
+# You must get this procedure to work PRIOR to the demo session.  It will be swapped out with something very
+# similar during the demo session.
+
+def minor_demo(ann,ignore=0):
+
+    def score_it(classification,k=4):
+        params = {"results": str(ignore) + " " + str(classification), "raw": "1","k": k}
+        resp = requests.post('http://folk.ntnu.no/valerijf/5/', data=params)
+        return resp.text
+
+    def test_it(ann,cases,k=4):
+        images,_ = cases
+        predictions = ann.blind_test(images)  # Students must write THIS method for their ANN
+        return score_it(predictions,k=k)
+
+    demo100 = load_flat_text_cases('demo100_text.txt')
+    training_cases = load_flat_text_cases('all_flat_mnist_training_cases_text.txt')
+    test_cases = load_flat_text_cases('all_flat_mnist_testing_cases_text.txt')
+    print('TEST Results:')
+    print('Training set: \n ',test_it(ann,training_cases,4))
+    print('Testing set:\n ',test_it(ann,test_cases,4))
+    print('Demo 100 set: \n ',test_it(ann,demo100,8))
+#
 def readfile(type):
     features, labels = load_all_flat_cases(type)#read in images and labels from file 
     #print(features[0][160])
-    features = np.divide(features,255)#divide all image values with 255
+    features = numpy.divide(features,255)#divide all image values with 255
     ###--- Make vector for all labels ---###
-    labels = np.array(labels)
+    labels = numpy.array(labels)
     labels = labels.flatten()
-    label_vectors = np.zeros((len(labels),10))#init all vectors to zero
-    label_vectors[np.arange(len(labels)),labels] = 1#the right answer is 1
+    label_vectors = numpy.zeros((len(labels),10))#init all vectors to zero
+    label_vectors[numpy.arange(len(labels)),labels] = 1#the right answer is 1
     return features, label_vectors
-def read_demo_file(filename):
-    cases = load_flat_cases(filename)
-    #
-    test_cases = cases[0]
-    #print (test_cases[1])
-    print(cases[1])
-    return test_cases
-    #print(len(cases[0]),"\n", cases[0])
-    #return cases
-if __name__ == '__main__':
-    b=read_demo_file('demo_prep')

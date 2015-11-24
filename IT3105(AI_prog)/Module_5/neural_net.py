@@ -18,7 +18,7 @@ class ANN:
     #
     def floatX(self,X): return np.asarray(X, dtype=theano.config.floatX)
     #
-    def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10):
+    def makeparamlist(self,w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10,b1,b2):
         if self.num_layers==10: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10]
         elif self.num_layers==9: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9]
         elif self.num_layers==8: return [w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8]
@@ -27,7 +27,7 @@ class ANN:
         elif self.num_layers==5: return [w_h1, w_h2, w_h3, w_h4, w_h5]
         elif self.num_layers==4: return [w_h1, w_h2, w_h3, w_h4]
         elif self.num_layers==3: return [w_h1, w_h2, w_h3]
-        elif self.num_layers==2: return [w_h1, w_h2]
+        elif self.num_layers==2: return [w_h1, b1, w_h2, b2]
         else: return [w_h1]
     #
     def init_weights(self,layers):
@@ -140,7 +140,7 @@ class ANN:
             updates.append([p, p - g * self.lr])
         return updates
     #
-    def sigmoid_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+    def sigmoid_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10,b1,b2):
         if self.num_layers==10:
             h1 = T.nnet.sigmoid(T.dot(X, w_h1))
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
@@ -202,11 +202,12 @@ class ANN:
             h2 = T.nnet.sigmoid(T.dot(h1, w_h2))
             pyx = T.nnet.softmax(T.dot(h2, w_h3))
         elif self.num_layers==2:
-            h1 = T.nnet.sigmoid(T.dot(X, w_h1))
-            pyx = T.nnet.softmax(T.dot(h1, w_h2))
+            print("using bias nodes")
+            h1 = T.nnet.sigmoid(T.dot(X, w_h1)+b1)
+            pyx = T.nnet.softmax(T.dot(h1, w_h2)+b2)
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
-    def tanh_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10):
+    def tanh_model(self,X,w_h1,w_h2,w_h3,w_h4,w_h5,w_h6,w_h7,w_h8,w_h9,w_h10, b1, b2):
         if self.num_layers==10:
             h1 = T.tanh(T.dot(X, w_h1))
             h2 = T.tanh(T.dot(h1, w_h2))
@@ -268,8 +269,8 @@ class ANN:
             h2 = T.tanh(T.dot(h1, w_h2))
             pyx = T.nnet.softmax(T.dot(h2, w_h3))
         elif self.num_layers==2:
-            h1 = T.tanh(T.dot(X, w_h1))
-            pyx = T.nnet.softmax(T.dot(h1, w_h2))
+            h1 = T.tanh(T.dot(X, w_h1)+b1)
+            pyx = T.nnet.softmax(T.dot(h1, w_h2)+b2)
         else: pyx = T.nnet.softmax(T.dot(X, w_h1))
         return pyx
     #
@@ -278,19 +279,21 @@ class ANN:
         Y = T.fmatrix()
         #
         w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10 = self.init_weights(layers)
+        b1=theano.shared(self.floatX(np.random.uniform(-.1,.1,size=(layers[0][1]))))
+        b2=theano.shared(self.floatX(np.random.uniform(-.1,.1,size=(layers[1][1]))))
         #
-        #py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
-        py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        py_x = self.tanh_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10, b1, b2)
+        #py_x = self.sigmoid_model(X, w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10, b1, b2)
         y_x = T.argmax(py_x, axis=1)
         #
         cost = T.mean(T.nnet.categorical_crossentropy(py_x, Y))
-        params = self.makeparamlist(w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10)
+        params = self.makeparamlist(w_h1, w_h2, w_h3, w_h4, w_h5, w_h6, w_h7, w_h8, w_h9, w_h10, b1, b2)
         updates = self.sgd(cost, params)
         #
         self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
         #
-#
+    #
     def test_testset(self):
     	return np.mean(np.argmax(self.teY, axis=1) == self.predict(self.teX))
     #
@@ -308,8 +311,11 @@ class ANN:
             score=self.test_testset()
             print("Training phase #",i," score on test-set: ", score)
             i+=1
-            if score >0.975:
+            if score >0.97:
                 x=False
+        print("\n")
+        print("score on test-set: ", self.test_testset())
+        print("score on train-set: ", self.test_trainset())
     #
     def blind_test(self, cases):
         nn_answers = []
@@ -319,6 +325,7 @@ class ANN:
         for n in svar:
             nn_answers.append(n)
         print(nn_answers)
+        return nn_answers
 #
 def main():
     training_acc = 0
@@ -345,8 +352,8 @@ def main():
 #
 nn=ANN(0.1,[(784,100),(100,10)])
 start=time.time()
-nn.training(500)
+nn.training(50)
 print("det tok: ",time.time()-start," aa trene nettet.")
-blind_cases = MNIST.read_demo_file("demo_prep")
-nn.blind_test(blind_cases)
-#main()
+MNIST.minor_demo(nn)
+#blind_cases = MNIST.read_demo_file("demo_prep")
+#nn.blind_test(blind_cases)
