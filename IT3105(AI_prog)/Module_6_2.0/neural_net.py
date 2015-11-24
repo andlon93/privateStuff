@@ -9,6 +9,7 @@ import State as S
 import operator
 import random
 import math
+import demo2048 as demo
 #
 class ANN:
     def __init__(self, lr, layers):
@@ -452,5 +453,7 @@ if __name__ == '__main__':
     print("Total training time: ", time.time()-total)
     #
     nn_results, random_results = main()
-    print(nn_results,"\n")
-    print(random_results)
+    print(demo.welch(random_results,nn_results))
+    #print(len(nn_results), len(random_results))
+    #print(nn_results,"\n")
+    #print(random_results)
